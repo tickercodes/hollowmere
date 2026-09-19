@@ -1,0 +1,6 @@
+{
+  // This project targets Flutter 3.47.x / Dart 3.13.x (see pubspec.yaml `environment.sdk`).
+  // The user-level setting points at an older SDK (~/mobile-app/flutter, Dart 3.12),
+  // which the Dart extension prepends to the integrated terminal PATH and breaks `flutter run`.
+  "dart.flutterSdkPath": "/Users/whycodex/development/flutter"
+}

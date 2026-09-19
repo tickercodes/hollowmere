@@ -1,0 +1,155 @@
+{
+  "id": "ep2",
+  "number": 2,
+  "title": "Dead Drop",
+  "start": "t_open",
+  "nodes": {
+    "t_open": {"type": "title", "kicker": "THE 24TH", "title": "7:40 AM", "subtitle": "Episode 2 - Dead Drop", "next": "fx_open"},
+    "fx_open": {"type": "effects", "effects": {"hours": 272, "journal": "Slept two hours. The Cloud Backup icon has a badge again. Tess is about to put me on the board too."}, "next": "p1"},
+
+    "p1": {"type": "message", "thread": "tess", "text": "hi. this is tess, wren's roommate. mara gave me your number", "delay": 1.0, "next": "p2"},
+    "p2": {"type": "message", "thread": "tess", "text": "the police had me for three hours. they asked if i've met you", "next": "p3"},
+    "p3": {"type": "message", "thread": "tess", "text": "did she ever mention someone called J to you", "next": "c_p1"},
+    "c_p1": {"type": "choice", "thread": "tess", "options": [
+      {"text": "She did. Who is he?", "next": "p4"},
+      {"text": "Why were the police interested in you for three hours?", "next": "p4_defensive", "effects": {"trust": {"tess": -1}, "flags": ["tess_pressed"]}},
+      {"text": "Tess - are you okay?", "next": "p4_kind", "effects": {"trust": {"tess": 1}}}
+    ]},
+    "p4_defensive": {"type": "message", "thread": "tess", "text": "because we had a fight two weeks ago and i said something stupid in a group chat. that's it. i'm not a suspect, i'm a roommate", "next": "p4"},
+    "p4_kind": {"type": "message", "thread": "tess", "text": "no. thanks for asking though. nobody's asked", "next": "p4"},
+    "p4": {"type": "message", "thread": "tess", "text": "J is jonah hale. dock mechanic at the marina. he's been at the diner every second day for a month and he doesn't even drink coffee", "next": "p5",
+      "effects": {"contacts": {"jonah": "Jonah Hale"}, "journal": "J. is Jonah Hale. Dock mechanic. Tess says he never even drinks the coffee."}},
+    "p5": {"type": "message", "thread": "tess", "text": "wren wouldn't tell me what he wanted. she just said 'he's not what you think' which is what people say right before they get murdered in podcasts", "next": "p6"},
+    "p6": {"type": "message", "thread": "tess", "text": "she sent me this the day before she went quiet. i can't read it. it's her emoji alphabet. she made me learn like six letters and i gave up", "next": "p7"},
+    "p7": {"type": "message", "thread": "tess", "text": "🌊🔑🍒🗝🌙🌧 14 🐟🔥 🐟 🌀🔑 🎯🦉🐟🌙🌲", "next": "p8"},
+    "p8": {"type": "message", "thread": "tess", "text": "here's the cheat sheet she gave me: 🌊=L 🔑=O 🌙=E 🌧=R 🦉=U 🐟=I. the rest you'd have to guess", "next": "g_cipher"},
+    "g_cipher": {"type": "goal", "text": "Tess sent Wren's coded note. Decode it.", "target": {"app": "messages", "thread": "tess"}, "next": "mg_cipher"},
+    "mg_cipher": {"type": "minigame", "game": "cipher", "title": "Wren's alphabet", "config": {
+      "cipher": "🌊🔑🍒🗝🌙🌧 14 🐟🔥 🐟 🌀🔑 🎯🦉🐟🌙🌲",
+      "answer": "LOCKER 14 IF I GO QUIET",
+      "legend": {"🌊": "L", "🔑": "O", "🌙": "E", "🌧": "R", "🦉": "U", "🐟": "I"},
+      "unknown": ["🍒", "🗝", "🔥", "🌀", "🎯", "🌲"],
+      "brief": "Six symbols are known from Tess's cheat sheet. Guess the rest from the words. Numbers stay as numbers."},
+      "hints": ["The first word is six letters and ends in ER. It is on your board already.", "\"I_ I _O\" - two short words. She is giving Tess an instruction.", "The last word starts with Q. Something you do when you are scared."],
+      "evidence": "ev_locker_note", "effects": {"trust": {"tess": 1}, "journal": "LOCKER 14 IF I GO QUIET. She planned for going quiet."}, "next": "p9"},
+    "p9": {"type": "message", "thread": "tess", "text": "locker 14?? the marina lockers have been dead for years. you can't rent them", "next": "p10"},
+    "p10": {"type": "message", "thread": "tess", "text": "she was searching stuff about the marina on the ipad we share. try 'marina locker' in your browser, the authority has a page", "next": "g_locker_page"},
+    "g_locker_page": {"type": "goal", "text": "Search the browser for the marina lockers.", "target": {"app": "browser", "page": "locker_rental"}, "next": "s_locker_page",
+      "effects": {"journal": "The lockers were closed in 2011. Keys were never taken back."}},
+    "s_locker_page": {"type": "scene", "lines": [
+      "Closed in 2011. Keys not taken back.",
+      "Locker 14 has a new padlock in her photo. Someone is still using a dead locker.",
+      "The Courier article about Wren links to something from 2006. Read it before you call anyone."
+    ], "next": "g_2006"},
+    "g_2006": {"type": "goal", "text": "Open the 2006 archive article linked from the Courier's missing-person story.", "target": {"app": "browser", "page": "courier_2006_runaway"}, "next": "s_2006",
+      "effects": {"flags": ["read_caleb_article"], "pins": ["caleb"], "journal": "Caleb Voss, 17, vanished 18 November 2006 - the week the council voted to flood the last of the old town. Called a runaway. Jonah Hale was the boy he loved."}},
+    "s_2006": {"type": "scene", "image": "loc_marina", "lines": [
+      "Caleb Voss. Seventeen. Last seen 18 November 2006.",
+      "The same week the council voted five to two to flood the east basin orchard and its frost-relay grid.",
+      "Jonah Hale was the boy he loved. The town called it nothing."
+    ], "next": "c_jonah_open"},
+
+    "c_jonah_open": {"type": "choice", "thread": "jonah", "options": [
+      {"text": "This is {player}. Wren's friend. I know about locker 14.", "next": "jo1", "effects": {"flags": ["jonah_confronted"], "trust": {"jonah": -1}}},
+      {"text": "This is {player}. I was talking to Wren the night she went quiet. I think you were the last person she called.", "next": "jo1", "effects": {"flags": ["jonah_honest"], "trust": {"jonah": 1}}},
+      {"text": "Jonah. I read about Caleb. I'm sorry.", "next": "jo1_caleb", "effects": {"flags": ["jonah_caleb_text"], "trust": {"jonah": 1}}}
+    ]},
+    "jo1_caleb": {"type": "message", "thread": "jonah", "text": "Don't put his name in a text.", "delay": 0.8, "next": "jo1"},
+    "jo1": {"type": "message", "thread": "jonah", "text": "Who gave you this number.", "delay": 1.4, "next": "c_jonah2"},
+    "c_jonah2": {"type": "choice", "thread": "jonah", "options": [
+      {"text": "Tess. She's scared. So am I.", "next": "jo2"},
+      {"text": "Does it matter? You never answered any of Wren's messages.", "next": "jo2_sharp", "effects": {"trust": {"jonah": -1}}}
+    ]},
+    "jo2_sharp": {"type": "message", "thread": "jonah", "text": "I answered every one of them. Just not in writing.", "next": "jo2"},
+    "jo2": {"type": "message", "thread": "jonah", "text": "Not like this. I'm calling you. Pick up.", "next": "call_jonah"},
+
+    "call_jonah": {"type": "call", "contact": "jonah", "incoming": true, "script": [
+      {"from": "jonah", "text": "Don't say names. Don't say the locker. Phones in this town have a way of getting read."},
+      {"from": "jonah", "text": "You were the one she was going to see that night. She told me. 'Someone who doesn't know anything about this place.'"},
+      {"choice": [
+        {"text": "Why do you never write anything down?", "goto": 3},
+        {"text": "What did she find, Jonah?", "goto": 5},
+        {"text": "Is this about Caleb?", "goto": 13, "effects": {"flags": ["asked_jonah_caleb"]}}
+      ]},
+      {"from": "jonah", "text": "Because twenty years ago the boy I loved wrote things down. In a notebook. And everything he wrote came true for him."},
+      {"from": "jonah", "text": "So no. I don't write. I show up at a diner and I sit there so people know someone's watching her. Fat lot of good it did."},
+      {"from": "jonah", "text": "She found what I told her not to look for. I gave her one page. One. She worked out the rest herself. She was faster than me."},
+      {"from": "jonah", "text": "The locker's Caleb's. Fourteen. The code isn't written anywhere. It's in the grid he cut into the door that summer."},
+      {"from": "jonah", "text": "Go at low light. Don't park at the marina. And if you see a dark car with council plates, you turn around.", "effects": {"flags": ["jonah_gave_hint"], "trust": {"jonah": 1}}},
+      {"choice": [
+        {"text": "I'll go tonight.", "goto": 10, "default": true},
+        {"text": "Come with me.", "goto": 9}
+      ]},
+      {"from": "jonah", "text": "No. If I'm seen with you, you're finished here. Go alone. You'll know the locker when you see it."},
+      {"from": "jonah", "text": "Forty-seven seconds. That's all I got from her that night. I've listened to it a hundred times. Be careful."},
+      {"from": "jonah", "text": "Low light. Don't park at the marina. Go."},
+      {"end": true},
+      {"from": "jonah", "text": "Don't say his name on a phone. I mean it. Not on a phone. Not to Locke, not to the Courier, not to Mara.", "effects": {"flags": ["jonah_shut_down"], "trust": {"jonah": -1}}},
+      {"end": true}
+    ], "next": "b_jonah_shut"},
+
+    "b_jonah_shut": {"type": "branch", "if": {"flag": "jonah_shut_down"}, "then": "s_jonah_shut", "else": "s_marina"},
+    "s_jonah_shut": {"type": "scene", "lines": [
+      "He hung up when you said Caleb's name.",
+      "The line stayed dead. He will not text. He will not call back today.",
+      "But Wren's note said locker 14. And her photo of the locker door shows a grid cut into the metal. You can still go."
+    ], "effects": {"journal": "Jonah shut down when I said Caleb's name on the phone. I have to earn that back."}, "next": "s_marina"},
+
+    "s_marina": {"type": "scene", "image": "loc_marina", "title": "The marina, 6:10 PM", "lines": [
+      "Low light. You park at the diner and walk the shore path.",
+      "The north dock lockers are a row of rust. Fourteen has a new brass padlock - four-digit keypad - and something cut into the door under thirty years of paint.",
+      "A grid. Nine by nine. Some squares are cut deeper than the others."
+    ], "next": "mg_grid1"},
+    "mg_grid1": {"type": "minigame", "game": "sudoku", "title": "Scratched into locker 14", "config": {"seed": 14, "size": 9, "givens": 62,
+      "shaded": [[1, 2], [3, 2], [5, 5], [7, 7]], "expected_code": "4719", "code_label": "locker 14",
+      "brief": "Caleb cut this into locker 14 in 2006. Most squares are already filled. Put 1–9 in every row, column and box. The deeper squares hold the code."},
+      "hints": ["Look for a row or box with only one empty square. That number is forced.", "If a digit is missing from a row and only one cell can take it, put it there.", "Read the shaded cells top to bottom, left to right - that is the order of the code."],
+      "effects": {"journal": "The grid on the locker door solves to a four-digit code."}, "next": "mg_pad1"},
+    "mg_pad1": {"type": "minigame", "game": "passcode", "title": "Brass padlock", "config": {"answer": "4719", "label": "Padlock - 4 digits", "clue": "The deeper-cut squares, read top to bottom."},
+      "hints": ["The code is the four digits you just found in the grid.", "Top-left shaded square first.", "4-7-1-9."],
+      "effects": {"unlock_photos": ["caleb_notebook"], "evidence": ["ev_notebook"], "flags": ["opened_locker"], "journal": "Locker 14: a notebook of hand-drawn grids, and a Polaroid of the spillway house."}, "next": "s_locker_open"},
+    "s_locker_open": {"type": "scene", "image": "caleb_notebook", "lines": [
+      "A school notebook, warped by damp. Page after page of nine-by-nine grids in pencil. Some squares shaded hard enough to dent the paper.",
+      "Tucked inside the cover: a Polaroid of the spillway house in daylight, years ago.",
+      "And on the inside cover, in a different hand, recent: \"W - page 2 is the archive. page 3 is the bell. don't do it in order. - J\""
+    ], "next": "g_notebook"},
+    "g_notebook": {"type": "goal", "text": "Her photo of the locker contents just synced. Compare it with what you found.", "target": {"app": "gallery", "photo": "caleb_notebook"}, "next": "n_notes",
+      "effects": {"journal": "Her photo is stamped Wed 12:02 AM. She opened this locker fifteen minutes after her last message to me."}},
+
+    "n_notes": {"type": "notification", "app": "notes", "title": "Notes synced", "body": "things to ask sam ridley", "delay": 1.4,
+      "effects": {"notes": [{"id": "n_ask_sam", "title": "things to ask sam ridley", "body": "1. why did you move somewhere you clearly hate\n2. what does he actually do all day\n4. doesn't tell you what he thinks of things. is that a personality or a wound\n7. only person here who wasn't here in 2006"}]}, "next": "g_notes"},
+    "g_notes": {"type": "goal", "text": "Open Notes. She wrote about you.", "target": {"app": "notes"}, "next": "s_notes"},
+    "s_notes": {"type": "scene", "lines": [
+      "Item 1: why did you move somewhere you clearly hate.",
+      "Item 4: doesn't tell you what he thinks of things. is that a personality or a wound.",
+      "Item 7: only person here who wasn't here in 2006.",
+      "You will laugh. Then you will feel worse about it."
+    ], "next": "n_memo1"},
+    "n_memo1": {"type": "notification", "app": "calls", "title": "Voice memo", "body": "if you're hearing this, sam…",
+      "effects": {"call_log": [{"id": "vm_memo1", "contact": "wren", "direction": "in", "label": "Voice memo · undated", "duration": 11, "voicemail": "vm_wren_memo1"}]}, "next": "n_pair"},
+
+    "n_pair": {"type": "notification", "app": "cloud", "title": "Cloud Backup", "body": "Paired devices: 2 · SAM-COTTAGE-WIFI · 11 days ago, 11:52 PM", "delay": 2.4,
+      "effects": {"mirror": 2}, "next": "g_pair"},
+    "g_pair": {"type": "goal", "text": "Open Cloud Backup. See when her phone linked to yours.", "target": {"app": "cloud"}, "next": "s_pair",
+      "effects": {"evidence": ["ev_pairing"], "pins": ["c_pairing"], "flags": ["cloud_pairing_visible"], "journal": "Her phone linked to my house wifi at 11:52 PM. Five minutes after my message. She came inside."}},
+    "s_pair": {"type": "scene", "lines": [
+      "SAM-COTTAGE-WIFI. Eleven days ago. 11:52 PM.",
+      "Five minutes after \"I'll leave the door open.\" She came. She stood in your kitchen with her phone in her hand while you waited upstairs, asleep, ten metres away.",
+      "She didn't knock. She linked her phone to yours and left.",
+      "This was never an accident."
+    ], "next": "n_kitchen"},
+    "n_kitchen": {"type": "notification", "app": "cloud", "title": "Wren's Library", "body": "1 item recovered · your kitchen", "effects": {"unlock_photos": ["kitchen_night"]}, "next": "g_kitchen"},
+    "g_kitchen": {"type": "goal", "text": "A photo from your kitchen. Open it and look at the window.", "target": {"app": "gallery", "photo": "kitchen_night"}, "next": "mg_kitchen"},
+    "mg_kitchen": {"type": "minigame", "game": "photo_spot", "title": "Your kitchen - 11:53 PM", "config": {"photo": "kitchen_night", "required": ["mug", "clock", "car"],
+      "brief": "She took this from inside your house. Find the mug, the stove clock, and what is in the window."},
+      "hints": ["Your mug is still on the counter.", "The stove clock is in the upper third.", "Look at the glass. Lights off."],
+      "evidence": "ev_kitchen_photo", "next": "gl2"},
+    "gl2": {"type": "glitch", "ghost": {"thread": "wren", "from": "wren", "text": "sorry. it was the only safe place"}, "next": "s_outside"},
+    "s_outside": {"type": "scene", "lines": [
+      "They were outside your house that night.",
+      "Hold the vanishing messages if you want to keep them. Five per episode."
+    ], "next": "t_card"},
+    "t_card": {"type": "title", "kicker": "THE HOLLOWMERE FILES", "title": "Episode 2", "subtitle": "Dead Drop", "next": "end2"},
+    "end2": {"type": "end_episode", "teaser": "Episode 3 - The Old Town. A deleted post. A bell that isn't the orchard. And the boy under the water.", "next_episode": "ep3"}
+  }
+}

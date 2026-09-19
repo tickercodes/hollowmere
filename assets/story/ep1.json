@@ -1,0 +1,177 @@
+{
+  "id": "ep1",
+  "number": 1,
+  "title": "Radio Silence",
+  "start": "fx_wake",
+  "nodes": {
+    "fx_wake": {"type": "effects", "effects": {
+      "hours": 264,
+      "unlock_apps": ["cloud", "gallery"],
+      "mirror": 1,
+      "gallery": [
+        {"photo": "sams_street", "locked": false},
+        {"photo": "dock_night", "locked": true},
+        {"photo": "birthday_cake", "locked": true},
+        {"photo": "gauge_spire", "locked": true},
+        {"photo": "relay_field", "locked": true},
+        {"photo": "caleb_notebook", "locked": true},
+        {"photo": "inspection_report", "locked": true},
+        {"photo": "diner_rota", "locked": true},
+        {"photo": "kitchen_night", "locked": true}
+      ],
+      "journal": "3:07 AM, 24th. An app I never installed just sent me a photo of my own front door."
+    }, "next": "n_cloud"},
+    "n_cloud": {"type": "notification", "app": "cloud", "title": "Cloud Backup - Wren's Library", "body": "1 new item synced from another device", "delay": 1.6, "next": "g_street"},
+    "g_street": {"type": "goal", "text": "A photo of your front door arrived at 3:07 AM. Open Wren's Library.", "target": {"app": "gallery", "photo": "sams_street"}, "next": "s_street"},
+    "s_street": {"type": "scene", "image": "sams_street", "lines": [
+      "Your front door. Taken from across the street. 1:12 AM, tonight.",
+      "You were asleep. Whoever held this phone was right outside."
+    ], "effects": {"evidence": ["ev_street_photo"]}, "next": "t_replay"},
+
+    "t_replay": {"type": "title", "kicker": "ELEVEN DAYS AGO", "title": "11:38 PM", "subtitle": "The 13th · Ferry Street", "next": "w1"},
+
+    "w1": {"type": "message", "thread": "wren", "text": "ok the fog tonight is wild. i can't see the marina from the dock", "next": "w2"},
+    "w2": {"type": "message", "thread": "wren", "text": "i'm shooting anyway. sue me", "next": "w3"},
+    "w3": {"type": "message", "thread": "wren", "text": "also it's been exactly three weeks since the 22nd. not that i'm counting", "next": "c1"},
+    "c1": {"type": "choice", "thread": "wren", "options": [
+      {"text": "you're going to fall in", "next": "w4a", "effects": {"flags": ["cold_open_worried"]}},
+      {"text": "you ARE counting", "next": "w4b", "effects": {"flags": ["cold_open_flirt"]}},
+      {"text": "come here instead. i'll make tea", "next": "w4c", "effects": {"flags": ["cold_open_invite"]}}
+    ]},
+    "w4a": {"type": "message", "thread": "wren", "text": "if i fall in i'm haunting you specifically", "next": "w5"},
+    "w4b": {"type": "message", "thread": "wren", "text": "🦉🌙", "next": "w4b2"},
+    "w4b2": {"type": "message", "thread": "wren", "text": "(that's 'you're up late' in the code. see, it works. tess still can't read it)", "next": "w5"},
+    "w4c": {"type": "message", "thread": "wren", "text": "tempting. give me twenty minutes, there's one more shot i want", "next": "w5"},
+
+    "w5": {"type": "message", "thread": "wren", "text": "weird thing though. there's a car at the spillway house with its lights off", "next": "w6"},
+    "w6": {"type": "message", "thread": "wren", "text": "ok it's nothing. ignore me", "next": "c2"},
+    "c2": {"type": "choice", "thread": "wren", "options": [
+      {"text": "not nothing. where are you exactly?", "next": "w7", "effects": {"flags": ["cold_open_asked_where"]}},
+      {"text": "want me to come down?", "next": "w7", "effects": {"flags": ["cold_open_offered"]}},
+      {"text": "get a shot of it. then leave", "next": "w7", "effects": {"flags": ["cold_open_told_shoot"]}}
+    ]},
+    "w7": {"type": "message", "thread": "wren", "text": "north dock. it's still there. engine's off", "next": "w8"},
+    "w8": {"type": "message", "thread": "wren", "text": "i'm going to get a little closer for one shot and then i'm coming to yours", "next": "w9"},
+    "w9": {"type": "message", "thread": "wren", "text": "keep the", "delay": 0.9, "next": "d1"},
+    "d1": {"type": "delay", "seconds": 2.2, "next": "p_last"},
+    "p_last": {"type": "message", "thread": "wren", "from": "player", "text": "still up? come by, I'll leave the door open", "next": "d2",
+      "effects": {"evidence": ["ev_unread"], "journal": "11:47 PM, the 13th. Delivered. Never read."}},
+    "d2": {"type": "delay", "seconds": 2.0, "next": "s_black"},
+    "s_black": {"type": "scene", "lines": ["Delivered 11:47 PM.", "Never read.", "Eleven days. Two hundred and sixty-four hours."], "next": "n_dock"},
+
+    "n_dock": {"type": "notification", "app": "cloud", "title": "Wren's Library", "body": "1 item recovered · Marina, north dock", "effects": {"unlock_photos": ["dock_night"]}, "next": "g_dock"},
+    "g_dock": {"type": "goal", "text": "A second photo cleared. Open it and look closely.", "target": {"app": "gallery", "photo": "dock_night"}, "next": "mg_dock"},
+    "mg_dock": {"type": "minigame", "game": "photo_spot", "title": "Marina, north dock - 11:31 PM", "config": {"photo": "dock_night", "required": ["locker", "siren", "badge"],
+      "brief": "Her last photo before the messages stopped. Someone else is in the shot, face turned away. Find three details."},
+      "hints": ["Look at the left edge, on the locker row.", "The red light on the spillway house should not be on at night.", "Puddles reflect. Check the bottom right corner."],
+      "evidence": "ev_dock_photo", "effects": {"pins": ["c_locker", "c_siren", "c_sedan"]}, "next": "fx_calls"},
+
+    "fx_calls": {"type": "effects", "effects": {
+      "unlock_apps": ["calls"],
+      "call_log": [
+        {"id": "cl_mara1", "contact": "mara", "direction": "missed", "label": "Tue 11:49 PM"},
+        {"id": "cl_j47", "contact": "jonah", "direction": "out", "label": "Tue 11:41 PM", "duration": 47},
+        {"id": "cl_mara2", "contact": "mara", "direction": "missed", "label": "Tue 11:58 PM"},
+        {"id": "cl_mara3", "contact": "mara", "direction": "missed", "label": "Wed 12:20 AM"}
+      ]
+    }, "next": "n_calls"},
+    "n_calls": {"type": "notification", "app": "calls", "title": "Call log mirrored", "body": "4 entries recovered from Wren's phone", "next": "g_calls"},
+    "g_calls": {"type": "goal", "text": "Her call log just appeared on your phone. Check it.", "target": {"app": "calls"}, "next": "s_calls",
+      "effects": {"evidence": ["ev_call_47s"], "journal": "Three missed calls from her girlfriend she never answered. One outgoing call, 47 seconds, to someone saved only as J."}},
+    "s_calls": {"type": "scene", "lines": [
+      "Three missed calls from MARA ❤ between 11:49 and 12:20. She never picked up.",
+      "One outgoing call at 11:41 PM. Forty-seven seconds. To a contact saved only as \"J.\"",
+      "Six minutes before your message. Six minutes before \"keep the\"."
+    ], "next": "m_mara1"},
+
+    "m_mara1": {"type": "message", "thread": "mara", "text": "Hi. Is this {player}? This is Mara Ellison. Wren and I are together.", "delay": 1.2, "next": "m_mara2"},
+    "m_mara2": {"type": "message", "thread": "mara", "text": "I found your number in her messages. I'm sorry to write so late. I don't sleep.", "next": "m_mara3"},
+    "m_mara3": {"type": "message", "thread": "mara", "text": "Have you heard from her? Anything at all. Please.", "next": "c_mara"},
+    "c_mara": {"type": "choice", "thread": "mara", "options": [
+      {"text": "Nothing since the night she went quiet. I'd asked her to come over. I left the door open for her.", "next": "m_mara_truth", "effects": {"trust": {"mara": 2}, "flags": ["told_mara_truth"], "journal": "I told Mara the truth about the door."}},
+      {"text": "No, sorry. We only talked a few times.", "next": "m_mara_lie", "effects": {"trust": {"mara": -1}, "flags": ["lied_to_mara"], "journal": "I lied to Wren's girlfriend."}},
+      {"text": "What are the police saying? Have they told you anything?", "next": "m_mara_deflect", "effects": {"flags": ["deflected_mara"]}}
+    ]},
+    "m_mara_truth": {"type": "message", "thread": "mara", "text": "Thank you for telling me that. She talked about you. She said you were the first person here who didn't already know everything about her.", "next": "m_mara_police"},
+    "m_mara_lie": {"type": "message", "thread": "mara", "text": "A few times. Right. She had your name saved with a heart, {player}. But all right.", "next": "m_mara_police"},
+    "m_mara_deflect": {"type": "message", "thread": "mara", "text": "They say she's an adult and adults leave. That's the phrase. Adults leave.", "next": "m_mara_police"},
+    "m_mara_police": {"type": "message", "thread": "mara", "text": "Ardis is pushing them for me. Councilwoman Locke. She got me the records job. She's been very kind.", "next": "m_mara_end"},
+    "m_mara_end": {"type": "message", "thread": "mara", "text": "If she contacts you - anyone contacts you - tell me first. Before the police. Please.", "next": "n_news",
+      "effects": {"contacts": {"mara": "Mara Ellison"}, "pins": ["mara"]}},
+
+    "n_news": {"type": "notification", "app": "browser", "title": "Hollowmere Courier", "body": "Hollowmere PD confirms 19-year-old woman reported missing; declined further comment.", "delay": 2.2,
+      "effects": {"pages": ["courier_missing"], "unlock_apps": ["browser", "board", "evidence", "journal", "notes"], "pins": ["wren"]}, "next": "g_board"},
+    "g_board": {"type": "goal", "text": "It's official now. Open the Case Board - her photo is already pinned.", "target": {"app": "board"}, "next": "s_board",
+      "effects": {"journal": "Started a board. One photo in the centre. Hers."}},
+    "s_board": {"type": "scene", "lines": [
+      "A board. One pin. Her.",
+      "Around it: a locker number, a siren that should not have been on, a car that was not Jonah's truck.",
+      "It does not feel like a game. It feels like a promise."
+    ], "next": "n_cake"},
+
+    "n_cake": {"type": "notification", "app": "cloud", "title": "Wren's Library", "body": "1 item recovered · nineteen!!", "effects": {"unlock_photos": ["birthday_cake"]}, "next": "s_lock"},
+    "s_lock": {"type": "scene", "lines": [
+      "Her messages are trying to come through. The link stops at a lock screen - hers, not yours.",
+      "Four digits. You knew her three weeks. You know exactly two numbers about her."
+    ], "next": "g_cake"},
+    "g_cake": {"type": "goal", "text": "Look at the birthday photo. It's the only clue you have to her passcode.", "target": {"app": "gallery", "photo": "birthday_cake"}, "next": "mg_pass"},
+    "mg_pass": {"type": "minigame", "game": "passcode", "title": "Wren's passcode", "config": {"answer": "2219", "label": "Enter Wren's passcode",
+      "clue": "Two number candles on the cake. A date you both remember. She always put the day first."},
+      "hints": ["The candles read 19. That's half of it.", "Scroll up in your thread with her. \"Exactly three weeks since the 22nd.\"", "Day first, then the age: 22, then 19."],
+      "effects": {"mirror": 2, "flags": ["wren_phone_unlocked"], "journal": "2219. Our first date, then her age. Her phone opened on mine."}, "next": "fx_threads"},
+
+    "fx_threads": {"type": "effects", "effects": {"contacts": {"j_mirror": "J. - from Wren's phone"}}, "next": "j1"},
+    "j1": {"type": "message", "thread": "j_mirror", "from": "wren", "text": "you said you'd stop coming to the diner.", "delay": 0.3, "next": "j2"},
+    "j2": {"type": "message", "thread": "j_mirror", "from": "wren", "text": "i saw your truck again. deacon noticed too.", "delay": 0.3, "next": "j3"},
+    "j3": {"type": "message", "thread": "j_mirror", "from": "wren", "text": "i'm not going to tell them. just leave me alone.", "delay": 0.3, "next": "j4"},
+    "j4": {"type": "message", "thread": "j_mirror", "from": "wren", "text": "why won't you answer in writing. what are you scared of", "delay": 0.3, "next": "j5"},
+    "j5": {"type": "message", "thread": "j_mirror", "from": "wren", "text": "ok. i went to the locker. you were right about the number.", "delay": 0.3, "next": "j6"},
+    "j6": {"type": "message", "thread": "j_mirror", "from": "wren", "text": "i'm going tonight. don't follow me. i mean it J", "delay": 0.3, "next": "n_threads"},
+    "n_threads": {"type": "notification", "app": "messages", "title": "Mirrored threads recovered", "body": "J. · 6 messages · no replies", "next": "g_j"},
+    "g_j": {"type": "goal", "text": "Her thread with J. came through. Read it.", "target": {"app": "messages", "thread": "j_mirror"}, "next": "s_j",
+      "effects": {"evidence": ["ev_j_thread"], "pins": ["jonah"], "journal": "Six messages to J. over two weeks. Not one reply. \"What are you scared of.\""}},
+    "s_j": {"type": "scene", "lines": [
+      "Six messages. No replies. Not one.",
+      "A man who keeps turning up at the diner and never writes anything down.",
+      "\"You were right about the number.\" Locker 14."
+    ], "next": "a1"},
+
+    "a1": {"type": "message", "thread": "ardis", "text": "Hello {player}. This is Ardis Locke. I'm so sorry to write so late. I saw your light on when I drove past.", "delay": 1.0, "next": "a2"},
+    "a2": {"type": "message", "thread": "ardis", "text": "Mara told me you two were close. Has anyone told you whether they've found her phone? This town looks after its own.", "next": "c_ardis"},
+    "c_ardis": {"type": "choice", "thread": "ardis", "options": [
+      {"text": "I don't know. Why would that matter?", "next": "a_reply_why", "effects": {"flags": ["ardis_asked_why"]}},
+      {"text": "I'd assume they'd have said so.", "next": "a_reply_neutral"},
+      {"text": "Why would I know that?", "next": "a_reply_cold", "effects": {"flags": ["suspicious_of_ardis"], "trust": {"ardis": -1}}}
+    ]},
+    "a_reply_why": {"type": "message", "thread": "ardis", "text": "Only that a phone tells you where someone was. Forgive me - I'm trying to help and it comes out as questions.", "next": "a_end"},
+    "a_reply_neutral": {"type": "message", "thread": "ardis", "text": "One would hope. Forgive me - I'm trying to help and it comes out as questions.", "next": "a_end"},
+    "a_reply_cold": {"type": "message", "thread": "ardis", "text": "No reason at all. Forgive me. Mara said you were close to her, that's all.", "next": "a_end"},
+    "a_end": {"type": "message", "thread": "ardis", "text": "Save my number. Day or night. Whatever you need, you call me.", "next": "n_vm",
+      "effects": {"contacts": {"ardis": "Ardis Locke (Council)"}, "pins": ["ardis"], "journal": "Councilwoman Locke texted at 3:24 AM. She saw my light. She asked if anyone had found Wren's phone."}},
+
+    "n_vm": {"type": "notification", "app": "calls", "title": "Recording recovered", "body": "Call to J. · Tue 11:41 PM · 47 s · audio restored", "delay": 2.0,
+      "effects": {"call_log": [{"id": "cl_rec47", "contact": "jonah", "direction": "out", "label": "Recording · Tue 11:41 PM", "duration": 47, "voicemail": "vm_wren_47s"}],
+        "notes": [{"id": "n_files", "title": "why is she recording her calls?", "body": "Her phone kept a recording of the 47-second call. A call recorder - for her interviews, for the project. She was recording everyone who would talk about 2006. The Hollowmere files."}]}, "next": "g_vm"},
+    "g_vm": {"type": "goal", "text": "Her phone recorded the 47-second call. Listen to it.", "target": {"app": "calls", "voicemail": "vm_wren_47s"}, "next": "mg_audio"},
+    "mg_audio": {"type": "minigame", "game": "audio_tag", "title": "Recording · 47 seconds", "config": {"voicemail": "vm_wren_47s", "required": ["siren", "bell", "car_door"],
+      "brief": "Play through the recording. Mark each sound behind her voice. The sounds tell you where she was."},
+      "hints": ["The siren is already on at the start. It does not wait.", "There is a single metal strike at about thirty-one seconds. It is not the orchard.", "Near the very end, before the line cuts: a heavy door."],
+      "evidence": "ev_voicemail_tags", "effects": {"pins": ["c_call", "c_bell"], "journal": "Siren already on. Bell at 0:31. Car door at 0:44. The Authority says there are no night releases."}, "next": "s_audio"},
+    "s_audio": {"type": "scene", "image": "loc_spillway", "lines": [
+      "\"I found the box. It's exactly where he said.\"",
+      "Who is he? What box?",
+      "The siren is already sounding when she calls. The Authority's own website says it never sounds at night.",
+      "Thirty-one seconds: a bell. Forty-four: a car door. Then nothing."
+    ], "next": "gl1"},
+
+    "gl1": {"type": "glitch", "ghost": {"thread": "wren", "from": "wren", "text": "i think he knows i saw it"}, "next": "d3"},
+    "d3": {"type": "delay", "seconds": 4.0, "next": "s_ghost"},
+    "s_ghost": {"type": "scene", "lines": [
+      "For one second, a message from Wren. Present tense.",
+      "Then, for four seconds: Wren is typing…",
+      "Then nothing."
+    ], "effects": {"journal": "A message from Wren appeared and vanished: \"i think he knows i saw it.\" Hold vanishing messages to keep them."}, "next": "t_card"},
+    "t_card": {"type": "title", "kicker": "THE HOLLOWMERE FILES", "title": "Episode 1", "subtitle": "Radio Silence", "next": "end1"},
+    "end1": {"type": "end_episode", "teaser": "Episode 2 - Dead Drop. The marina. Locker 14. And the man who never writes anything down.", "next_episode": "ep2"}
+  }
+}

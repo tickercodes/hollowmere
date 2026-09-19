@@ -1,0 +1,158 @@
+{
+  "id": "ep6",
+  "number": 6,
+  "title": "Hollowmere",
+  "start": "t_open",
+  "nodes": {
+    "t_open": {"type": "title", "kicker": "THE 26TH", "title": "9:40 PM", "subtitle": "Episode 6 - Hollowmere", "next": "fx_open"},
+    "fx_open": {"type": "effects", "effects": {"hours": 324, "siren_seconds": 7260, "journal": "Siren in 2:01:00. Fog so thick the spillway light is only a glow."}, "next": "s_open"},
+    "s_open": {"type": "scene", "image": "key_art", "lines": [
+      "Fog on the reservoir so thick the spillway light is only a faint glow.",
+      "The counter in the corner is running down.",
+      "Everything you have is on the board. Everything she has is on your phone."
+    ], "next": "b_bait"},
+
+    "b_bait": {"type": "branch", "if": {"flag": "bait_north_dock"}, "then": "pr_bait1", "else": "call_ardis"},
+    "pr_bait1": {"type": "message", "thread": "tess", "text": "don't look at the camera. look at the car", "delay": 0.8, "next": "fx_bait"},
+    "fx_bait": {"type": "effects", "effects": {"gallery": [{"photo": "bait_dock", "locked": false}]}, "next": "g_bait"},
+    "g_bait": {"type": "goal", "text": "Tess sent a photo from cover. Open it.", "target": {"app": "gallery", "photo": "bait_dock"}, "next": "mg_bait"},
+    "mg_bait": {"type": "minigame", "game": "photo_spot", "title": "north dock · 8:05 PM", "config": {"photo": "bait_dock", "required": ["car"],
+      "brief": "Engine off. Lights off. Find the council car."},
+      "hints": ["Look at the far edge of the dock lights.", "The badge is the same shape as the puddle.", "Right-hand side of the frame."],
+      "evidence": "ev_bait_car", "effects": {"pins": ["c_sedan"], "flags": ["bait_photo_got"], "journal": "The council car at the north dock, 8:05 PM. Nobody was told about this place except the mirror."}, "next": "s_bait"},
+    "s_bait": {"type": "scene", "image": "bait_dock", "lines": [
+      "8:05 PM. Engine off. Lights off.",
+      "Nobody was told about the north dock except the person reading this phone."
+    ], "next": "call_ardis_bait"},
+
+    "call_ardis_bait": {"type": "call", "contact": "ardis", "incoming": true, "script": [
+      {"from": "ardis", "text": "{player}. Ardis. I'm told you've been busy. I thought we should talk like adults before anyone does anything they regret."},
+      {"from": "ardis", "text": "You have a recording. Forty-seven seconds of a frightened girl saying she found a box 'exactly where he said'. It proves nothing, you know."},
+      {"timer": 12, "choice": [
+        {"text": "Where did you hear that phrase?", "goto": 3, "effects": {"evidence": ["ev_voice_match"], "flags": ["ardis_tell_caught"], "journal": "She quoted the recording. Only I have heard it."}},
+        {"text": "You're right. It proves nothing.", "goto": 5, "default": true, "effects": {"flags": ["ardis_placated"]}},
+        {"text": "I never told anyone what was on it.", "goto": 3, "effects": {"evidence": ["ev_voice_match"], "flags": ["ardis_tell_caught"], "journal": "She quoted the recording. Only I have heard it."}}
+      ]},
+      {"from": "ardis", "text": "…Mara told me. Or the roommate. Does it matter?"},
+      {"from": "ardis", "text": "It doesn't matter. What matters is what you do tonight."},
+      {"from": "ardis", "text": "Everett has agreed to fund a scholarship in Caleb Voss's name. Mara has agreed to rest. Deacon - well. Deacon has always known which side of the counter he stands on."},
+      {"timer": 12, "choice": [
+        {"text": "And Wren?", "goto": 7, "default": true},
+        {"text": "Where is she, Ardis?", "goto": 7, "effects": {"flags": ["ardis_asked_where"]}}
+      ]},
+      {"from": "ardis", "text": "Wren will come home when she's ready. She always does. She's very like Mara."},
+      {"from": "ardis", "text": "I'm sending someone to the north dock to make sure she's warm. You needn't be there. In fact I'd take it as a kindness if you weren't.", "effects": {"flags": ["ardis_named_dock"]}},
+      {"timer": 10, "choice": [
+        {"text": "The north dock. You just named a place only the mirror was told.", "goto": 10, "effects": {"flags": ["ardis_caught_bait"], "journal": "She named the north dock on a recorded line. She is the leak."}},
+        {"text": "Please don't send anyone.", "goto": 12, "default": true},
+        {"text": "You edited the log in 2006. And eleven days ago.", "goto": 14, "effects": {"flags": ["ardis_confronted"]}}
+      ]},
+      {"from": "ardis", "text": "…Because you wrote it down, dear. Goodnight."},
+      {"end": true},
+      {"from": "ardis", "text": "Then be there before I am. Goodnight, {player}."},
+      {"end": true},
+      {"from": "ardis", "text": "I have chaired this Authority for twenty-two years. The log is what I say it is. Goodnight."},
+      {"end": true}
+    ], "effects": {"flags": ["ardis_final_call"], "journal": "Ardis called. She named the north dock. She has just proved she is the leak."}, "next": "s_after_bait"},
+    "s_after_bait": {"type": "scene", "lines": [
+      "She named the north dock on a recorded line.",
+      "She is sending Tarrant. To the wrong place.",
+      "The siren is still counting."
+    ], "next": "b_fork"},
+
+    "call_ardis": {"type": "call", "contact": "ardis", "incoming": true, "script": [
+      {"from": "ardis", "text": "{player}. Ardis. I'm told you've been busy. I thought we should talk like adults before anyone does anything they regret."},
+      {"from": "ardis", "text": "You have a recording. Forty-seven seconds of a frightened girl saying she found a box 'exactly where he said'. It proves nothing, you know."},
+      {"timer": 12, "choice": [
+        {"text": "Where did you hear that phrase?", "goto": 3, "effects": {"evidence": ["ev_voice_match"], "flags": ["ardis_tell_caught"], "journal": "She quoted the recording. Only I have heard it."}},
+        {"text": "You're right. It proves nothing.", "goto": 5, "default": true, "effects": {"flags": ["ardis_placated"]}},
+        {"text": "I never told anyone what was on it.", "goto": 3, "effects": {"evidence": ["ev_voice_match"], "flags": ["ardis_tell_caught"], "journal": "She quoted the recording. Only I have heard it."}}
+      ]},
+      {"from": "ardis", "text": "…Mara told me. Or the roommate. Does it matter?"},
+      {"from": "ardis", "text": "It doesn't matter. What matters is what you do tonight."},
+      {"from": "ardis", "text": "Everett has agreed to fund a scholarship in Caleb Voss's name. Mara has agreed to rest. Deacon - well. Deacon has always known which side of the counter he stands on."},
+      {"timer": 12, "choice": [
+        {"text": "And Wren?", "goto": 7, "default": true},
+        {"text": "Where is she, Ardis?", "goto": 7, "effects": {"flags": ["ardis_asked_where"]}}
+      ]},
+      {"from": "ardis", "text": "Wren will come home when she's ready. She always does. She's very like Mara."},
+      {"from": "ardis", "text": "I'm sending someone to the boom shed when the siren sounds, to make sure she's warm. Nobody will hear a car door. You needn't be there.", "effects": {"flags": ["ardis_knows_shed"]}},
+      {"timer": 10, "choice": [
+        {"text": "How do you know she's at the boom shed?", "goto": 10, "effects": {"flags": ["ardis_slipped_shed"], "journal": "Nobody told Ardis about the shed. Except everything I did on this phone."}},
+        {"text": "Please don't send anyone.", "goto": 12, "default": true},
+        {"text": "You edited the log in 2006. And eleven days ago.", "goto": 14, "effects": {"flags": ["ardis_confronted"]}}
+      ]},
+      {"from": "ardis", "text": "…Because it's the only warm place on that shore, dear. Goodnight."},
+      {"end": true},
+      {"from": "ardis", "text": "Then be there before I am. Goodnight, {player}."},
+      {"end": true},
+      {"from": "ardis", "text": "I have chaired this Authority for twenty-two years. The log is what I say it is. Goodnight."},
+      {"end": true}
+    ], "effects": {"flags": ["ardis_final_call"], "journal": "Ardis called. She knows where Wren is. She is sending Tarrant at the siren."}, "next": "s_after_call"},
+    "s_after_call": {"type": "scene", "lines": [
+      "She named the boom shed.",
+      "You never said the word to her. You said it to Tess, in a thread on this phone.",
+      "She is sending Tarrant at the siren, when nobody can hear a car door."
+    ], "next": "b_fork"},
+
+    "b_fork": {"type": "branch", "if": {"flag": "fork_alone"}, "then": "b_alone_backed", "else": "s_police_night"},
+    "b_alone_backed": {"type": "branch", "if": {"any": [{"trust": {"who": "deacon", "min": 2}}, {"trust": {"who": "jonah", "min": 2}}]}, "then": "s_alone_backed", "else": "s_alone_unbacked"},
+    "s_alone_backed": {"type": "scene", "image": "buoy_shed", "title": "The shore path", "lines": [
+      "You do not go alone after all. A truck with its lights off waits at the spillway car park, and a man who never writes anything down gets out with a light.",
+      "Or a diner owner with a coffee tin under his arm, breathing like he has run here.",
+      "The shed door is open. The bell moves in the breeze. And behind it, wrapped in a sleeping bag, a girl with a camera raises her phone and takes your picture."
+    ], "effects": {"flags": ["wren_reached"], "journal": "We reached the shed. Wren was there."}, "next": "wr1"},
+    "s_alone_unbacked": {"type": "scene", "image": "buoy_shed", "title": "The shore path", "lines": [
+      "You go alone. The fog eats your light at three metres.",
+      "The shed door is open. The sleeping bag is here. The camera is here. Fresh tyre tracks on the shore path, heading towards the spillway car park.",
+      "The bell is still moving."
+    ], "effects": {"flags": ["shed_empty"], "journal": "I reached the shed alone. She was gone. Tyre tracks on the path."}, "next": "wr_ghost"},
+    "s_police_night": {"type": "scene", "image": "loc_spillway", "title": "Ferry Street", "lines": [
+      "Chief Whitlock texts: 'Units at the boom shed 05:30. Stay home. Leave the door open. That is not a request.'",
+      "You stay home. You leave the door open.",
+      "Your phone lights up. Messages. Wren."
+    ], "next": "wr1"},
+
+    "wr_ghost": {"type": "glitch", "ghost": {"thread": "wren", "from": "wren", "text": "car on the path. moving. if this is the last one - jonah has everything. finish it"}, "next": "g_board_final"},
+
+    "wr1": {"type": "message", "thread": "wren", "text": "you came.", "delay": 1.2, "next": "wr2"},
+    "wr2": {"type": "message", "thread": "wren", "text": "or you stayed and left the door open, which is the same thing with you", "next": "c_wren"},
+    "c_wren": {"type": "choice", "thread": "wren", "options": [
+      {"text": "I read every message you sent. Even the ones that disappeared.", "next": "wr3", "effects": {"trust": {"wren": 1}}},
+      {"text": "Are you okay? Are you hurt?", "next": "wr3_hurt", "effects": {"trust": {"wren": 1}}},
+      {"text": "She's sending Tarrant.", "next": "wr3_warn"}
+    ]},
+    "wr3_hurt": {"type": "message", "thread": "wren", "text": "wrist's bad. i fell on the boom the night i ran. everything else is just cold", "next": "wr3"},
+    "wr3_warn": {"type": "message", "thread": "wren", "text": "i know. i heard the call. she reads this phone, remember", "next": "wr3"},
+    "wr3": {"type": "message", "thread": "wren", "text": "i need you to do one thing before anyone comes. put it on the board. all of it. in the right order. so when they ask you 'how do you know', you don't have to think", "next": "wr4"},
+    "wr4": {"type": "message", "thread": "wren", "text": "then say her name. out loud. someone has to be the first person in this town to do it", "next": "n_memo3",
+      "effects": {"flags": ["wren_asked_board"], "journal": "Wren: put it on the board. Then say her name."}},
+    "n_memo3": {"type": "notification", "app": "calls", "title": "Voice memo", "body": "if this is the last one",
+      "effects": {"call_log": [{"id": "vm_memo3", "contact": "wren", "direction": "in", "label": "Voice memo · undated", "duration": 8, "voicemail": "vm_wren_memo3"}]}, "next": "g_board_final"},
+
+    "g_board_final": {"type": "goal", "text": "Open the Case Board. Connect the chain.", "target": {"app": "board"}, "next": "mg_connect_final"},
+    "mg_connect_final": {"type": "minigame", "game": "board_connect", "title": "The chain", "config": {
+      "brief": "Four links close the case. The log to the person who signed it. The siren to the call that recorded it. The car to the person who signs it out. The report to the boy who found it first.",
+      "required": [["ardis", "c_log"], ["c_call", "c_siren"], ["ardis", "c_sedan"], ["c_report", "caleb"]]},
+      "hints": ["Who signed the release log? Connect them to it.", "The siren is on the 47-second call. Connect the two clue cards.", "The council car appears in 2006 and in the puddle. Who has council plates? And who found the FAIL report first, in 2006?"],
+      "effects": {"flags": ["chain_closed"], "journal": "The chain is closed on the board."}, "next": "mg_accuse"},
+    "mg_accuse": {"type": "minigame", "game": "accuse", "title": "Say the name", "config": {
+      "brief": "Everything you have gathered is behind this choice. Tap a pin. The board locks when you commit.",
+      "suspects": ["ardis", "jonah", "deacon", "tess", "mara"]},
+      "hints": ["Who benefits from a log that says the water never moves at night?", "Who did Caleb trust in 2006? Who did Mara trust this month?", "Who called you after the bell and said she was home?"],
+      "next": "b_accused"},
+
+    "b_accused": {"type": "branch", "if": {"flag": "accused_ardis"}, "then": "s_dawn_right", "else": "s_dawn_wrong"},
+    "s_dawn_right": {"type": "scene", "image": "loc_spillway", "title": "The next siren", "lines": [
+      "You say her name out loud, to a police chief, to a recording, to a town.",
+      "Ardis Locke.",
+      "The board locks. The water is still. For the first time in twenty years, someone is watching the book."
+    ], "next": "ending"},
+    "s_dawn_wrong": {"type": "scene", "image": "loc_marina", "title": "The next siren", "lines": [
+      "You say a name out loud. The wrong one.",
+      "The board locks. The chief thanks you for your time. The siren sounds and nobody writes it down.",
+      "Somewhere on the shore path a car is moving with its lights off."
+    ], "next": "ending"},
+    "ending": {"type": "ending"}
+  }
+}
