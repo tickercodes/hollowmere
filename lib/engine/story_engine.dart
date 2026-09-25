@@ -72,7 +72,6 @@ class EpisodeEndInteraction extends Interaction {
   const EpisodeEndInteraction(this.node, this.episode);
   final StoryNode node;
   final EpisodeScript episode;
-  String? get nextEpisode => node['next_episode'] as String?;
 }
 
 class EndingInteraction extends Interaction {
@@ -112,10 +111,13 @@ final storyEngineProvider =
 class StoryEngine extends Notifier<Session> {
   final _notifications = StreamController<AppNotification>.broadcast();
   final _sfx = StreamController<String>.broadcast();
+  final _whispers = StreamController<String>.broadcast();
   final _glitches = StreamController<GlitchEvent>.broadcast();
 
   Stream<AppNotification> get notifications => _notifications.stream;
   Stream<String> get sfx => _sfx.stream;
+  /// Scripted story line ids (`voice_*`). Empty unless the current node asked.
+  Stream<String> get whispers => _whispers.stream;
   Stream<GlitchEvent> get glitches => _glitches.stream;
 
   Completer<void>? _skip;
@@ -131,6 +133,7 @@ class StoryEngine extends Notifier<Session> {
     ref.onDispose(() {
       _notifications.close();
       _sfx.close();
+      _whispers.close();
       _glitches.close();
       _saveDebounce?.cancel();
     });
@@ -249,8 +252,6 @@ class StoryEngine extends Notifier<Session> {
     _setGame(Reducer.addFail(game, puzzleId));
   }
 
-  int hintsUsed(String puzzleId) => game.hintsUsed[puzzleId] ?? 0;
-  int fails(String puzzleId) => game.fails[puzzleId] ?? 0;
   void useHint(String puzzleId) => _setGame(Reducer.addHint(game, puzzleId));
 
   void applyEffects(Map<String, dynamic> effects) =>
@@ -289,7 +290,6 @@ class StoryEngine extends Notifier<Session> {
   void toggleLink(String a, String b) => _setGame(Reducer.toggleLink(game, a, b));
 
   void setTextSpeed(double v) => _setGame(game.copyWith(textSpeed: v));
-  void setPlayerName(String v) => _setGame(game.copyWith(playerName: v));
 
   Future<void> resetProgress() async {
     _running = false;
@@ -334,6 +334,8 @@ class StoryEngine extends Notifier<Session> {
 
   /// Executes one node. Returns true when the loop must wait for the player.
   Future<bool> _execute(StoryNode node) async {
+    final voice = node['voice'] as String?;
+    if (voice != null && voice.isNotEmpty) _whispers.add(voice);
     switch (node.type) {
       case 'message':
         final thread = node['thread'] as String;

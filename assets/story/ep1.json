@@ -57,7 +57,7 @@
     "p_last": {"type": "message", "thread": "wren", "from": "player", "text": "still up? come by, I'll leave the door open", "next": "d2",
       "effects": {"evidence": ["ev_unread"], "journal": "11:47 PM, the 13th. Delivered. Never read."}},
     "d2": {"type": "delay", "seconds": 2.0, "next": "s_black"},
-    "s_black": {"type": "scene", "lines": ["Delivered 11:47 PM.", "Never read.", "Eleven days. Two hundred and sixty-four hours."], "next": "n_dock"},
+    "s_black": {"type": "scene", "voice": "voice_still_up", "lines": ["Delivered 11:47 PM.", "Never read.", "Eleven days. Two hundred and sixty-four hours."], "next": "n_dock"},
 
     "n_dock": {"type": "notification", "app": "cloud", "title": "Wren's Library", "body": "1 item recovered · Marina, north dock", "effects": {"unlock_photos": ["dock_night"]}, "next": "g_dock"},
     "g_dock": {"type": "goal", "text": "A second photo cleared. Open it and look closely.", "target": {"app": "gallery", "photo": "dock_night"}, "next": "mg_dock"},
@@ -157,7 +157,7 @@
       "brief": "Play through the recording. Mark each sound behind her voice. The sounds tell you where she was."},
       "hints": ["The siren is already on at the start. It does not wait.", "There is a single metal strike at about thirty-one seconds. It is not the orchard.", "Near the very end, before the line cuts: a heavy door."],
       "evidence": "ev_voicemail_tags", "effects": {"pins": ["c_call", "c_bell"], "journal": "Siren already on. Bell at 0:31. Car door at 0:44. The Authority says there are no night releases."}, "next": "s_audio"},
-    "s_audio": {"type": "scene", "image": "loc_spillway", "lines": [
+    "s_audio": {"type": "scene", "image": "loc_spillway", "voice": "voice_found_it", "lines": [
       "\"I found the box. It's exactly where he said.\"",
       "Who is he? What box?",
       "The siren is already sounding when she calls. The Authority's own website says it never sounds at night.",
@@ -166,7 +166,7 @@
 
     "gl1": {"type": "glitch", "ghost": {"thread": "wren", "from": "wren", "text": "i think he knows i saw it"}, "next": "d3"},
     "d3": {"type": "delay", "seconds": 4.0, "next": "s_ghost"},
-    "s_ghost": {"type": "scene", "lines": [
+    "s_ghost": {"type": "scene", "voice": "voice_here", "lines": [
       "For one second, a message from Wren. Present tense.",
       "Then, for four seconds: Wren is typing…",
       "Then nothing."

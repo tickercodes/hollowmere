@@ -9,6 +9,13 @@ Voicemail speech uses macOS `say` as a placeholder for real voice acting. The
 mixing code keeps the story-critical background cues (water, two-tone siren,
 buoy bell) at fixed timestamps that the Audio Forensics mini-game references.
 
+Licensed music and radio static come from the internet:
+python3 tools/fetch_audio.py
+
+Story whispers (exact lines from voicemails and Wren's last message) are
+built here with the same macOS `say` voices as the placeholder voicemails:
+python3 tools/build_audio.py --whispers
+
 Run from the repo root: python3 tools/build_audio.py
 """
 from __future__ import annotations
@@ -18,6 +25,7 @@ import random
 import shutil
 import struct
 import subprocess
+import sys
 import wave
 from pathlib import Path
 
@@ -251,6 +259,32 @@ def voicemail_wren_47s() -> Samples:
     return normalise(bed[: int(SR * 47.0)], 0.85)
 
 
+# Exact phrases from the scripts. Played between scenes as leaked backup audio.
+# (id, spoken text, macOS voice, rate)
+STORY_WHISPERS = [
+    ("voice_still_up", "still up?", "Samantha", 148),
+    ("voice_found_it", "I found it.", "Samantha", 160),
+    ("voice_here", "Someone's here.", "Samantha", 145),
+    ("voice_sam", "If you're hearing this, Sam.", "Samantha", 155),
+    ("voice_stop", "Stop looking.", "Ralph", 138),
+    ("voice_alive", "She's alive if you stop.", "Ralph", 140),
+    ("voice_marina", "Stay away from the marina.", "Daniel", 162),
+    ("voice_quiet", "Don't tell anyone.", "Fred", 152),
+]
+
+
+def leak(text: str, voice: str, rate: int) -> Samples:
+    """A short canon line leaking through the shared backup: phone-line, close."""
+    speech = phone_line(say_to_samples(text, voice, rate))
+    hiss = lowpass(noise(len(speech) / SR + 0.2, 0.035), 3200)
+    body = mix(gain(speech, 0.88), hiss[: len(speech)])
+    return normalise(envelope(silence(0.12) + body + silence(0.28), 0.03, 0.16), 0.78)
+
+
+def write_whispers() -> list[Path]:
+    return [write_wav(name, leak(text, voice, rate)) for name, text, voice, rate in STORY_WHISPERS]
+
+
 def voicemail(name: str, text: str, voice: str, background: str) -> Samples:
     speech = phone_line(say_to_samples(text, voice))
     length = len(speech) / SR + 1.5
@@ -281,6 +315,11 @@ def transcode(paths: list[Path]) -> None:
 
 
 if __name__ == "__main__":
+    whispers_only = "--whispers" in sys.argv
+    if whispers_only:
+        transcode(write_whispers())
+        print(f"wrote {len(STORY_WHISPERS)} story whispers -> assets/audio")
+        sys.exit(0)
     written = [
         write_wav("sfx_message_in", message_in()),
         write_wav("sfx_message_out", message_out()),
@@ -312,5 +351,6 @@ if __name__ == "__main__":
         write_wav("vm_unknown", voicemail(
             "vm_unknown", "Stop looking. She's alive if you stop.", "Ralph", "car")),
     ]
-    transcode(written)
-    print(f"wrote {len(written)} audio files -> assets/audio")
+    whispers = write_whispers()
+    transcode(written + whispers)
+    print(f"wrote {len(written) + len(whispers)} audio files -> assets/audio")

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/audio.dart';
 import '../../core/notice.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
@@ -172,7 +173,10 @@ class _PhoneShellState extends ConsumerState<PhoneShell> {
     super.initState();
     shellRouteListenable.value = '/';
     final engine = ref.read(storyEngineProvider.notifier);
-    _glitchSub = engine.glitches.listen((g) => _glitchKey.currentState?.trigger(g));
+    _glitchSub = engine.glitches.listen((g) {
+      _glitchKey.currentState?.trigger(g);
+      unawaited(ref.read(audioProvider).onGlitch());
+    });
     _notifSub = engine.notifications.listen((n) => _bannerKey.currentState?.show(n));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _syncRoutes(ref.read(storyEngineProvider).interaction);

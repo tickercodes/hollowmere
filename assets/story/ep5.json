@@ -157,7 +157,7 @@
       "Your phone buzzes in your pocket."
     ], "next": "s_read_receipt"},
 
-    "s_read_receipt": {"type": "scene", "lines": [
+    "s_read_receipt": {"type": "scene", "voice": "voice_still_up", "lines": [
       "Messages. Wren.",
       "\"still up? come by, I'll leave the door open\" - 11:47 PM, eleven days ago.",
       "Delivered.",

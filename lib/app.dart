@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/audio.dart';
 import 'core/theme.dart';
+import 'core/whisper.dart';
 import 'engine/story_engine.dart';
 import 'features/shell/ending_screen.dart';
 import 'features/shell/menu_screen.dart';
@@ -56,6 +57,8 @@ class _Root extends ConsumerStatefulWidget {
 }
 
 class _RootState extends ConsumerState<_Root> {
+  String? _audioKey;
+
   @override
   void initState() {
     super.initState();
@@ -63,11 +66,44 @@ class _RootState extends ConsumerState<_Root> {
     final engine = ref.read(storyEngineProvider.notifier);
     final audio = ref.read(audioProvider);
     engine.sfx.listen(audio.sfx);
+    engine.whispers.listen((id) => unawaited(audio.playVoice(id)));
     unawaited(audio.startMusic());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _syncAudio(ref.read(storyEngineProvider).interaction);
+    });
+  }
+
+  void _syncAudio(Interaction it) {
+    final key = switch (it) {
+      MenuInteraction() => 'menu',
+      TitleInteraction(:final node) => 'title:${node.id}',
+      SceneInteraction(:final node) => 'scene:${node.id}',
+      EpisodeEndInteraction(:final node) => 'end:${node.id}',
+      EndingInteraction(:final endingId) => 'ending:$endingId',
+      _ => 'play',
+    };
+    if (key == _audioKey) return;
+    _audioKey = key;
+    final audio = ref.read(audioProvider);
+    if (it is MenuInteraction) {
+      unawaited(audio.setMood(MusicMood.menu));
+    } else if (it is TitleInteraction ||
+        it is SceneInteraction ||
+        it is EpisodeEndInteraction) {
+      unawaited(audio.setMood(MusicMood.scene));
+    } else if (it is EndingInteraction) {
+      unawaited(audio.setMood(MusicMood.ending));
+    } else {
+      unawaited(audio.setMood(MusicMood.play));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<Interaction>(
+      storyEngineProvider.select((s) => s.interaction),
+      (prev, next) => _syncAudio(next),
+    );
     final interaction =
         ref.watch(storyEngineProvider.select((s) => s.interaction));
     final Widget child = switch (interaction) {
@@ -75,9 +111,15 @@ class _RootState extends ConsumerState<_Root> {
       EndingInteraction(:final endingId) => EndingScreen(endingId: endingId),
       _ => const PhoneShell(),
     };
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 600),
-      child: KeyedSubtree(key: ValueKey(child.runtimeType), child: child),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 600),
+          child: KeyedSubtree(key: ValueKey(child.runtimeType), child: child),
+        ),
+        const WhisperOverlay(),
+      ],
     );
   }
 }

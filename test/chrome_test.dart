@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hollowmere_files/core/theme.dart';
+import 'package:hollowmere_files/core/whisper.dart';
 import 'package:hollowmere_files/features/shell/widgets.dart';
 
 void main() {
@@ -74,6 +75,23 @@ void main() {
     await tester.pump(const Duration(milliseconds: 800));
     expect(tester.takeException(), isNull);
     expect(find.text('Your front door.'), findsOneWidget);
+  });
+
+  testWidgets('whisper overlay shows a leaked caption', (tester) async {
+    addTearDown(() => whisperListenable.value = null);
+    await tester.pumpWidget(const MaterialApp(
+      home: Stack(
+        fit: StackFit.expand,
+        children: [
+          ColoredBox(color: Colors.black),
+          WhisperOverlay(),
+        ],
+      ),
+    ));
+    expect(find.text('still up?'), findsNothing);
+    whisperListenable.value = const WhisperEvent('still up?');
+    await tester.pumpAndSettle();
+    expect(find.text('still up?'), findsOneWidget);
   });
 }
 

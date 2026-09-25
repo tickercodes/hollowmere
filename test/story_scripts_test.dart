@@ -8,6 +8,7 @@ import 'package:hollowmere_files/content/endings.dart';
 import 'package:hollowmere_files/content/evidence.dart';
 import 'package:hollowmere_files/content/photos.dart';
 import 'package:hollowmere_files/content/voicemails.dart';
+import 'package:hollowmere_files/content/voices.dart';
 import 'package:hollowmere_files/engine/game_state.dart';
 import 'package:hollowmere_files/engine/reducer.dart';
 import 'package:hollowmere_files/engine/script.dart';
@@ -91,6 +92,10 @@ void main() {
         for (final o in n.options) {
           checkEffects(o['effects'] as Map<String, dynamic>?);
         }
+        if (n['voice'] != null) {
+          expect(spokenVoiceIds.contains(n['voice']), isTrue,
+              reason: '$where voice ${n['voice']}');
+        }
 
         switch (n.type) {
           case 'message':
@@ -153,6 +158,17 @@ void main() {
         }
       }
     }
+  });
+
+  test('every spoken voice is attached to at least one story beat', () {
+    final used = <String>{};
+    for (final ep in episodes.values) {
+      for (final n in ep.nodes.values) {
+        final v = n['voice'] as String?;
+        if (v != null) used.add(v);
+      }
+    }
+    expect(used, spokenVoiceIds);
   });
 
   test('every node is reachable from start', () {

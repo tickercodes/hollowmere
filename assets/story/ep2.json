@@ -95,7 +95,7 @@
       "But Wren's note said locker 14. And her photo of the locker door shows a grid cut into the metal. You can still go."
     ], "effects": {"journal": "Jonah shut down when I said Caleb's name on the phone. I have to earn that back."}, "next": "s_marina"},
 
-    "s_marina": {"type": "scene", "image": "loc_marina", "title": "The marina, 6:10 PM", "lines": [
+    "s_marina": {"type": "scene", "image": "loc_marina", "title": "The marina, 6:10 PM", "voice": "voice_marina", "lines": [
       "Low light. You park at the diner and walk the shore path.",
       "The north dock lockers are a row of rust. Fourteen has a new brass padlock - four-digit keypad - and something cut into the door under thirty years of paint.",
       "A grid. Nine by nine. Some squares are cut deeper than the others."
@@ -125,7 +125,7 @@
       "Item 7: only person here who wasn't here in 2006.",
       "You will laugh. Then you will feel worse about it."
     ], "next": "n_memo1"},
-    "n_memo1": {"type": "notification", "app": "calls", "title": "Voice memo", "body": "if you're hearing this, sam…",
+    "n_memo1": {"type": "notification", "app": "calls", "title": "Voice memo", "body": "if you're hearing this, sam…", "voice": "voice_sam",
       "effects": {"call_log": [{"id": "vm_memo1", "contact": "wren", "direction": "in", "label": "Voice memo · undated", "duration": 11, "voicemail": "vm_wren_memo1"}]}, "next": "n_pair"},
 
     "n_pair": {"type": "notification", "app": "cloud", "title": "Cloud Backup", "body": "Paired devices: 2 · SAM-COTTAGE-WIFI · 11 days ago, 11:52 PM", "delay": 2.4,

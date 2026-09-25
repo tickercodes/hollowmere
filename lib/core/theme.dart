@@ -39,6 +39,8 @@ ThemeData buildTheme() {
     surfaceContainerHigh: HmColors.bg,
     surfaceContainerHighest: HmColors.bg,
     surfaceContainerLowest: HmColors.bg,
+    outline: HmColors.hairline,
+    outlineVariant: HmColors.hairline,
   );
   final base = ThemeData(
     useMaterial3: true,
@@ -101,6 +103,11 @@ ThemeData buildTheme() {
       ),
     ),
     dividerColor: HmColors.hairline,
+    dividerTheme: const DividerThemeData(
+      color: HmColors.hairline,
+      thickness: 1,
+      space: 1,
+    ),
     splashFactory: InkSparkle.splashFactory,
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(

@@ -15,7 +15,6 @@ class ChatMessage {
     this.deleted = false,
     this.vanishing = false,
     this.saved = false,
-    this.timestamp,
   });
 
   /// Unique within a thread; used for read tracking and animations.
@@ -36,7 +35,6 @@ class ChatMessage {
 
   /// Held before the mirror ate it. Stays readable.
   final bool saved;
-  final String? timestamp;
 
   bool get isPlayer => from == 'player';
 
@@ -53,7 +51,6 @@ class ChatMessage {
         deleted: deleted ?? this.deleted,
         vanishing: vanishing ?? this.vanishing,
         saved: saved ?? this.saved,
-        timestamp: timestamp,
       );
 
   Map<String, dynamic> toJson() => {
@@ -64,7 +61,6 @@ class ChatMessage {
         if (deleted) 'deleted': true,
         if (vanishing) 'vanishing': true,
         if (saved) 'saved': true,
-        if (timestamp != null) 'ts': timestamp,
       };
 
   factory ChatMessage.fromJson(Map<String, dynamic> j) => ChatMessage(
@@ -75,7 +71,6 @@ class ChatMessage {
         deleted: j['deleted'] == true,
         vanishing: j['vanishing'] == true,
         saved: j['saved'] == true,
-        timestamp: j['ts'] as String?,
       );
 }
 

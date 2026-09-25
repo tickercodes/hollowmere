@@ -67,6 +67,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 12),
           GlassCard(
+            padding: EdgeInsets.zero,
+            child: SwitchListTile(
+              value: audio.voicesEnabled,
+              onChanged: (v) => setState(() => audio.setVoicesEnabled(v)),
+              title: const Text('Mysterious voices'),
+              subtitle: const Text(
+                'Only at the matching story beat. Off the rest of the time.',
+                style: TextStyle(color: HmColors.textDim),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          GlassCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -82,7 +95,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   },
                 ),
                 const Text(
-                  'A low drone under the phone. Ducks when a voicemail plays.',
+                  'A mystery score under the phone. Ducks when a voicemail or voice plays.',
                   style: TextStyle(color: HmColors.textDim, fontSize: 12),
                 ),
               ],
@@ -100,7 +113,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: engine.backToMenu,
                 ),
-                const Divider(height: 1),
+                const Divider(height: 1, color: HmColors.hairline),
                 ListTile(
                   title: const Text('Erase all progress', style: TextStyle(color: HmColors.danger)),
                   trailing: const Icon(Icons.delete_outline, color: HmColors.danger),
@@ -118,6 +131,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   },
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          const SectionLabel('Credits'),
+          GlassCard(
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              title: const Text('Audio credits'),
+              subtitle: const Text(
+                'Internet music; story whispers; Mixkit radio.',
+                style: TextStyle(color: HmColors.textDim),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _audioCredits(context),
             ),
           ),
           const SizedBox(height: 24),
@@ -143,5 +170,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (v <= 0.4) return 'low';
     if (v <= 0.7) return 'medium';
     return 'high';
+  }
+
+  void _audioCredits(BuildContext context) {
+    showGlassSheet(
+      context: context,
+      builder: (c) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('AUDIO',
+                style: monoStyle.copyWith(
+                    color: HmColors.teal, letterSpacing: 2.4, fontSize: 11)),
+            const SizedBox(height: 12),
+            const Text(
+              'Menu: Solo Piano 4 - Tozan (CC0)\n'
+              'Investigation: Piano Horror - Francisco Alvear (Mixkit)\n'
+              'Scenes: GoshtPiano2 - Kilua Boy (CC0)\n'
+              'Endings: Echoes - Andrew Ev (Mixkit)\n'
+              '\n'
+              'Voices: story lines, same placeholder voices as the voicemails\n'
+              'Radio static: Mixkit horror SFX\n'
+              '\n'
+              'Full source list: assets/audio/ATTRIBUTION.md',
+              style: TextStyle(color: HmColors.text, height: 1.45, fontSize: 13),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

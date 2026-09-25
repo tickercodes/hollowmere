@@ -74,8 +74,11 @@ class _ThreadList extends ConsumerWidget {
           ? const EmptyHint('No conversations yet.')
           : ListView.separated(
               itemCount: ids.length,
-              separatorBuilder: (_, _) =>
-                  const Divider(height: 1, indent: 72),
+              separatorBuilder: (_, _) => const Divider(
+                height: 1,
+                indent: 72,
+                color: HmColors.hairline,
+              ),
               itemBuilder: (context, i) {
                 final id = ids[i];
                 final msgs = game.threads[id]!;

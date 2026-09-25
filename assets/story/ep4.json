@@ -64,7 +64,7 @@
     ]}, "next": "n_vms"},
     "n_vms": {"type": "notification", "app": "calls", "title": "5 voicemails", "body": "Delivered late · times scrambled by the mirror", "next": "g_vms"},
     "g_vms": {"type": "goal", "text": "Five voicemails from last night, out of order. Open the call log.", "target": {"app": "calls"}, "next": "s_vms"},
-    "s_vms": {"type": "scene", "lines": [
+    "s_vms": {"type": "scene", "voice": "voice_stop", "lines": [
       "Five people called you last night while you slept. The mirror mixed up the times.",
       "But the town has a clock: the siren sounds sixty seconds before they let the water out, and the bell rings when the boom takes the surge.",
       "Whatever is in the background of each message tells you when it was left."

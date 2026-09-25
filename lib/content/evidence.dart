@@ -166,10 +166,6 @@ const evidenceCatalog = <String, EvidenceItem>{
   ),
 };
 
-EvidenceItem evidenceOf(String id) =>
-    evidenceCatalog[id] ??
-    EvidenceItem(id: id, title: id, summary: '');
-
 /// A pin on the case board: a suspect (portrait) or a clue (note card).
 class BoardPin {
   const BoardPin({

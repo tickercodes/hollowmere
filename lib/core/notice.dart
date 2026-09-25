@@ -68,7 +68,7 @@ class TopNoticeStrip extends StatelessWidget {
               duration: const Duration(milliseconds: 160),
               layoutBuilder: (current, previous) => Stack(
                 alignment: Alignment.topCenter,
-                children: [...previous, if (current != null) current],
+                children: [...previous, ?current],
               ),
               transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
               child: notice == null

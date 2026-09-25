@@ -60,7 +60,7 @@
       {"from": "deacon", "text": "Ten. Kitchen door."},
       {"end": true}
     ], "next": "s_diner"},
-    "s_diner": {"type": "scene", "image": "loc_diner", "title": "The Waterline, 10:04 PM", "lines": [
+    "s_diner": {"type": "scene", "image": "loc_diner", "title": "The Waterline, 10:04 PM", "voice": "voice_quiet", "lines": [
       "The kitchen smells of bleach and fryer oil. Deacon hands you a canvas camera bag without a word and goes to the front to count the till.",
       "The zip is done up backwards. The inner pocket is empty.",
       "On the wall by the walk-in: the staff rota. Thursday's night shift has a name crossed out and new initials written over it.",
@@ -84,7 +84,7 @@
     "wd3_prove": {"type": "message", "thread": "warden", "text": "I can't. That's the point. Don't go to the archive.", "next": "wd4"},
     "wd4": {"type": "message", "thread": "warden", "text": "(No caller ID · number withheld)", "next": "s_warden",
       "effects": {"pins": ["warden"], "notes": [{"id": "n_warden", "title": "THE WARDEN", "body": "Hidden number. Knows about the recording. Knows about the archive - which I have not told anyone about. Says 'she's alive if you stop' - present tense. Either they know where she is, or they want me to think so."}]}},
-    "s_warden": {"type": "scene", "lines": [
+    "s_warden": {"type": "scene", "voice": "voice_alive", "lines": [
       "Nobody knows about the archive. You only learned about it tonight, from a line of pencil inside a notebook cover.",
       "Whoever the Warden is, they have seen the notebook. Or they were with the person who wrote in it.",
       "Page 2 is the archive."
