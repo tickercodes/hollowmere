@@ -4,168 +4,832 @@
   "title": "The Warden",
   "start": "t_open",
   "nodes": {
-    "t_open": {"type": "title", "kicker": "THE 26TH", "title": "6:02 AM", "subtitle": "Episode 5 - The Warden", "next": "fx_open"},
-    "fx_open": {"type": "effects", "effects": {"hours": 308, "pins": ["roy"], "journal": "Dawn. He checks the shore path at dawn."}, "next": "s_open"},
-    "s_open": {"type": "scene", "image": "loc_spillway", "lines": [
-      "Jonah's dock camera. A man walking the shore path with a torch.",
-      "Roy Tarrant. Reed Hydro site security. The same walk as the man who opened a car door on the 13th.",
-      "Wren is one hundred metres from him. Do not go."
-    ], "next": "g_notes"},
-    "g_notes": {"type": "goal", "text": "Open Notes and read Jonah's sensor file.", "target": {"app": "notes"}, "next": "mg_logdiff"},
-    "mg_logdiff": {"type": "minigame", "game": "log_diff", "title": "Official log vs. dock sensor", "config": {
-      "left_title": "Authority Release Log (A. Locke)", "right_title": "Dock sensor (Caleb, then Jonah)",
-      "brief": "Two records of the same nights. Mark every row where the official log and the sensor do not match.",
-      "rows": [
-        {"time": "10th 06:00", "left": "release · scheduled", "right": "−0.4 m over 9 min", "mismatch": false},
-        {"time": "10th 18:00", "left": "release · scheduled", "right": "−0.4 m over 9 min", "mismatch": false},
-        {"time": "11th 06:00", "left": "release · scheduled", "right": "−0.4 m over 9 min", "mismatch": false},
-        {"time": "11th 18:00", "left": "release · scheduled", "right": "−0.4 m over 9 min", "mismatch": false},
-        {"time": "11th 23:41", "left": "no night operations", "right": "−0.4 m over 9 min", "mismatch": true},
-        {"time": "13th 06:00", "left": "release · scheduled", "right": "−0.4 m over 9 min", "mismatch": false},
-        {"time": "13th 23:41", "left": "no night operations", "right": "−0.4 m over 9 min", "mismatch": true},
-        {"time": "18 Nov 2006 23:40", "left": "house locked · unmanned", "right": "−0.4 m over 9 min", "mismatch": true},
-        {"time": "19 Nov 2006 06:00", "left": "release · scheduled", "right": "−0.4 m over 9 min", "mismatch": false}
-      ]},
-      "hints": ["The planned releases match. Look at the times when nothing was supposed to happen.", "Two nights this month. One night in 2006.", "23:41 on the 11th, 23:41 on the 13th, 23:40 on 18 November 2006."],
-      "evidence": "ev_sensor_log", "effects": {"pins": ["c_log"], "flags": ["log_diff_done"], "journal": "Three nights the water moved and the book says it didn't: the 11th, the 13th, and Caleb's last night. Same hand, same book."}, "next": "s_logdiff"},
-    "s_logdiff": {"type": "scene", "lines": [
-      "Three nights the water moved and the book says it didn't.",
-      "The 11th. The 13th. 18 November 2006.",
-      "Now: who is the Warden?"
-    ], "next": "wd1"},
-
-    "wd1": {"type": "message", "thread": "warden", "text": "Last chance.", "delay": 1.4, "next": "wd2"},
-    "wd2": {"type": "message", "thread": "warden", "text": "Delete the recording. Stop, and she comes home on her own.", "next": "c_warden2"},
-    "c_warden2": {"type": "choice", "thread": "warden", "options": [
-      {"text": "Okay. I'm stopping. I'll delete it.", "next": "wd3_obey", "effects": {"flags": ["warden_obeyed_2"], "journal": "I told the Warden I'd stop. Again."}},
-      {"text": "You were on the Thursday night shift. Your kitchen faces the spillway.", "next": "wd3_called", "effects": {"flags": ["warden_defied_2", "warden_guessed_deacon"]}},
-      {"text": "I know your bell. It's in your voicemail too. The second strike.", "next": "wd3_called", "effects": {"flags": ["warden_defied_2", "warden_guessed_deacon"]}}
-    ]},
-    "wd3_obey": {"type": "message", "thread": "warden", "text": "Thank you. I'm sorry. You don't know what she's like.", "next": "g_board"},
-    "wd3_called": {"type": "message", "thread": "warden", "text": "…", "delay": 2.0, "next": "wd3_called2"},
-    "wd3_called2": {"type": "message", "thread": "warden", "text": "(No caller ID · number withheld)", "next": "g_board"},
-    "g_board": {"type": "goal", "text": "Take it to the board. Connect what you know about the Warden.", "target": {"app": "board"}, "next": "mg_connect"},
-    "mg_connect": {"type": "minigame", "game": "board_connect", "title": "Who is the Warden?", "config": {
-      "brief": "Draw the lines that name the hidden caller. Wrong lines cost nothing. The board only unlocks when the right ones are there.",
-      "required": [["warden", "deacon"], ["c_rota", "deacon"], ["c_bell", "warden"]]},
-      "hints": ["The Warden's voicemail had a bell in it, close. Who else had a bell in the background?", "Whose rota swap put them at a window facing the spillway on the nights that matter?", "Connect the Warden to Deacon, the rota to Deacon, and the bell to the Warden."],
-      "effects": {"flags": ["warden_identified"], "journal": "The Warden is Deacon Moss."}, "next": "mg_voice"},
-    "mg_voice": {"type": "minigame", "game": "voice_match", "title": "Match the voices", "config": {
-      "brief": "Three distorted messages. Work out who left each one from voice and background.",
-      "clips": [
-        {"voicemail": "vm_unknown", "answer": "deacon"},
-        {"voicemail": "vm_jonah", "answer": "jonah"},
-        {"voicemail": "vm_ardis", "answer": "ardis"}
+    "t_open": {
+      "type": "title",
+      "kicker": "THE 26TH",
+      "title": "6:02 AM",
+      "subtitle": "Episode 5 - The Warden",
+      "next": "fx_open"
+    },
+    "fx_open": {
+      "type": "effects",
+      "effects": {
+        "hours": 308,
+        "pins": [
+          "roy"
+        ],
+        "journal": "Dawn. He checks the shore path at dawn."
+      },
+      "next": "s_open"
+    },
+    "s_open": {
+      "type": "scene",
+      "image": "loc_spillway",
+      "lines": [
+        "Jonah's dock camera. A man walking the shore path with a torch.",
+        "Roy Tarrant. Reed Hydro site security. The same walk as the man who opened a car door on the 13th.",
+        "Wren is one hundred metres from him. Do not go."
       ],
-      "options": ["deacon", "jonah", "ardis"]},
-      "hints": ["The dock is the loudest water. Only one of them works on a dock.", "An office hum with a bell through glass: the Authority building.", "The hidden number sits in a parked car. The bell is close because the Waterline is on the shore."],
-      "effects": {"flags": ["voice_matched"], "journal": "The hidden-number voice is Deacon's. Same rhythm, same breath before 'stop'."}, "next": "c_deacon_call"},
-
-    "c_deacon_call": {"type": "choice", "thread": "deacon", "options": [
-      {"text": "Deacon. I know it's you. I'm not angry. Call me.", "next": "call_deacon", "effects": {"flags": ["deacon_reassured"], "trust": {"deacon": 2}}},
-      {"text": "Warden. Kitchen door. Now. Or I send your voicemail to the Courier.", "next": "call_deacon", "effects": {"flags": ["deacon_threatened"], "trust": {"deacon": -1}}}
-    ]},
-    "call_deacon": {"type": "call", "contact": "deacon", "incoming": false, "script": [
-      {"from": "deacon", "text": "…Don't say it on the phone. Fine. Fine. Yes."},
-      {"from": "deacon", "text": "I was nineteen. I washed dishes at the old Waterline. The kitchen window faced the spillway house then too."},
-      {"from": "deacon", "text": "18 November 2006. Twenty to midnight. A dark car with council plates, and someone in a long coat in the doorway, and the Voss boy's bicycle against the rail. I took one photo with a cheap camera because I thought it was a couple having an affair."},
-      {"choice": [
-        {"text": "And then?", "goto": 4},
-        {"text": "Why the Warden? Why threaten me?", "goto": 6}
-      ]},
-      {"from": "deacon", "text": "Then the siren. At night. I'd never heard it at night. And the next week the boy was a runaway and I was a dishwasher who'd seen a car."},
-      {"from": "deacon", "text": "I kept the print. Nineteen years in a coffee tin. I've been a coward for exactly as long as I've owned that diner."},
-      {"from": "deacon", "text": "Because she came in. Ardis. Eleven days ago, the morning after, and ordered eggs and told me the town looks after its own and looked at my kitchen window the whole time."},
-      {"from": "deacon", "text": "I thought if you stopped, she'd have no reason to - I thought Wren would just come back. I'm not a brave man, {player}."},
-      {"choice": [
-        {"text": "Give me the photo. Then we do this together.", "goto": 9, "effects": {"trust": {"deacon": 1}, "flags": ["deacon_together"]}},
-        {"text": "Give me the photo. Then stay out of my way.", "goto": 11, "effects": {"flags": ["deacon_dismissed"]}},
-        {"text": "Give me the photo. And on the day, you come with me to the station.", "goto": 9, "effects": {"trust": {"deacon": 1}, "flags": ["deacon_will_come"]}}
-      ]},
-      {"from": "deacon", "text": "…Yes. All right. Together. God help me. It's under the till. Come now, the breakfast crowd's not in yet."},
-      {"end": true},
-      {"from": "deacon", "text": "It's under the till. Take it and go. Don't come back to the Waterline after this."},
-      {"end": true}
-    ], "effects": {"journal": "Deacon has kept a photograph in a coffee tin for nineteen years."}, "next": "fx_photo"},
-    "fx_photo": {"type": "effects", "effects": {"gallery": [{"photo": "spillway_2006", "locked": false}]}, "next": "g_2006photo"},
-    "g_2006photo": {"type": "goal", "text": "Open the 2006 print you scanned at the diner.", "target": {"app": "gallery", "photo": "spillway_2006"}, "next": "mg_2006"},
-    "mg_2006": {"type": "minigame", "game": "photo_spot", "title": "scan_0018 - 18 Nov 2006", "config": {"photo": "spillway_2006", "required": ["car", "figure", "date"],
-      "brief": "A cheap-camera print, nineteen years old. Find the car, the figure, and the date."},
-      "hints": ["The car is centre-left, by the spillway house.", "Someone stands in the doorway.", "Cheap cameras stamped the date in the corner."],
-      "evidence": "ev_2006_photo", "effects": {"pins": ["c_sedan"], "journal": "18 Nov 2006: a council car at the spillway house. The same badge shape as the puddle in Wren's dock photo."}, "next": "a1"},
-
-    "a1": {"type": "message", "thread": "ardis", "text": "{player}, I hear you've been to the archive. And to the Waterline before opening. You are being very thorough.", "delay": 1.3, "next": "a2"},
-    "a2": {"type": "message", "thread": "ardis", "text": "Everett Reed would like to buy you a coffee. He has a great deal of respect for thorough people, and a great many lawyers. Shall I set it up?", "next": "c_ardis5"},
-    "c_ardis5": {"type": "choice", "thread": "ardis", "options": [
-      {"text": "No thank you.", "next": "a3"},
-      {"text": "Tell Mr Reed I'd rather read about him.", "next": "a3", "effects": {"flags": ["ardis_provoked"]}},
-      {"text": "Who told you I'd been to the archive, Ardis?", "next": "a3_who", "effects": {"flags": ["ardis_asked_source"]}}
-    ]},
-    "a3_who": {"type": "message", "thread": "ardis", "text": "It's a small town. People talk. Don't read too much into it.", "next": "a3"},
-    "a3": {"type": "message", "thread": "ardis", "text": "As you like. The offer stands. This town looks after its own.", "next": "g_reed",
-      "effects": {"journal": "Ardis knows about the archive and the diner. Nobody saw me at either. Except the mirror."}},
-    "g_reed": {"type": "goal", "text": "Search the browser for Reed Hydro.", "target": {"app": "browser", "page": "reed_hydro"}, "next": "s_reed",
-      "effects": {"flags": ["read_reed"], "journal": "Reed Hydro: the 2006 expansion, and the 2024 operations contract. The same money, twenty years apart."}},
-    "s_reed": {"type": "scene", "lines": [
-      "Reed Hydro. Awarded 2006. Awarded 2024.",
-      "The developer, the chair, and a book that says the water never moves at night."
-    ], "next": "p_bait1"},
-
-    "p_bait1": {"type": "message", "thread": "tess", "text": "she reads everything you type. so give her something to read", "delay": 1.0, "next": "c_bait"},
-    "c_bait": {"type": "choice", "thread": "tess", "options": [
-      {"text": "Tell her I'm meeting Jonah at the north dock at 8.", "next": "p_bait_yes", "effects": {"flags": ["bait_north_dock"], "journal": "I lied into the mirror. North dock, 8 PM. Only she was supposed to read it."}},
-      {"text": "Don't. I won't type a fake plan.", "next": "p_bait_no", "effects": {"flags": ["bait_skipped"], "journal": "I typed nothing she could use. If she knows the real plan, it came from this phone anyway."}}
-    ]},
-    "p_bait_yes": {"type": "message", "thread": "tess", "text": "ok. whoever trusts you most will be watching from cover. if a car shows up that wasn't told - that's your proof", "next": "s_page3"},
-    "p_bait_no": {"type": "message", "thread": "tess", "text": "ok. then don't type the real one either", "next": "s_page3"},
-
-    "s_page3": {"type": "scene", "lines": [
-      "Page 3 is the bell."
-    ], "next": "mg_grid3"},
-    "mg_grid3": {"type": "minigame", "game": "sudoku", "title": "Caleb's notebook - page 3", "config": {"seed": 1811, "size": 9, "givens": 62,
-      "shaded": [[1, 6], [3, 3], [5, 8], [7, 7]], "expected_code": "1811", "code_label": "boom shed padlock",
-      "brief": "The last page. Most squares are already filled. The shaded cells hold the shed padlock code - the Chair's office thinks only it knows this number."},
-      "hints": ["Find a row, column or box with one empty square. Fill that number.", "If a digit is missing and only one cell can take it, put it there.", "Read the shaded cells top to bottom: the date Caleb was last seen, day then month."],
-      "effects": {"pages": ["buoy_shed_map"], "journal": "Page 3 solves to 1811. The eighteenth of November."}, "next": "p1"},
-
-    "p1": {"type": "message", "thread": "tess", "text": "ok i've been reading everything you sent me and i can't breathe", "delay": 1.0, "next": "p2"},
-    "p2": {"type": "message", "thread": "tess", "text": "police, or the shed. you don't get both", "next": "c_fork"},
-    "c_fork": {"type": "choice", "thread": "tess", "options": [
-      {"text": "Police. Now. With everything - the log, the sensor, the photo, the recording.", "next": "s_police", "effects": {"flags": ["fork_police", "shared_evidence"], "journal": "I chose the police, and I gave them everything."}},
-      {"text": "Police. But I'm keeping the recording and the photo back until I know they'll act.", "next": "s_police", "effects": {"flags": ["fork_police"], "journal": "I chose the police, and kept the strongest evidence back."}},
-      {"text": "The shed. Alone. Tonight.", "next": "s_shed", "effects": {"flags": ["fork_alone"], "journal": "I chose the shed. Alone."}}
-    ]},
-
-    "s_police": {"type": "scene", "image": "loc_diner", "title": "Hollowmere PD, 8:30 AM", "lines": [
-      "Chief Dana Whitlock listens for eleven minutes without interrupting.",
-      "Then she says: 'A sensor built by a boy, a coded notebook, and a photograph from a coffee tin. I believe you. I can't move on it before tomorrow.'",
-      "'Nobody goes near the boom shed tonight. Nobody. Do you understand me?'",
-      "Your phone buzzes in your pocket."
-    ], "next": "s_read_receipt"},
-    "s_shed": {"type": "scene", "image": "buoy_shed", "title": "Spillway boom shed", "lines": [
-      "Fog so thick the spillway light is only a glow.",
-      "The padlock is new."
-    ], "next": "mg_pad3"},
-    "mg_pad3": {"type": "minigame", "game": "passcode", "title": "Boom shed padlock", "config": {"answer": "1811", "label": "Padlock - 4 digits", "clue": "Page 3. The Chair's office thinks only it knows this number."},
-      "hints": ["The code is what page 3 solved to.", "Day, then month.", "1-8-1-1."],
-      "effects": {"flags": ["opened_shed"], "journal": "The shed opened."}, "next": "s_shed_inside"},
-    "s_shed_inside": {"type": "scene", "image": "buoy_shed", "lines": [
-      "A sleeping bag. A camera. A still-warm Waterline thermos.",
-      "On the shelf under the bell: Wren's phone - the real one - charging from a solar bank, screen dark.",
-      "The original FAIL report, in its plastic sleeve.",
-      "She is not here. She was here an hour ago.",
-      "Your phone buzzes in your pocket."
-    ], "next": "s_read_receipt"},
-
-    "s_read_receipt": {"type": "scene", "voice": "voice_still_up", "lines": [
-      "Messages. Wren.",
-      "\"still up? come by, I'll leave the door open\" - 11:47 PM, eleven days ago.",
-      "Delivered.",
-      "Read - just now."
-    ], "effects": {"flags": ["message_read"], "mirror": 3, "journal": "My message is marked Read. Eleven days late. She has her phone in her hand right now."}, "next": "b_warden_all"},
-    "b_warden_all": {"type": "branch", "if": {"all": [{"flag": "warden_obeyed_1"}, {"flag": "warden_obeyed_2"}]}, "then": "fx_warden_all", "else": "t_card"},
-    "fx_warden_all": {"type": "effects", "effects": {"flags": ["warden_obeyed_all"]}, "next": "t_card"},
-    "t_card": {"type": "title", "kicker": "THE HOLLOWMERE FILES", "title": "Episode 5", "subtitle": "The Warden", "next": "end5"},
-    "end5": {"type": "end_episode", "teaser": "Episode 6 - Hollowmere. The siren is coming. Keep her talking.", "next_episode": "ep6"}
+      "next": "g_notes"
+    },
+    "g_notes": {
+      "type": "goal",
+      "text": "Open Notes and read Jonah's sensor file.",
+      "target": {
+        "app": "notes"
+      },
+      "next": "mg_logdiff"
+    },
+    "mg_logdiff": {
+      "type": "minigame",
+      "game": "log_diff",
+      "title": "Official log vs. dock sensor",
+      "config": {
+        "left_title": "Authority Release Log (A. Locke)",
+        "right_title": "Dock sensor (Caleb, then Jonah)",
+        "brief": "Two records of the same nights. Mark every row where the official log and the sensor do not match.",
+        "rows": [
+          {
+            "time": "10th 06:00",
+            "left": "release \u00b7 scheduled",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": false
+          },
+          {
+            "time": "10th 18:00",
+            "left": "release \u00b7 scheduled",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": false
+          },
+          {
+            "time": "11th 06:00",
+            "left": "release \u00b7 scheduled",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": false
+          },
+          {
+            "time": "11th 18:00",
+            "left": "release \u00b7 scheduled",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": false
+          },
+          {
+            "time": "11th 23:41",
+            "left": "no night operations",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": true
+          },
+          {
+            "time": "13th 06:00",
+            "left": "release \u00b7 scheduled",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": false
+          },
+          {
+            "time": "13th 23:41",
+            "left": "no night operations",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": true
+          },
+          {
+            "time": "18 Nov 2006 23:40",
+            "left": "house locked \u00b7 unmanned",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": true
+          },
+          {
+            "time": "19 Nov 2006 06:00",
+            "left": "release \u00b7 scheduled",
+            "right": "\u22120.4 m over 9 min",
+            "mismatch": false
+          }
+        ]
+      },
+      "hints": [
+        "The planned releases match. Look at the times when nothing was supposed to happen.",
+        "Two nights this month. One night in 2006.",
+        "23:41 on the 11th, 23:41 on the 13th, 23:40 on 18 November 2006."
+      ],
+      "evidence": "ev_sensor_log",
+      "effects": {
+        "pins": [
+          "c_log"
+        ],
+        "flags": [
+          "log_diff_done"
+        ],
+        "journal": "Three nights the water moved and the book says it didn't: the 11th, the 13th, and Caleb's last night. Same hand, same book."
+      },
+      "next": "s_logdiff"
+    },
+    "s_logdiff": {
+      "type": "scene",
+      "lines": [
+        "Three nights the water moved and the book says it didn't.",
+        "The 11th. The 13th. 18 November 2006.",
+        "Now: who is the Warden?"
+      ],
+      "next": "wd1"
+    },
+    "wd1": {
+      "type": "message",
+      "thread": "warden",
+      "text": "Last chance.",
+      "delay": 1.4,
+      "next": "wd2"
+    },
+    "wd2": {
+      "type": "message",
+      "thread": "warden",
+      "text": "Delete the recording. Stop, and she comes home on her own.",
+      "next": "c_warden2"
+    },
+    "c_warden2": {
+      "type": "choice",
+      "thread": "warden",
+      "options": [
+        {
+          "text": "Okay. I'm stopping. I'll delete it.",
+          "next": "wd3_obey",
+          "effects": {
+            "flags": [
+              "warden_obeyed_2"
+            ],
+            "journal": "I told the Warden I'd stop. Again."
+          }
+        },
+        {
+          "text": "You were on the Thursday night shift. Your kitchen faces the spillway.",
+          "next": "wd3_called",
+          "effects": {
+            "flags": [
+              "warden_defied_2",
+              "warden_guessed_deacon"
+            ]
+          }
+        },
+        {
+          "text": "I know your bell. It's in your voicemail too. The second strike.",
+          "next": "wd3_called",
+          "effects": {
+            "flags": [
+              "warden_defied_2",
+              "warden_guessed_deacon"
+            ]
+          }
+        }
+      ]
+    },
+    "wd3_obey": {
+      "type": "message",
+      "thread": "warden",
+      "text": "Thank you. I'm sorry. You don't know what she's like.",
+      "next": "g_board"
+    },
+    "wd3_called": {
+      "type": "message",
+      "thread": "warden",
+      "text": "\u2026",
+      "delay": 2.0,
+      "next": "wd3_called2"
+    },
+    "wd3_called2": {
+      "type": "message",
+      "thread": "warden",
+      "text": "(No caller ID \u00b7 number withheld)",
+      "next": "g_board"
+    },
+    "g_board": {
+      "type": "goal",
+      "text": "Take it to the board. Connect what you know about the Warden.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg_connect"
+    },
+    "mg_connect": {
+      "type": "minigame",
+      "game": "board_connect",
+      "title": "Who is the Warden?",
+      "config": {
+        "brief": "Draw the lines that name the hidden caller. Wrong lines cost nothing. The board only unlocks when the right ones are there.",
+        "required": [
+          [
+            "warden",
+            "deacon"
+          ],
+          [
+            "c_rota",
+            "deacon"
+          ],
+          [
+            "c_bell",
+            "warden"
+          ]
+        ]
+      },
+      "hints": [
+        "The Warden's voicemail had a bell in it, close. Who else had a bell in the background?",
+        "Whose rota swap put them at a window facing the spillway on the nights that matter?",
+        "Connect the Warden to Deacon, the rota to Deacon, and the bell to the Warden."
+      ],
+      "effects": {
+        "flags": [
+          "warden_identified"
+        ],
+        "journal": "The Warden is Deacon Moss."
+      },
+      "next": "mg_voice"
+    },
+    "mg_voice": {
+      "type": "minigame",
+      "game": "voice_match",
+      "title": "Match the voices",
+      "config": {
+        "brief": "Three distorted messages. Work out who left each one from voice and background.",
+        "clips": [
+          {
+            "voicemail": "vm_unknown",
+            "answer": "deacon"
+          },
+          {
+            "voicemail": "vm_jonah",
+            "answer": "jonah"
+          },
+          {
+            "voicemail": "vm_ardis",
+            "answer": "ardis"
+          }
+        ],
+        "options": [
+          "deacon",
+          "jonah",
+          "ardis"
+        ]
+      },
+      "hints": [
+        "The dock is the loudest water. Only one of them works on a dock.",
+        "An office hum with a bell through glass: the Authority building.",
+        "The hidden number sits in a parked car. The bell is close because the Waterline is on the shore."
+      ],
+      "effects": {
+        "flags": [
+          "voice_matched"
+        ],
+        "journal": "The hidden-number voice is Deacon's. Same rhythm, same breath before 'stop'."
+      },
+      "next": "c_deacon_call"
+    },
+    "c_deacon_call": {
+      "type": "choice",
+      "thread": "deacon",
+      "options": [
+        {
+          "text": "Deacon. I know it's you. I'm not angry. Call me.",
+          "next": "call_deacon",
+          "effects": {
+            "flags": [
+              "deacon_reassured"
+            ],
+            "trust": {
+              "deacon": 2
+            }
+          }
+        },
+        {
+          "text": "Warden. Kitchen door. Now. Or I send your voicemail to the Courier.",
+          "next": "call_deacon",
+          "effects": {
+            "flags": [
+              "deacon_threatened"
+            ],
+            "trust": {
+              "deacon": -1
+            }
+          }
+        }
+      ]
+    },
+    "call_deacon": {
+      "type": "call",
+      "contact": "deacon",
+      "incoming": false,
+      "script": [
+        {
+          "from": "deacon",
+          "text": "\u2026Don't say it on the phone. Fine. Fine. Yes."
+        },
+        {
+          "from": "deacon",
+          "text": "I was nineteen. I washed dishes at the old Waterline. The kitchen window faced the spillway house then too."
+        },
+        {
+          "from": "deacon",
+          "text": "18 November 2006. Twenty to midnight. A dark car with council plates, and someone in a long coat in the doorway, and the Voss boy's bicycle against the rail. I took one photo with a cheap camera because I thought it was a couple having an affair."
+        },
+        {
+          "choice": [
+            {
+              "text": "And then?",
+              "goto": 4
+            },
+            {
+              "text": "Why the Warden? Why threaten me?",
+              "goto": 6
+            }
+          ]
+        },
+        {
+          "from": "deacon",
+          "text": "Then the siren. At night. I'd never heard it at night. And the next week the boy was a runaway and I was a dishwasher who'd seen a car."
+        },
+        {
+          "from": "deacon",
+          "text": "I kept the print. Nineteen years in a coffee tin. I've been a coward for exactly as long as I've owned that diner."
+        },
+        {
+          "from": "deacon",
+          "text": "Because she came in. Ardis. Eleven days ago, the morning after, and ordered eggs and told me the town looks after its own and looked at my kitchen window the whole time."
+        },
+        {
+          "from": "deacon",
+          "text": "I thought if you stopped, she'd have no reason to - I thought Wren would just come back. I'm not a brave man, {player}."
+        },
+        {
+          "choice": [
+            {
+              "text": "Give me the photo. Then we do this together.",
+              "goto": 9,
+              "effects": {
+                "trust": {
+                  "deacon": 1
+                },
+                "flags": [
+                  "deacon_together"
+                ]
+              }
+            },
+            {
+              "text": "Give me the photo. Then stay out of my way.",
+              "goto": 11,
+              "effects": {
+                "flags": [
+                  "deacon_dismissed"
+                ]
+              }
+            },
+            {
+              "text": "Give me the photo. And on the day, you come with me to the station.",
+              "goto": 9,
+              "effects": {
+                "trust": {
+                  "deacon": 1
+                },
+                "flags": [
+                  "deacon_will_come"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "from": "deacon",
+          "text": "\u2026Yes. All right. Together. God help me. It's under the till. Come now, the breakfast crowd's not in yet."
+        },
+        {
+          "end": true
+        },
+        {
+          "from": "deacon",
+          "text": "It's under the till. Take it and go. Don't come back to the Waterline after this."
+        },
+        {
+          "end": true
+        }
+      ],
+      "effects": {
+        "journal": "Deacon has kept a photograph in a coffee tin for nineteen years."
+      },
+      "next": "fx_photo"
+    },
+    "fx_photo": {
+      "type": "effects",
+      "effects": {
+        "gallery": [
+          {
+            "photo": "spillway_2006",
+            "locked": false
+          }
+        ]
+      },
+      "next": "g_2006photo"
+    },
+    "g_2006photo": {
+      "type": "goal",
+      "text": "Open the 2006 print you scanned at the diner.",
+      "target": {
+        "app": "gallery",
+        "photo": "spillway_2006"
+      },
+      "next": "mg_2006"
+    },
+    "mg_2006": {
+      "type": "minigame",
+      "game": "photo_spot",
+      "title": "scan_0018 - 18 Nov 2006",
+      "config": {
+        "photo": "spillway_2006",
+        "required": [
+          "car",
+          "figure",
+          "date"
+        ],
+        "brief": "A cheap-camera print, nineteen years old. Find the car, the figure, and the date."
+      },
+      "hints": [
+        "The car is centre-left, by the spillway house.",
+        "Someone stands in the doorway.",
+        "Cheap cameras stamped the date in the corner."
+      ],
+      "evidence": "ev_2006_photo",
+      "effects": {
+        "pins": [
+          "c_sedan"
+        ],
+        "journal": "18 Nov 2006: a council car at the spillway house. The same badge shape as the puddle in Wren's dock photo."
+      },
+      "next": "a1"
+    },
+    "a1": {
+      "type": "message",
+      "thread": "ardis",
+      "text": "{player}, I hear you've been to the archive. And to the Waterline before opening. You are being very thorough.",
+      "delay": 1.3,
+      "next": "a2"
+    },
+    "a2": {
+      "type": "message",
+      "thread": "ardis",
+      "text": "Everett Reed would like to buy you a coffee. He has a great deal of respect for thorough people, and a great many lawyers. Shall I set it up?",
+      "next": "c_ardis5"
+    },
+    "c_ardis5": {
+      "type": "choice",
+      "thread": "ardis",
+      "options": [
+        {
+          "text": "No thank you.",
+          "next": "a3"
+        },
+        {
+          "text": "Tell Mr Reed I'd rather read about him.",
+          "next": "a3",
+          "effects": {
+            "flags": [
+              "ardis_provoked"
+            ]
+          }
+        },
+        {
+          "text": "Who told you I'd been to the archive, Ardis?",
+          "next": "a3_who",
+          "effects": {
+            "flags": [
+              "ardis_asked_source"
+            ]
+          }
+        }
+      ]
+    },
+    "a3_who": {
+      "type": "message",
+      "thread": "ardis",
+      "text": "It's a small town. People talk. Don't read too much into it.",
+      "next": "a3"
+    },
+    "a3": {
+      "type": "message",
+      "thread": "ardis",
+      "text": "As you like. The offer stands. This town looks after its own.",
+      "next": "g_reed",
+      "effects": {
+        "journal": "Ardis knows about the archive and the diner. Nobody saw me at either. Except the mirror."
+      }
+    },
+    "g_reed": {
+      "type": "goal",
+      "text": "Search the browser for Reed Hydro.",
+      "target": {
+        "app": "browser",
+        "page": "reed_hydro"
+      },
+      "next": "s_reed",
+      "effects": {
+        "flags": [
+          "read_reed"
+        ],
+        "journal": "Reed Hydro: the 2006 expansion, and the 2024 operations contract. The same money, twenty years apart."
+      }
+    },
+    "s_reed": {
+      "type": "scene",
+      "lines": [
+        "Reed Hydro. Awarded 2006. Awarded 2024.",
+        "The developer, the chair, and a book that says the water never moves at night."
+      ],
+      "next": "p_bait1"
+    },
+    "p_bait1": {
+      "type": "message",
+      "thread": "tess",
+      "text": "she reads everything you type. so give her something to read",
+      "delay": 1.0,
+      "next": "c_bait"
+    },
+    "c_bait": {
+      "type": "choice",
+      "thread": "tess",
+      "options": [
+        {
+          "text": "Tell her I'm meeting Jonah at the north dock at 8.",
+          "next": "p_bait_yes",
+          "effects": {
+            "flags": [
+              "bait_north_dock"
+            ],
+            "journal": "I lied into the mirror. North dock, 8 PM. Only she was supposed to read it."
+          }
+        },
+        {
+          "text": "Don't. I won't type a fake plan.",
+          "next": "p_bait_no",
+          "effects": {
+            "flags": [
+              "bait_skipped"
+            ],
+            "journal": "I typed nothing she could use. If she knows the real plan, it came from this phone anyway."
+          }
+        }
+      ]
+    },
+    "p_bait_yes": {
+      "type": "message",
+      "thread": "tess",
+      "text": "ok. whoever trusts you most will be watching from cover. if a car shows up that wasn't told - that's your proof",
+      "next": "s_page3"
+    },
+    "p_bait_no": {
+      "type": "message",
+      "thread": "tess",
+      "text": "ok. then don't type the real one either",
+      "next": "s_page3"
+    },
+    "s_page3": {
+      "type": "scene",
+      "lines": [
+        "Page 3 is the bell."
+      ],
+      "next": "mg_grid3"
+    },
+    "mg_grid3": {
+      "type": "minigame",
+      "game": "sudoku",
+      "title": "Caleb's notebook - page 3",
+      "config": {
+        "seed": 1811,
+        "size": 9,
+        "givens": 62,
+        "shaded": [
+          [
+            1,
+            6
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            7,
+            7
+          ]
+        ],
+        "expected_code": "1811",
+        "code_label": "boom shed padlock",
+        "brief": "The last page. Most squares are already filled. The shaded cells hold the shed padlock code - the Chair's office thinks only it knows this number."
+      },
+      "hints": [
+        "Find a row, column or box with one empty square. Fill that number.",
+        "If a digit is missing and only one cell can take it, put it there.",
+        "Read the shaded cells top to bottom: the date Caleb was last seen, day then month."
+      ],
+      "effects": {
+        "pages": [
+          "buoy_shed_map"
+        ],
+        "journal": "Page 3 solves to 1811. The eighteenth of November."
+      },
+      "next": "p1"
+    },
+    "p1": {
+      "type": "message",
+      "thread": "tess",
+      "text": "ok i've been reading everything you sent me and i can't breathe",
+      "delay": 1.0,
+      "next": "p2"
+    },
+    "p2": {
+      "type": "message",
+      "thread": "tess",
+      "text": "police, or the shed. you don't get both",
+      "next": "c_fork"
+    },
+    "c_fork": {
+      "type": "choice",
+      "thread": "tess",
+      "options": [
+        {
+          "text": "Police. Now. With everything - the log, the sensor, the photo, the recording.",
+          "next": "s_police",
+          "effects": {
+            "flags": [
+              "fork_police",
+              "shared_evidence"
+            ],
+            "journal": "I chose the police, and I gave them everything."
+          }
+        },
+        {
+          "text": "Police. But I'm keeping the recording and the photo back until I know they'll act.",
+          "next": "s_police",
+          "effects": {
+            "flags": [
+              "fork_police"
+            ],
+            "journal": "I chose the police, and kept the strongest evidence back."
+          }
+        },
+        {
+          "text": "The shed. Alone. Tonight.",
+          "next": "s_shed",
+          "effects": {
+            "flags": [
+              "fork_alone"
+            ],
+            "journal": "I chose the shed. Alone."
+          }
+        }
+      ]
+    },
+    "s_police": {
+      "type": "scene",
+      "image": "loc_diner",
+      "title": "Hollowmere PD, 8:30 AM",
+      "lines": [
+        "Chief Dana Whitlock listens for eleven minutes without interrupting.",
+        "Then she says: 'A sensor built by a boy, a coded notebook, and a photograph from a coffee tin. I believe you. I can't move on it before tomorrow.'",
+        "'Nobody goes near the boom shed tonight. Nobody. Do you understand me?'",
+        "Your phone buzzes in your pocket."
+      ],
+      "next": "s_read_receipt"
+    },
+    "s_shed": {
+      "type": "scene",
+      "image": "buoy_shed",
+      "title": "Spillway boom shed",
+      "lines": [
+        "Fog so thick the spillway light is only a glow.",
+        "The padlock is new."
+      ],
+      "next": "mg_pad3"
+    },
+    "mg_pad3": {
+      "type": "minigame",
+      "game": "passcode",
+      "title": "Boom shed padlock",
+      "config": {
+        "answer": "1811",
+        "label": "Padlock - 4 digits",
+        "clue": "Page 3. The Chair's office thinks only it knows this number."
+      },
+      "hints": [
+        "The code is what page 3 solved to.",
+        "Day, then month.",
+        "1-8-1-1."
+      ],
+      "effects": {
+        "flags": [
+          "opened_shed"
+        ],
+        "journal": "The shed opened."
+      },
+      "next": "s_shed_inside"
+    },
+    "s_shed_inside": {
+      "type": "scene",
+      "image": "buoy_shed",
+      "lines": [
+        "A sleeping bag. A camera. A still-warm Waterline thermos.",
+        "On the shelf under the bell: Wren's phone - the real one - charging from a solar bank, screen dark.",
+        "The original FAIL report, in its plastic sleeve.",
+        "She is not here. She was here an hour ago.",
+        "Your phone buzzes in your pocket."
+      ],
+      "next": "s_read_receipt"
+    },
+    "s_read_receipt": {
+      "type": "scene",
+      "voice": "voice_still_up",
+      "lines": [
+        "Messages. Wren.",
+        "\"still up? come by, I'll leave the door open\" - 11:47 PM, eleven days ago.",
+        "Delivered.",
+        "Read - just now."
+      ],
+      "effects": {
+        "flags": [
+          "message_read"
+        ],
+        "mirror": 3,
+        "journal": "My message is marked Read. Eleven days late. She has her phone in her hand right now."
+      },
+      "next": "b_warden_all"
+    },
+    "b_warden_all": {
+      "type": "branch",
+      "if": {
+        "all": [
+          {
+            "flag": "warden_obeyed_1"
+          },
+          {
+            "flag": "warden_obeyed_2"
+          }
+        ]
+      },
+      "then": "fx_warden_all",
+      "else": "t_card"
+    },
+    "fx_warden_all": {
+      "type": "effects",
+      "effects": {
+        "flags": [
+          "warden_obeyed_all"
+        ]
+      },
+      "next": "t_card"
+    },
+    "t_card": {
+      "type": "title",
+      "kicker": "THE HOLLOWMERE FILES",
+      "title": "Episode 5",
+      "subtitle": "The Warden",
+      "next": "new_ep5_s1"
+    },
+    "end5": {
+      "type": "end_episode",
+      "teaser": "Episode 6 - Hollowmere. The siren is coming. Keep her talking.",
+      "next_episode": "ep6"
+    },
+    "new_ep5_s1": {
+      "type": "scene",
+      "lines": [
+        "You find a torn piece of a map.",
+        "It shows the reservoir, but the depth lines are all wrong.",
+        "Someone altered the official records."
+      ],
+      "next": "new_ep5_mg"
+    },
+    "new_ep5_mg": {
+      "type": "minigame",
+      "game": "log_diff",
+      "title": "Map Alterations",
+      "config": {
+        "left": "Depth: 50ft\nFlow: Normal",
+        "right": "Depth: 150ft\nFlow: Critical\nValves: OPEN",
+        "brief": "Find the difference between the public map and the torn map."
+      },
+      "hints": [
+        "Look at the Depth and Valves."
+      ],
+      "next": "new_ep5_m1"
+    },
+    "new_ep5_m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You see it now? The dam isn't failing.",
+      "delay": 2.0,
+      "next": "new_ep5_m2"
+    },
+    "new_ep5_m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "They are intentionally flooding the lower valley.",
+      "delay": 2.0,
+      "next": "end5"
+    }
   }
 }

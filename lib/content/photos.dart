@@ -7,6 +7,7 @@ class Hotspot {
     required this.dy,
     required this.label,
     required this.detail,
+    this.radius = 0.09,
   });
 
   final String id;
@@ -16,6 +17,9 @@ class Hotspot {
   final double dy;
   final String label;
   final String detail;
+
+  /// Tap radius in normalised image units. Larger for a carving that spans the trunk.
+  final double radius;
 }
 
 class Photo {
@@ -92,6 +96,11 @@ const photos = <String, Photo>{
     asset: '$_e/ev_drowned_orchard.jpg',
     caption: 'hollowmere below - 07',
     meta: '2 weeks ago · Reservoir, east basin',
+    aspect: 16 / 9,
+    hotspots: [
+      Hotspot(id: 'code', dx: 0.18, dy: 0.48, radius: 0.16, label: '1986',
+          detail: '1-9-8-6 scratched into the near trunk. The year the church went under.'),
+    ],
   ),
   'gauge_spire': Photo(
     id: 'gauge_spire',
@@ -109,6 +118,8 @@ const photos = <String, Photo>{
           detail: 'The real 2006 result. FAIL: seepage under the spillway wall. The filed copy says PASS.'),
       Hotspot(id: 'signature', dx: 0.42, dy: 0.8, label: 'Signature',
           detail: 'Signed by the inspector, J. M. Harlan. He died in 2007.'),
+      Hotspot(id: 'year', dx: 0.36, dy: 0.21, radius: 0.12, label: 'Founded 1892',
+          detail: 'Town seal, top left. Hollowmere, 1892.'),
     ],
   ),
   'spillway_2006': Photo(
@@ -158,6 +169,18 @@ const photos = <String, Photo>{
       caption: 'Spillway house', meta: '', aspect: 16 / 9),
   'loc_diner': Photo(id: 'loc_diner', asset: '$_l/loc_waterline_diner.jpg',
       caption: 'The Waterline', meta: '', aspect: 16 / 9),
+  'underwater_church': Photo(
+    id: 'underwater_church',
+    asset: '$_e/ev_underwater_church.jpg',
+    caption: 'The drowned church',
+    meta: 'Unknown · reservoir',
+  ),
+  'server_farm': Photo(
+    id: 'server_farm',
+    asset: '$_e/ev_server_farm.jpg',
+    caption: 'The Core',
+    meta: 'Tonight · below the mines',
+  ),
   'loc_archive': Photo(id: 'loc_archive', asset: '$_l/loc_town_hall_archive.jpg',
       caption: 'Town hall archive', meta: '', aspect: 16 / 9),
   'key_art': Photo(id: 'key_art', asset: '$_k/key_art.jpg',
@@ -190,7 +213,15 @@ const photos = <String, Photo>{
 };
 
 Photo photoOf(String id) {
-  final p = photos[id];
+  const aliases = {
+    'ev_drowned_orchard': 'relay_field',
+    'ev_inspection_report': 'inspection_report',
+    'ev_underwater_church': 'underwater_church',
+    'ev_server_farm': 'server_farm',
+    'loc_town_hall_archive': 'loc_archive',
+    'loc_server_farm': 'server_farm',
+  };
+  final p = photos[aliases[id] ?? id];
   if (p == null) throw ArgumentError('Unknown photo "$id"');
   return p;
 }

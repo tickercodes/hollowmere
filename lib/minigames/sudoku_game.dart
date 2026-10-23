@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme.dart';
+import '../l10n/l10n.dart';
 import '../engine/story_engine.dart';
 import 'logic/sudoku.dart';
 import 'minigame_scaffold.dart';
@@ -29,11 +30,19 @@ class _SudokuGameState extends ConsumerState<SudokuGame> {
   @override
   void initState() {
     super.initState();
-    _sudoku = Sudoku.generate(
-      seed: cfg['seed'] as int,
-      size: (cfg['size'] as int?) ?? 9,
-      givens: (cfg['givens'] as int?) ?? 62,
-    );
+    final rawGrid = cfg['grid'];
+    Sudoku? fromGrid;
+    if (rawGrid is List && rawGrid.isNotEmpty) {
+      fromGrid = Sudoku.tryFromGrid([
+        for (final row in rawGrid) (row as List).map((e) => (e as num).toInt()).toList(),
+      ]);
+    }
+    _sudoku = fromGrid ??
+        Sudoku.generate(
+          seed: (cfg['seed'] as int?) ?? widget.interaction.puzzleId.hashCode,
+          size: (cfg['size'] as int?) ?? (fromGrid == null && rawGrid is List ? 6 : 9),
+          givens: (cfg['givens'] as int?) ?? 18,
+        );
     _grid = List.of(_sudoku.puzzle);
   }
 
@@ -84,7 +93,7 @@ class _SudokuGameState extends ConsumerState<SudokuGame> {
               color: HmColors.surface,
               child: Column(
                 children: [
-                  Text('SHADED CELLS READ',
+                  Text(context.tr('SHADED CELLS READ'),
                       style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim, letterSpacing: 2)),
                   const SizedBox(height: 6),
                   Text(code!.split('').join(' '), style: displayStyle.copyWith(fontSize: 34, color: HmColors.amber)),

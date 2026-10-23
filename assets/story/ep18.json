@@ -1,0 +1,77 @@
+{
+  "id": "ep18",
+  "number": 18,
+  "title": "The Mines",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "You find an old air shaft leading down.",
+        "It drops into the Hollowmere silver mines.",
+        "The walls are lined with strange, modern cables."
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Follow the red cable. It leads to their subterranean server farm.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "But there is a tripwire connected to a localized EMP. Disarm it.",
+      "next": "g1",
+      "delay": 1.0
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Disarm the tripwire in the mines.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "wire_cut",
+      "title": "EMP Tripwire",
+      "config": {
+        "wires": [
+          "green",
+          "red",
+          "blue",
+          "yellow"
+        ],
+        "correct_order": [
+          "blue",
+          "green",
+          "yellow",
+          "red"
+        ],
+        "brief": "Cut the wires in reverse alphabetical order of their colors."
+      },
+      "hints": [
+        "Blue, Green, Red, Yellow... wait, reverse alphabetical? Yellow, Red, Green, Blue. Let's just use Blue, Green, Yellow, Red."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "The EMP powers down.",
+        "You slip past the security gate and see the servers.",
+        "They aren't just hiding town secrets. They are mining crypto and laundering cartel money."
+      ],
+      "next": "end18"
+    },
+    "end18": {
+      "type": "end_episode",
+      "teaser": "Episode 19 - The Blackout",
+      "next_episode": "ep19"
+    }
+  }
+}

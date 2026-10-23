@@ -7,6 +7,7 @@ import '../../content/characters.dart';
 import '../../core/notice.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/widgets.dart';
 
 /// A live phone call rendered as an animated transcript.
@@ -166,7 +167,7 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                   const SizedBox(height: 4),
                   Text(
                     !_accepted
-                        ? 'incoming call'
+                        ? context.tr('incoming call')
                         : '${_elapsed ~/ 60}:${(_elapsed % 60).toString().padLeft(2, '0')}',
                     style: monoStyle.copyWith(color: HmColors.textDim),
                   ),
@@ -249,8 +250,8 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                                     padding: const EdgeInsets.only(bottom: 10, left: 2),
                                     child: Text(
                                       current!['timer'] != null
-                                          ? 'say something · $_secondsLeft'
-                                          : 'Choose a reply',
+                                          ? context.fmt('say something · {n}', {'n': _secondsLeft})
+                                          : context.tr('Choose a reply'),
                                       style: monoStyle.copyWith(
                                           fontSize: 11, color: HmColors.textDim),
                                     ),
@@ -261,9 +262,9 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                                       child: OutlinedButton(
                                         onPressed: () => _choose(choice, i),
                                         child: Text(
-                                          fillPlayer(
+                                          context.tr(
                                               choice[i]['text'] as String,
-                                              ref.read(storyEngineProvider).game.playerName),
+                                              playerName: ref.read(storyEngineProvider).game.playerName),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -278,7 +279,7 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                   else
                     Padding(
                       padding: const EdgeInsets.only(bottom: 28),
-                      child: Text('tap to continue',
+                      child: Text(context.tr('tap to continue'),
                           style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
                     ),
                 ],
@@ -300,7 +301,7 @@ class _Line extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final from = line['from'] as String? ?? contact;
     final mine = from == 'player';
-    final name = mine ? 'You' : displayName(ref, from);
+    final name = mine ? context.tr('You') : displayName(ref, from);
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(
@@ -312,7 +313,7 @@ class _Line extends ConsumerWidget {
                   letterSpacing: 1.5,
                   color: mine ? HmColors.teal : HmColors.amber)),
           const SizedBox(height: 3),
-          Text(fillPlayer(line['text'] as String, ref.watch(storyEngineProvider.select((s) => s.game.playerName))),
+          Text(context.tr(line['text'] as String, playerName: ref.watch(storyEngineProvider.select((s) => s.game.playerName))),
               textAlign: mine ? TextAlign.right : TextAlign.left,
               style: const TextStyle(fontSize: 17, height: 1.45)),
         ],
@@ -336,7 +337,7 @@ class _TimerBar extends StatelessWidget {
               backgroundColor: HmColors.hairline,
             ),
             const SizedBox(height: 6),
-            Text('say something · $secondsLeft',
+            Text(context.fmt('say something · {n}', {'n': secondsLeft}),
                 style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
           ],
         ),
@@ -373,7 +374,7 @@ class _RoundButton extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(color: HmColors.textDim)),
+          Text(context.tr(label), style: const TextStyle(color: HmColors.textDim)),
         ],
       );
 }

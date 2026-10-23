@@ -266,7 +266,6 @@ class _PhoneShellState extends ConsumerState<PhoneShell> {
                 ),
               ),
               const ObjectiveBar(),
-              const SirenCountdown(),
               NotificationBanner(key: _bannerKey),
               const TopNoticeStrip(),
               GlitchOverlay(key: _glitchKey),

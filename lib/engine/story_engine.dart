@@ -151,7 +151,7 @@ class StoryEngine extends Notifier<Session> {
 
   // ------------------------------------------------------------ public API
 
-  Future<void> newGame({String playerName = 'Sam'}) async {
+  Future<void> newGame({String playerName = 'John'}) async {
     _setGame(GameState(playerName: playerName));
     await startEpisode('ep1');
   }

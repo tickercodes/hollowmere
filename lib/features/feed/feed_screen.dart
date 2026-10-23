@@ -5,6 +5,7 @@ import '../../content/photos.dart';
 import '../../core/theme.dart';
 import '../../engine/game_state.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/phone_shell.dart';
 import '../shell/widgets.dart';
 
@@ -72,7 +73,7 @@ class FeedCard extends ConsumerWidget {
               leading: Avatar(post.author, size: 34),
               title: Text(displayName(ref, post.author),
                   style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-              subtitle: Text(post.timeLabel,
+              subtitle: Text(context.tr(post.timeLabel),
                   style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
               trailing: post.deleted ? const Pill('deleted', color: HmColors.danger) : null,
             ),
@@ -95,7 +96,7 @@ class FeedCard extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(post.deleted && !showCached ? '[post removed]' : post.text,
+                  Text(context.tr(post.deleted && !showCached ? '[post removed]' : post.text),
                       style: const TextStyle(height: 1.4)),
                   if (showCached && post.cachedText != null) ...[
                     const SizedBox(height: 10),
@@ -109,10 +110,10 @@ class FeedCard extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('CACHED · 16 DAYS AGO',
+                          Text(context.tr('CACHED · 16 DAYS AGO'),
                               style: monoStyle.copyWith(fontSize: 10, color: HmColors.amber, letterSpacing: 1.5)),
                           const SizedBox(height: 4),
-                          Text(post.cachedText!, style: const TextStyle(height: 1.4)),
+                          Text(context.tr(post.cachedText!), style: const TextStyle(height: 1.4)),
                         ],
                       ),
                     ),

@@ -28,7 +28,7 @@ sets `"voice"`, at the beat where that line is already in play.
 | `voice_still_up` | still up? | Wren's last message |
 | `voice_found_it` | I found it. | Wren's 47-second recording |
 | `voice_here` | Someone's here. | Wren's 47-second recording |
-| `voice_sam` | If you're hearing this, Sam. | Wren's first voice memo |
+| `voice_hearing` | If you're hearing this | Wren's first voice memo |
 | `voice_stop` | Stop looking. | The hidden-number / Warden voicemail |
 | `voice_alive` | She's alive if you stop. | The hidden-number / Warden voicemail |
 | `voice_marina` | Stay away from the marina. | Jonah's voicemail |

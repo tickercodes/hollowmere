@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme.dart';
+import '../l10n/l10n.dart';
 import '../engine/story_engine.dart';
 import 'minigame_scaffold.dart';
 
@@ -52,7 +53,7 @@ class _PasscodeGameState extends ConsumerState<PasscodeGame> {
           const SizedBox(height: 12),
           const Icon(Icons.lock_outline_rounded, color: HmColors.teal, size: 36),
           const SizedBox(height: 8),
-          Text((cfg['label'] as String?) ?? 'Enter passcode',
+          Text(context.tr((cfg['label'] as String?) ?? 'Enter passcode'),
               style: const TextStyle(color: HmColors.textDim)),
           const SizedBox(height: 22),
           AnimatedSlide(

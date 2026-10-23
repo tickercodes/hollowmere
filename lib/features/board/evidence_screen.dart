@@ -5,6 +5,7 @@ import '../../content/evidence.dart';
 import '../../content/photos.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/phone_shell.dart';
 import '../shell/widgets.dart';
 
@@ -24,14 +25,17 @@ class EvidenceScreen extends ConsumerWidget {
     }
     return AppScaffold(
       title: 'Evidence',
-      subtitle: '${items.length} of $total on file',
+      subtitle: context.fmt('{found} of {total} on file', {
+        'found': items.length,
+        'total': total,
+      }),
       body: items.isEmpty
           ? const EmptyHint('Nothing on file yet.', icon: Icons.folder_open_rounded)
           : ListView(
               padding: const EdgeInsets.all(12),
               children: [
                 for (final ep in byEpisode.keys) ...[
-                  SectionLabel('Episode $ep'),
+                  SectionLabel(context.fmt('Episode {n}', {'n': ep})),
                   for (final e in byEpisode[ep]!)
                     GlassCard(
                       margin: const EdgeInsets.only(bottom: 10),
@@ -62,9 +66,9 @@ class EvidenceScreen extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(e.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                Text(context.tr(e.title), style: const TextStyle(fontWeight: FontWeight.w600)),
                                 const SizedBox(height: 4),
-                                Text(e.summary,
+                                Text(context.tr(e.summary),
                                     style: const TextStyle(color: HmColors.textDim, fontSize: 13, height: 1.4)),
                               ],
                             ),

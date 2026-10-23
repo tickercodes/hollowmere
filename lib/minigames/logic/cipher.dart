@@ -19,6 +19,47 @@ class Cipher {
     return buf.toString();
   }
 
+  /// Caesar shift. Positive [shift] encodes (A+n); decode with `-n`.
+  static String caesar(String text, int shift) {
+    final buf = StringBuffer();
+    for (final unit in text.codeUnits) {
+      if (unit >= 65 && unit <= 90) {
+        buf.writeCharCode(65 + _mod26(unit - 65 + shift));
+      } else if (unit >= 97 && unit <= 122) {
+        buf.writeCharCode(97 + _mod26(unit - 97 + shift));
+      } else {
+        buf.writeCharCode(unit);
+      }
+    }
+    return buf.toString();
+  }
+
+  static int _mod26(int n) => ((n % 26) + 26) % 26;
+
+  /// Repeating-key cipher. [key] cycles across the letters.
+  /// Decode with [encode] false.
+  static String vigenere(String text, String key, {bool encode = false}) {
+    final k = key.toUpperCase().replaceAll(RegExp(r'[^A-Z]'), '');
+    if (k.isEmpty) return text;
+    final buf = StringBuffer();
+    var ki = 0;
+    for (final unit in text.codeUnits) {
+      final base = unit >= 65 && unit <= 90
+          ? 65
+          : unit >= 97 && unit <= 122
+              ? 97
+              : null;
+      if (base == null) {
+        buf.writeCharCode(unit);
+        continue;
+      }
+      final shift = k.codeUnitAt(ki % k.length) - 65;
+      buf.writeCharCode(base + _mod26(unit - base + (encode ? shift : -shift)));
+      ki++;
+    }
+    return buf.toString();
+  }
+
   /// Decodes using symbol -> letter. Emoji are multi-code-unit, so we walk
   /// by grapheme via [Runes] joining, matching the longest symbol first.
   static String decode(String cipher, Map<String, String> symbolToLetter) {

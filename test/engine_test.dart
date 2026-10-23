@@ -221,5 +221,14 @@ void main() {
       expect(Cipher.matches('locker-14, if i go quiet!', 'LOCKER 14 IF I GO QUIET'), isTrue);
       expect(Cipher.matches('locker 15', 'LOCKER 14'), isFalse);
     });
+
+    test('caesar shift decodes the story ciphers', () {
+      expect(Cipher.caesar('FGBC YBBXVAT', -13), 'STOP LOOKING');
+      expect(Cipher.caesar('ZDWHU', -3), 'WATER');
+      expect(Cipher.caesar('HTBFWI', -5), 'COWARD');
+      expect(Cipher.vigenere('WRMLTAU', 'DAM'), 'TRAITOR');
+      expect(Cipher.vigenere('TRAITOR', 'DAM', encode: true), 'WRMLTAU');
+      expect(Cipher.caesar('STOP LOOKING', 13), 'FGBC YBBXVAT');
+    });
   });
 }

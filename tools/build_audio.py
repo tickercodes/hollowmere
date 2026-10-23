@@ -36,6 +36,11 @@ random.seed(7)
 
 Samples = list[float]
 
+# macOS `say` placeholders until real VO ships. Flo/Shelley read more naturally
+VOICE_WREN = "Flo (English (US))"
+VOICE_MARA = "Shelley (English (US))"
+VOICE_ARDIS = "Moira"
+
 
 # ---------------------------------------------------------------- primitives
 def silence(seconds: float) -> Samples:
@@ -247,11 +252,11 @@ def voicemail_wren_47s() -> Samples:
     bed = water(47.0, 0.28)
     speech = phone_line(say_to_samples(
         "Jonah. Jonah, I found it. I found the box. It's exactly where he said. "
-        "The grids were right, all of them. I'm at the... wait.", "Samantha", 168))
+        "The grids were right, all of them. I'm at the... wait.", VOICE_WREN, 168))
     bed = place(bed, gain(speech, 0.8), 6.0)
     bed = place(bed, gain(siren_two_tone(3), 0.45), 23.0)
     bed = place(bed, gain(bell_clang(), 0.5), 31.5)
-    whisper = phone_line(say_to_samples("Someone's here.", "Samantha", 150))
+    whisper = phone_line(say_to_samples("Someone's here.", VOICE_WREN, 150))
     bed = place(bed, gain(whisper, 0.55), 39.0)
     bed = place(bed, gain(car_door(), 0.8), 44.0)
     cut = decay(highpass(noise(0.15, 0.5), 1500), 0.03)
@@ -262,10 +267,10 @@ def voicemail_wren_47s() -> Samples:
 # Exact phrases from the scripts. Played between scenes as leaked backup audio.
 # (id, spoken text, macOS voice, rate)
 STORY_WHISPERS = [
-    ("voice_still_up", "still up?", "Samantha", 148),
-    ("voice_found_it", "I found it.", "Samantha", 160),
-    ("voice_here", "Someone's here.", "Samantha", 145),
-    ("voice_sam", "If you're hearing this, Sam.", "Samantha", 155),
+    ("voice_still_up", "still up?", VOICE_WREN, 148),
+    ("voice_found_it", "I found it.", VOICE_WREN, 160),
+    ("voice_here", "Someone's here.", VOICE_WREN, 145),
+    ("voice_hearing", "If you're hearing this", VOICE_WREN, 155),
     ("voice_stop", "Stop looking.", "Ralph", 138),
     ("voice_alive", "She's alive if you stop.", "Ralph", 140),
     ("voice_marina", "Stay away from the marina.", "Daniel", 162),
@@ -285,8 +290,8 @@ def write_whispers() -> list[Path]:
     return [write_wav(name, leak(text, voice, rate)) for name, text, voice, rate in STORY_WHISPERS]
 
 
-def voicemail(name: str, text: str, voice: str, background: str) -> Samples:
-    speech = phone_line(say_to_samples(text, voice))
+def voicemail(name: str, text: str, voice: str, background: str, rate: int = 175) -> Samples:
+    speech = phone_line(say_to_samples(text, voice, rate))
     length = len(speech) / SR + 1.5
     beds = {
         "diner": mix(hum(length), place(silence(length), gain(bell_clang(), 0.25), length - 2.2)),
@@ -339,15 +344,15 @@ if __name__ == "__main__":
             "vm_jonah", "It's Jonah. Whatever she told you, forget it. Stay away from the marina. "
             "I mean it. Please.", "Daniel", "dock")),
         write_wav("vm_mara", voicemail(
-            "vm_mara", "Sam, it's Mara Calloway, Wren's mother. The police won't tell me anything. "
-            "If you've heard from her, anything at all, please call me back.", "Karen", "quiet")),
+            "vm_mara", "John, it's Mara Calloway, Wren's mother. The police won't tell me anything. "
+            "If you've heard from her, anything at all, please call me back.", VOICE_MARA, "quiet", 162)),
         write_wav("vm_deacon", voicemail(
             "vm_deacon", "It's Deacon, from the Waterline. Wren left her camera bag here. "
             "You should come get it. Come after close. Don't tell anyone.", "Fred", "diner")),
         write_wav("vm_ardis", voicemail(
-            "vm_ardis", "Sam, this is Ardis Locke. I wanted to check in personally. This town looks after "
+            "vm_ardis", "John, this is Ardis Locke. I wanted to check in personally. This town looks after "
             "its own. If the police have Wren's phone I'd like to know, so I can push them. Call me.",
-            "Moira", "office")),
+            VOICE_ARDIS, "office")),
         write_wav("vm_unknown", voicemail(
             "vm_unknown", "Stop looking. She's alive if you stop.", "Ralph", "car")),
     ]

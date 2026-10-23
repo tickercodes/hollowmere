@@ -4,7 +4,7 @@ A found-phone interactive mystery, built in Flutter.
 
 Eleven days after Wren Calloway vanished, her phone starts copying itself onto yours. You are not a detective. You are the last person she texted. Every notification you get, someone else might be getting too.
 
-The game is played as a phone: messages, calls, a gallery, notes, a town feed, a case board. Story is driven by JSON episode scripts. Headphones help. You never have to wait in real time.
+The game is played as a phone: messages, calls, a gallery, notes, a town feed, a case board. Story is driven by JSON episode scripts. Use headphones for a better experience.
 
 Package name: `hollowmere_files` · version `0.1.0`
 
@@ -12,7 +12,7 @@ Package name: `hollowmere_files` · version `0.1.0`
 
 ## Play
 
-You are Sam (name is yours to change). Wren left an unread message. Her cloud backup is pairing with your device. Over six episodes you read, listen, dig through photos, and decide who to trust.
+You are John (name is yours to change). Wren left an unread message. Her cloud backup is pairing with your device. Over six episodes you read, listen, dig through photos, and decide who to trust.
 
 **On the home screen**
 
@@ -27,7 +27,7 @@ You are Sam (name is yours to change). Wren left an unread message. Her cloud ba
 | Feed | Cached posts versus what still loads. |
 | Case Board | Pins, connections, the accusation. |
 | Evidence | What you have actually found. |
-| Journal | Sam's running notes. |
+| Journal | John's running notes. |
 | Settings | Typing speed, music, sound, erase progress. |
 
 Progress is a single autosave slot. Resume from the menu, or jump back into completed episodes after you have finished them.

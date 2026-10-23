@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import 'theme.dart';
 
 const _glassRadius = 28.0;
@@ -119,7 +120,7 @@ class GlassDialogFrame extends StatelessWidget {
             children: [
               if (kicker != null) ...[
                 Text(
-                  kicker!.toUpperCase(),
+                  context.tr(kicker!).toUpperCase(),
                   style: monoStyle.copyWith(
                     color: HmColors.teal,
                     fontSize: 11,
@@ -128,7 +129,7 @@ class GlassDialogFrame extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
               ],
-              Text(title, style: displayStyle.copyWith(fontSize: 26, letterSpacing: 1.1)),
+              Text(context.tr(title), style: displayStyle.copyWith(fontSize: 26, letterSpacing: 1.1)),
               const SizedBox(height: 14),
               child,
               if (actions.isNotEmpty) ...[
@@ -163,7 +164,7 @@ Future<bool?> showGlassConfirm({
             Expanded(
               child: TextButton(
                 onPressed: () => Navigator.pop(c, false),
-                child: Text(cancelLabel),
+                child: Text(c.tr(cancelLabel)),
               ),
             ),
             const SizedBox(width: 8),
@@ -176,14 +177,14 @@ Future<bool?> showGlassConfirm({
                       )
                     : null,
                 onPressed: () => Navigator.pop(c, true),
-                child: Text(confirmLabel),
+                child: Text(c.tr(confirmLabel)),
               ),
             ),
           ],
         ),
       ],
       child: Text(
-        body,
+        c.tr(body),
         style: const TextStyle(color: HmColors.textDim, height: 1.5, fontSize: 15),
       ),
     ),
@@ -199,30 +200,39 @@ Future<T?> showGlassSheet<T>({
     backgroundColor: Colors.transparent,
     barrierColor: const Color(0xCC050A0C),
     isScrollControlled: true,
-    builder: (c) => Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(c).bottom),
-      child: GlassPanel(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(_sheetRadius)),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 10),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(999),
-                ),
+    builder: (c) {
+      final media = MediaQuery.of(c);
+      final maxHeight = (media.size.height - media.viewInsets.bottom) * 0.86;
+      return Padding(
+        padding: EdgeInsets.only(bottom: media.viewInsets.bottom),
+        child: GlassPanel(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(_sheetRadius)),
+          child: SafeArea(
+            top: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 10),
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(child: builder(c)),
+                  ),
+                ],
               ),
-              builder(c),
-            ],
+            ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 
@@ -242,7 +252,7 @@ class _PlayerNameDialog extends StatefulWidget {
 }
 
 class _PlayerNameDialogState extends State<_PlayerNameDialog> {
-  late final _controller = TextEditingController(text: 'Sam');
+  late final _controller = TextEditingController(text: 'John');
   late final _focus = FocusNode();
 
   @override
@@ -254,7 +264,7 @@ class _PlayerNameDialogState extends State<_PlayerNameDialog> {
 
   void _submit() {
     final name = _controller.text.trim();
-    Navigator.pop(context, name.isEmpty ? 'Sam' : name);
+    Navigator.pop(context, name.isEmpty ? 'John' : name);
   }
 
   @override
@@ -265,18 +275,18 @@ class _PlayerNameDialogState extends State<_PlayerNameDialog> {
       actions: [
         FilledButton(
           onPressed: _submit,
-          child: const Padding(
-            padding: EdgeInsets.symmetric(vertical: 4),
-            child: Text('Begin'),
+            child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Text(context.tr('Begin')),
           ),
         ),
       ],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'How Wren has you saved. Fourteen characters. You can keep Sam.',
-            style: TextStyle(color: HmColors.textDim, height: 1.5, fontSize: 14),
+          Text(
+            context.tr('How Wren has you saved. Fourteen characters. You can keep John.'),
+            style: const TextStyle(color: HmColors.textDim, height: 1.5, fontSize: 14),
           ),
           const SizedBox(height: 18),
           TextField(
@@ -297,7 +307,7 @@ class _PlayerNameDialogState extends State<_PlayerNameDialog> {
             ),
             cursorColor: HmColors.teal,
             decoration: InputDecoration(
-              hintText: 'Sam',
+              hintText: 'John',
               counterStyle: monoStyle.copyWith(fontSize: 10, color: HmColors.textDim),
               filled: true,
               fillColor: Colors.black.withValues(alpha: 0.28),

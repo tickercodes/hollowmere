@@ -5,7 +5,9 @@ import '../../core/audio.dart';
 import '../../core/glass.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/widgets.dart';
+import 'language_picker.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -24,15 +26,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
+          const SectionLabel('Language'),
+          GlassCard(
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              title: Text(context.tr('Language')),
+              subtitle: Text(
+                ref.watch(localeProvider).label,
+                style: const TextStyle(color: HmColors.textDim),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showLanguagePicker(context, ref),
+            ),
+          ),
+          const SizedBox(height: 12),
           const SectionLabel('Pacing'),
           GlassCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Typing speed · ${_speedLabel(game.textSpeed)}'),
+                Text(context.fmt('Typing speed · {speed}', {'speed': _speedLabel(game.textSpeed)})),
                 Row(
                   children: [
-                    Text('Slow',
+                    Text(context.tr('Slow'),
                         style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
                     Expanded(
                       child: Slider(
@@ -43,13 +59,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         onChanged: (v) => engine.setTextSpeed(1.6 - v),
                       ),
                     ),
-                    Text('Instant',
+                    Text(context.tr('Instant'),
                         style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
                   ],
                 ),
-                const Text(
-                  'You can always tap the screen to skip a typing indicator.',
-                  style: TextStyle(color: HmColors.textDim, fontSize: 12),
+                Text(
+                  context.tr('You can always tap the screen to skip a typing indicator.'),
+                  style: const TextStyle(color: HmColors.textDim, fontSize: 12),
                 ),
               ],
             ),
@@ -61,8 +77,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: SwitchListTile(
               value: audio.enabled,
               onChanged: (v) => setState(() => audio.setEnabled(v)),
-              title: const Text('Sound effects'),
-              subtitle: const Text('Voicemails always play.', style: TextStyle(color: HmColors.textDim)),
+              title: Text(context.tr('Sound effects')),
+              subtitle: Text(context.tr('Voicemails always play.'), style: const TextStyle(color: HmColors.textDim)),
             ),
           ),
           const SizedBox(height: 12),
@@ -71,10 +87,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: SwitchListTile(
               value: audio.voicesEnabled,
               onChanged: (v) => setState(() => audio.setVoicesEnabled(v)),
-              title: const Text('Mysterious voices'),
-              subtitle: const Text(
-                'Only at the matching story beat. Off the rest of the time.',
-                style: TextStyle(color: HmColors.textDim),
+              title: Text(context.tr('Mysterious voices')),
+              subtitle: Text(
+                context.tr('Only at the matching story beat. Off the rest of the time.'),
+                style: const TextStyle(color: HmColors.textDim),
               ),
             ),
           ),
@@ -83,7 +99,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Music intensity · ${_musicLabel(audio.musicIntensity)}'),
+                Text(context.fmt('Music intensity · {level}', {'level': _musicLabel(audio.musicIntensity)})),
                 Slider(
                   value: audio.musicIntensity,
                   min: 0,
@@ -94,9 +110,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     setState(() {});
                   },
                 ),
-                const Text(
-                  'A mystery score under the phone. Ducks when a voicemail or voice plays.',
-                  style: TextStyle(color: HmColors.textDim, fontSize: 12),
+                Text(
+                  context.tr('A mystery score under the phone. Ducks when a voicemail or voice plays.'),
+                  style: const TextStyle(color: HmColors.textDim, fontSize: 12),
                 ),
               ],
             ),
@@ -108,14 +124,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Column(
               children: [
                 ListTile(
-                  title: const Text('Back to main menu'),
-                  subtitle: const Text('Progress is saved automatically.', style: TextStyle(color: HmColors.textDim)),
+                  title: Text(context.tr('Back to main menu')),
+                  subtitle: Text(context.tr('Progress is saved automatically.'), style: const TextStyle(color: HmColors.textDim)),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: engine.backToMenu,
                 ),
                 const Divider(height: 1, color: HmColors.hairline),
                 ListTile(
-                  title: const Text('Erase all progress', style: TextStyle(color: HmColors.danger)),
+                  title: Text(context.tr('Erase all progress'), style: const TextStyle(color: HmColors.danger)),
                   trailing: const Icon(Icons.delete_outline, color: HmColors.danger),
                   onTap: () async {
                     final ok = await showGlassConfirm(
@@ -138,10 +154,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           GlassCard(
             padding: EdgeInsets.zero,
             child: ListTile(
-              title: const Text('Audio credits'),
-              subtitle: const Text(
-                'Internet music; story whispers; Mixkit radio.',
-                style: TextStyle(color: HmColors.textDim),
+              title: Text(context.tr('Audio credits')),
+              subtitle: Text(
+                context.tr('Internet music; story whispers; Mixkit radio.'),
+                style: const TextStyle(color: HmColors.textDim),
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => _audioCredits(context),
@@ -149,7 +165,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 24),
           Center(
-            child: Text('THE HOLLOWMERE FILES · v0.1',
+            child: Text(context.tr('THE HOLLOWMERE FILES · v0.1'),
                 style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim, letterSpacing: 2)),
           ),
         ],
@@ -181,21 +197,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('AUDIO',
+            Text(c.tr('AUDIO'),
                 style: monoStyle.copyWith(
                     color: HmColors.teal, letterSpacing: 2.4, fontSize: 11)),
             const SizedBox(height: 12),
-            const Text(
-              'Menu: Solo Piano 4 - Tozan (CC0)\n'
-              'Investigation: Piano Horror - Francisco Alvear (Mixkit)\n'
-              'Scenes: GoshtPiano2 - Kilua Boy (CC0)\n'
-              'Endings: Echoes - Andrew Ev (Mixkit)\n'
-              '\n'
-              'Voices: story lines, same placeholder voices as the voicemails\n'
-              'Radio static: Mixkit horror SFX\n'
-              '\n'
-              'Full source list: assets/audio/ATTRIBUTION.md',
-              style: TextStyle(color: HmColors.text, height: 1.45, fontSize: 13),
+            Text(
+              c.tr(
+                'Menu: Solo Piano 4 - Tozan (CC0)\n'
+                'Investigation: Piano Horror - Francisco Alvear (Mixkit)\n'
+                'Scenes: GoshtPiano2 - Kilua Boy (CC0)\n'
+                'Endings: Echoes - Andrew Ev (Mixkit)\n'
+                '\n'
+                'Voices: story lines, same placeholder voices as the voicemails\n'
+                'Radio static: Mixkit horror SFX\n'
+                '\n'
+                'Full source list: assets/audio/ATTRIBUTION.md',
+              ),
+              style: const TextStyle(color: HmColors.text, height: 1.45, fontSize: 13),
             ),
           ],
         ),

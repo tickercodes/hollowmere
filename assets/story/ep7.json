@@ -1,0 +1,338 @@
+{
+  "id": "ep7",
+  "number": 7,
+  "title": "The Deep",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "The church that was submerged in 1986.",
+        "It was supposed to be a myth. But the photo in your cloud shows its spire, breaching the water's surface.",
+        "Someone just sent it to you."
+      ],
+      "next": "m1",
+      "image": "ev_underwater_church"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Do you see it?",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "The water level drops at midnight for exactly 15 minutes. That's when the spire shows.",
+      "next": "m3",
+      "delay": 1.0
+    },
+    "m3": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Wren found this out. That's why she went to the Spillway.",
+      "next": "c1",
+      "delay": 1.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "unknown",
+      "options": [
+        {
+          "text": "Who are you?",
+          "next": "m_who"
+        },
+        {
+          "text": "Wren is dead.",
+          "next": "m_dead"
+        },
+        {
+          "text": "How do you have my number?",
+          "next": "m_how"
+        }
+      ]
+    },
+    "m_who": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "An observer. Someone who doesn't want to drown.",
+      "next": "m4",
+      "delay": 1.0
+    },
+    "m_dead": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Maybe. But her secrets aren't.",
+      "next": "m4",
+      "delay": 1.0
+    },
+    "m_how": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "I work for the network provider. I see all the data.",
+      "next": "m4",
+      "delay": 1.0
+    },
+    "m4": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "I intercepted a corrupted audio file from the Mayor's office. You need to scrub it.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "calls",
+      "title": "File Received",
+      "body": "Unknown Audio",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Open the Calls app to find the unknown audio.",
+      "target": {
+        "app": "calls"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "audio_tag",
+      "title": "Corrupted Mayor Tape",
+      "config": {
+        "voicemail": "vm_unknown",
+        "required": [
+          "siren",
+          "ringtone",
+          "static"
+        ],
+        "brief": "Tag the hidden sounds behind the static."
+      },
+      "hints": [
+        "There's a siren at the start.",
+        "A ringtone in the middle.",
+        "Static at the end."
+      ],
+      "next": "s2",
+      "effects": {
+        "pins": [
+          "mayor_tape"
+        ]
+      }
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "The tape clears up.",
+        "\"If the dam breaks, we blame the old infrastructure. Not the explosives we planted.\"",
+        "Explosives. They are going to blow the dam."
+      ],
+      "next": "m5",
+      "voice": "voice_static"
+    },
+    "m5": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You heard it. They're going to flood the valley.",
+      "next": "m6",
+      "delay": 1.0
+    },
+    "m6": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You need to access the town's legacy server to find the detonation code. I'm sending you the portal.",
+      "next": "notif2",
+      "delay": 1.0
+    },
+    "notif2": {
+      "type": "notification",
+      "app": "cloud",
+      "title": "Portal Link",
+      "body": "legacy.hollowmere.gov",
+      "next": "g2"
+    },
+    "g2": {
+      "type": "goal",
+      "text": "Open the Cloud and access the portal.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "mg2"
+    },
+    "mg2": {
+      "type": "minigame",
+      "game": "cipher",
+      "title": "Legacy Server Login",
+      "config": {
+        "type": "shift",
+        "shift": 3,
+        "cipher": "ZDWHU",
+        "ciphertext": "ZDWHU",
+        "answer": "WATER",
+        "legend": {},
+        "brief": "Decode the admin password. It's a Caesar cipher with a shift of 3."
+      },
+      "hints": [
+        "Shift each letter back by 3 in the alphabet.",
+        "Z becomes W."
+      ],
+      "next": "s3",
+      "effects": {
+        "flags": [
+          "server_in"
+        ]
+      }
+    },
+    "s3": {
+      "type": "scene",
+      "lines": [
+        "You're in.",
+        "The server logs show thousands of access attempts.",
+        "One user keeps downloading the town map: W.L."
+      ],
+      "next": "c2"
+    },
+    "c2": {
+      "type": "choice",
+      "thread": "unknown",
+      "options": [
+        {
+          "text": "W.L. is Wren?",
+          "next": "m_wren1"
+        },
+        {
+          "text": "W.L. could be someone else.",
+          "next": "m_wren2"
+        }
+      ]
+    },
+    "m_wren1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Yes. She knew.",
+      "next": "m7",
+      "delay": 1.0
+    },
+    "m_wren2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "No, it's Wren Locke. She was Ardis's niece.",
+      "next": "m7",
+      "delay": 1.0
+    },
+    "m7": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Look at the access logs. Compare them.",
+      "next": "notif3",
+      "delay": 1.0
+    },
+    "notif3": {
+      "type": "notification",
+      "app": "board",
+      "title": "Logs uploaded",
+      "body": "Compare the server logs.",
+      "next": "g3"
+    },
+    "g3": {
+      "type": "goal",
+      "text": "Open the Board and use Log Diff on the new evidence.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg3"
+    },
+    "mg3": {
+      "type": "minigame",
+      "game": "log_diff",
+      "title": "Access Logs",
+      "config": {
+        "left": "Login at 23:00\nDownload: map.pdf",
+        "right": "Login at 23:00\nDownload: map.pdf\nDeleted: codes.txt",
+        "brief": "Find the discrepancy in the logs."
+      },
+      "hints": [
+        "What is missing in the left log?"
+      ],
+      "next": "m8"
+    },
+    "m8": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "They deleted codes.txt. The detonation codes.",
+      "next": "m9",
+      "delay": 1.0
+    },
+    "m9": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "But Wren hid a backup in a photo she posted.",
+      "next": "notif4",
+      "delay": 1.0
+    },
+    "notif4": {
+      "type": "notification",
+      "app": "gallery",
+      "title": "New Photo",
+      "body": "Orchard.jpg",
+      "next": "g4"
+    },
+    "g4": {
+      "type": "goal",
+      "text": "Check the new photo in the Gallery.",
+      "target": {
+        "app": "gallery",
+        "photo": "ev_drowned_orchard"
+      },
+      "next": "mg4"
+    },
+    "mg4": {
+      "type": "minigame",
+      "game": "photo_spot",
+      "title": "Hidden Code",
+      "config": {
+        "image": "ev_drowned_orchard",
+        "target": {
+          "x": 100,
+          "y": 200,
+          "r": 50
+        },
+        "brief": "Find the hidden number scratched into the tree."
+      },
+      "hints": [
+        "The near trunk on the left. The carving reads 1986."
+      ],
+      "next": "s4"
+    },
+    "s4": {
+      "type": "scene",
+      "lines": [
+        "You spot a sequence of numbers: 4-8-15-16-23-42.",
+        "No, wait. It's 1-9-8-6. The year the church was flooded."
+      ],
+      "next": "m10"
+    },
+    "m10": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "1986. That's the code. I'm going dark. They're scanning for my signal.",
+      "next": "gl1",
+      "delay": 1.0
+    },
+    "gl1": {
+      "type": "glitch",
+      "ghost": {
+        "thread": "unknown",
+        "from": "unknown",
+        "text": "trust no one. not even jonah."
+      },
+      "next": "end7"
+    },
+    "end7": {
+      "type": "end_episode",
+      "teaser": "Episode 8 - The Ticking Clock",
+      "next_episode": "ep8"
+    }
+  }
+}

@@ -52,9 +52,9 @@ void main() {
   });
 
   test('fillPlayer substitutes the player name', () {
-    expect(fillPlayer('This is {player}. Wren\'s friend.', 'Sam'),
-        "This is Sam. Wren's friend.");
-    expect(fillPlayer('already filled', 'Sam'), 'already filled');
+    expect(fillPlayer('This is {player}. Wren\'s friend.', 'John'),
+        "This is John. Wren's friend.");
+    expect(fillPlayer('already filled', 'John'), 'already filled');
   });
 
   testWidgets('scene overlay fade does not put Positioned inside FadeTransition', (tester) async {

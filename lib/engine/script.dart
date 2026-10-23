@@ -20,8 +20,14 @@ class StoryNode {
       ((raw['options'] as List?) ?? const []).cast<Map<String, dynamic>>();
   List<String> get hints =>
       ((raw['hints'] as List?) ?? const []).cast<String>();
-  Map<String, dynamic> get config =>
-      (raw['config'] as Map<String, dynamic>?) ?? const {};
+  Map<String, dynamic> get config {
+    final rawConfig = raw['config'];
+    if (rawConfig is! Map) return const {};
+    final cfg = Map<String, dynamic>.from(rawConfig);
+    cfg['cipher'] ??= cfg['ciphertext'];
+    cfg.putIfAbsent('legend', () => <String, String>{});
+    return cfg;
+  }
 }
 
 class EpisodeScript {

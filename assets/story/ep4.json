@@ -4,169 +4,933 @@
   "title": "Static",
   "start": "t_open",
   "nodes": {
-    "t_open": {"type": "title", "kicker": "THE 26TH", "title": "2:11 AM", "subtitle": "Episode 4 - Static", "next": "fx_open"},
-    "fx_open": {"type": "effects", "effects": {"hours": 304, "mirror": 3, "journal": "2:11 AM. The phone woke me. Every app icon is flickering."}, "next": "gl1"},
-    "gl1": {"type": "glitch", "ghost": {"thread": "wren", "from": "wren", "text": "sam"}, "next": "gl2"},
-    "gl2": {"type": "glitch", "ghost": {"thread": "wren", "from": "wren", "text": "sam are you"}, "next": "s_live_intro"},
-    "s_live_intro": {"type": "scene", "lines": [
-      "The mirror is tearing. Messages from Wren land and vanish before the thread can hold them.",
-      "This is not a recording. The times are now.",
-      "You will have seconds to answer each one. Whatever you say, she will remember."
-    ], "next": "mg_live"},
-    "mg_live": {"type": "minigame", "game": "live_static", "title": "LIVE · signal unstable", "config": {"from": "wren",
-      "brief": "She is typing. First in code - someone else is reading. Each message vanishes. Answer before time runs out - or stay quiet.",
-      "steps": [
-        {"text": "🦉🌙", "timer": 18, "options": [
-          {"text": "🦉🌙", "effects": {"flags": ["live_emoji_ok", "live_here"], "trust": {"wren": 1}}},
-          {"text": "🌊🔑", "effects": {"flags": ["live_emoji_wrong"]}},
-          {"text": "is this you", "effects": {"flags": ["live_emoji_wrong", "live_doubt"]}}
-        ], "timeout_effects": {"flags": ["live_silent_0"]}},
-        {"text": "sam. is this working. tell me this is working", "timer": 20, "options": [
-          {"text": "it's working. i'm here.", "effects": {"flags": ["live_here"], "trust": {"wren": 1}}},
-          {"text": "WREN. where are you", "effects": {"flags": ["live_where"]}},
-          {"text": "is this really you?", "effects": {"flags": ["live_doubt"]}}
-        ], "timeout_effects": {"flags": ["live_silent_1"]}},
-        {"text": "can't stay on. he's watching the road and the signal only reaches when the fog lifts", "timer": 18, "options": [
-          {"text": "who is he?", "effects": {"flags": ["live_asked_who"]}},
-          {"text": "are you hurt?", "effects": {"flags": ["live_asked_hurt"], "trust": {"wren": 1}}},
-          {"text": "tell me what you need", "effects": {"flags": ["live_asked_need"], "trust": {"wren": 1}}}
-        ], "timeout_effects": {"flags": ["live_silent_2"]}},
-        {"text": "you left it open. i came in. i'm sorry i didn't wake you. i needed somewhere they'd never look and you were the only person here who wasn't here in 2006", "timer": 20, "options": [
-          {"text": "i know. i found the wifi link. i'm not angry.", "effects": {"flags": ["live_forgave"], "trust": {"wren": 1}}},
-          {"text": "you could have woken me.", "effects": {"flags": ["live_hurt"]}},
-          {"text": "you did the right thing.", "effects": {"flags": ["live_affirmed"], "trust": {"wren": 1}}}
-        ], "timeout_effects": {"flags": ["live_silent_3"]}},
-        {"text": "i'm where the bell is. don't come. not yet. he checks the shore path at dawn", "timer": 18, "options": [
-          {"text": "i'm coming now.", "effects": {"flags": ["live_said_coming"]}},
-          {"text": "tell me when. i'll be ready.", "effects": {"flags": ["live_patient"], "trust": {"wren": 1}}},
-          {"text": "i'm going to the police.", "effects": {"flags": ["live_said_police"]}}
-        ], "timeout_effects": {"flags": ["live_silent_4"]}},
-        {"text": "if i go quiet for real: jonah has the numbers. the sensor. trust him even when he won't say anything. fog's closing. i", "timer": 15, "options": [
-          {"text": "wren-", "effects": {"flags": ["live_last_wren"]}},
-          {"text": "i'll trust him. stay hidden.", "effects": {"flags": ["live_trust_jonah"], "trust": {"jonah": 1}}},
-          {"text": "i'll find you.", "effects": {"flags": ["live_find_you"], "trust": {"wren": 1}}}
-        ], "timeout_effects": {"flags": ["live_silent_5"]}}
-      ]},
-      "hints": [], "evidence": "ev_live_wren",
-      "effects": {"flags": ["wren_alive_confirmed"], "pins": ["c_bell"], "journal": "She is alive. She is where the bell is. Jonah has 'the numbers'."}, "next": "s_after_live"},
-    "s_after_live": {"type": "scene", "image": "loc_spillway", "lines": [
-      "Gone. The thread is exactly as it was. Not one word survived.",
-      "But you read them. She is alive. She is at the bell. Someone checks the shore path at dawn.",
-      "And the phone, exhausted, does one more thing: it drops five voicemails from last night into your inbox, all at once."
-    ], "next": "fx_vms"},
-
-    "fx_vms": {"type": "effects", "effects": {"call_log": [
-      {"id": "vm_c_mara", "contact": "mara", "direction": "in", "label": "Last night · voicemail", "duration": 12, "voicemail": "vm_mara"},
-      {"id": "vm_c_jonah", "contact": "jonah", "direction": "in", "label": "Last night · voicemail", "duration": 9, "voicemail": "vm_jonah"},
-      {"id": "vm_c_deacon", "contact": "deacon", "direction": "in", "label": "Last night · voicemail", "duration": 11, "voicemail": "vm_deacon"},
-      {"id": "vm_c_unknown", "contact": "warden", "direction": "in", "label": "Last night · voicemail", "duration": 5, "voicemail": "vm_unknown"},
-      {"id": "vm_c_ardis", "contact": "ardis", "direction": "in", "label": "Last night · voicemail", "duration": 13, "voicemail": "vm_ardis"}
-    ]}, "next": "n_vms"},
-    "n_vms": {"type": "notification", "app": "calls", "title": "5 voicemails", "body": "Delivered late · times scrambled by the mirror", "next": "g_vms"},
-    "g_vms": {"type": "goal", "text": "Five voicemails from last night, out of order. Open the call log.", "target": {"app": "calls"}, "next": "s_vms"},
-    "s_vms": {"type": "scene", "voice": "voice_stop", "lines": [
-      "Five people called you last night while you slept. The mirror mixed up the times.",
-      "But the town has a clock: the siren sounds sixty seconds before they let the water out, and the bell rings when the boom takes the surge.",
-      "Whatever is in the background of each message tells you when it was left."
-    ], "next": "mg_order"},
-    "mg_order": {"type": "minigame", "game": "order", "title": "Reconstruct last night", "config": {
-      "brief": "Drag the voicemails into the order they were left. Use what you hear behind each voice.",
-      "items": [
-        {"id": "vm_mara", "who": "mara", "text": "\"If you've heard from her, anything at all, please call me back.\"", "cue": "TV in the background: the late news sign-off jingle."},
-        {"id": "vm_jonah", "who": "jonah", "text": "\"Stay away from the marina. I mean it. Please.\"", "cue": "Water lapping a dock. No siren. Quiet."},
-        {"id": "vm_deacon", "who": "deacon", "text": "\"Come after close. Don't tell anyone.\"", "cue": "Kitchen fan - and through a window, the two-tone siren starting."},
-        {"id": "vm_unknown", "who": "warden", "text": "\"Stop looking. She's alive if you stop.\"", "cue": "Inside a car, engine off. A single bell strike, close - the second strike. Gates closing."},
-        {"id": "vm_ardis", "who": "ardis", "text": "\"I've been home all evening, so forgive the hour. If the police have Wren's phone I'd like to know.\"", "cue": "Office hum. The bell, fading, through glass."}
+    "t_open": {
+      "type": "title",
+      "kicker": "THE 26TH",
+      "title": "2:11 AM",
+      "subtitle": "Episode 4 - Static",
+      "next": "fx_open"
+    },
+    "fx_open": {
+      "type": "effects",
+      "effects": {
+        "hours": 304,
+        "mirror": 3,
+        "journal": "2:11 AM. The phone woke me. Every app icon is flickering."
+      },
+      "next": "gl1"
+    },
+    "gl1": {
+      "type": "glitch",
+      "ghost": {
+        "thread": "wren",
+        "from": "wren",
+        "text": "john"
+      },
+      "next": "gl2"
+    },
+    "gl2": {
+      "type": "glitch",
+      "ghost": {
+        "thread": "wren",
+        "from": "wren",
+        "text": "john are you"
+      },
+      "next": "s_live_intro"
+    },
+    "s_live_intro": {
+      "type": "scene",
+      "lines": [
+        "The mirror is tearing. Messages from Wren land and vanish before the thread can hold them.",
+        "This is not a recording. The times are now.",
+        "You will have seconds to answer each one. Whatever you say, she will remember."
       ],
-      "answer": ["vm_mara", "vm_jonah", "vm_deacon", "vm_unknown", "vm_ardis"]},
-      "hints": ["The late news signs off at 11:30. That one is first.", "The siren always comes before the first bell.", "Two messages have the bell. One is close (gates closing). One is fading through glass. Close first."],
-      "evidence": "ev_timeline", "effects": {"pins": ["c_siren"], "journal": "Order: Mara, Jonah, Deacon (siren starting), the Warden (second bell, close), Ardis (bell fading). Ardis said she was home all evening. There is no bell at her home. There is one fifty metres from the Authority office."}, "next": "s_order"},
-    "s_order": {"type": "scene", "lines": [
-      "Ardis Locke's voicemail was left after the siren, after the bell.",
-      "\"I've been home all evening.\" Through the glass behind her: the bell, fading.",
-      "The only building with an office window fifty metres from the boom is the Reservoir Authority."
-    ], "next": "a1"},
-
-    "a1": {"type": "message", "thread": "ardis", "text": "Good morning {player}. I've had the Authority pull the release log for the nights in question, since people are asking. Official copy attached.", "delay": 1.2, "next": "a2",
-      "effects": {"pages": ["release_log_pdf"]}},
-    "a2": {"type": "message", "thread": "ardis", "text": "hollowmere-authority.gov/log/extract - it should put the siren stories to bed. No night work. Never have been.", "next": "g_log"},
-    "g_log": {"type": "goal", "text": "Open the release log extract Ardis sent.", "target": {"app": "browser", "page": "release_log_pdf"}, "next": "s_log",
-      "effects": {"pins": ["c_log"], "journal": "Ardis sent the official release log. 11th and 13th: no night work. Signed accurate - Office of the Chair. Her office."}},
-    "s_log": {"type": "scene", "lines": [
-      "Signed accurate - Office of the Chair.",
-      "The one record everyone in Hollowmere trusts to place people in time, and it is signed by the person who benefits from the times.",
-      "Jonah has the numbers."
-    ], "next": "b_jonah"},
-
-    "b_jonah": {"type": "branch", "if": {"flag": "jonah_shut_down"}, "then": "c_jonah_apology", "else": "jo_in"},
-    "c_jonah_apology": {"type": "choice", "thread": "jonah", "options": [
-      {"text": "I shouldn't have said his name on the phone. I'm sorry. Wren told me to trust you.", "next": "jo_forgive", "effects": {"trust": {"jonah": 2}, "flags": ["jonah_apologised"], "unflag": ["jonah_shut_down"]}},
-      {"text": "Wren says you have numbers. I need them.", "next": "jo_cold", "effects": {"flags": ["jonah_demanded"]}}
-    ]},
-    "jo_forgive": {"type": "message", "thread": "jonah", "text": "She told you that.", "delay": 1.5, "next": "jo_forgive2"},
-    "jo_forgive2": {"type": "message", "thread": "jonah", "text": "Okay. Okay. Pick up.", "next": "call_jonah"},
-    "jo_cold": {"type": "message", "thread": "jonah", "text": "Wren says. Present tense.", "delay": 1.5, "next": "jo_cold2"},
-    "jo_cold2": {"type": "message", "thread": "jonah", "text": "Pick up. Don't talk. Listen.", "next": "call_jonah"},
-    "jo_in": {"type": "message", "thread": "jonah", "text": "Pick up.", "delay": 1.0, "next": "call_jonah"},
-
-    "call_jonah": {"type": "call", "contact": "jonah", "incoming": true, "script": [
-      {"from": "jonah", "text": "I gave her the notebook. One page, then she wanted them all. I should have burned it in 2006. I didn't."},
-      {"from": "jonah", "text": "Caleb was seventeen. He found the report in the bins behind the town hall and he took it to the one adult who'd ever been decent to him. She sat on the council. She told him she'd handle it."},
-      {"from": "jonah", "text": "Three days later he was a runaway. And the release log for that night said the spillway house was locked and empty."},
-      {"choice": [
-        {"text": "You've been logging the water yourself.", "goto": 4},
-        {"text": "Why didn't you go to the police?", "goto": 7},
-        {"text": "Say her name, Jonah.", "goto": 10, "effects": {"flags": ["jonah_named_ardis"]}}
-      ]},
-      {"from": "jonah", "text": "Caleb built a pressure sensor on the dock that summer. He was seventeen. I've kept it running every minute since. It writes the level to a card. Nobody knows it's there."},
-      {"from": "jonah", "text": "Nobody looked for it because nobody knew Caleb built things. He was 'the runaway'. That's all he got to be."},
-      {"choice": [{"text": "Go on.", "goto": 12, "default": true}]},
-      {"from": "jonah", "text": "I did. In 2009. Chief Pell told me Caleb was a runaway and I should think about my future."},
-      {"from": "jonah", "text": "Pell's retired now. He plays golf with Everett Reed. So I kept my mouth shut and my sensor running."},
-      {"choice": [{"text": "Go on.", "goto": 12, "default": true}]},
-      {"from": "jonah", "text": "…Locke. Ardis Locke. There. Twenty years and I've never said it into a phone."},
-      {"choice": [{"text": "Go on.", "goto": 12, "default": true}]},
-      {"from": "jonah", "text": "She was the adult Caleb trusted. She's the adult Mara trusts. And she's been texting you, hasn't she. 'Anything you need.'"},
-      {"from": "jonah", "text": "When the gates open, the level drops four tenths of a metre in nine minutes.", "effects": {"flags": ["jonah_sensor_explained"]}},
-      {"from": "jonah", "text": "The card has a drop at 23:41 on the 13th. The night Wren went. And 23:41 on the 11th. Official log: nothing. I'm sending you the file."},
-      {"choice": [
-        {"text": "Go on.", "goto": 16, "default": true},
-        {"text": "What about inspector Harlan?", "goto": 17, "effects": {"evidence": ["ev_harlan_2007"], "flags": ["asked_harlan"]}}
-      ]},
-      {"end": true},
-      {"from": "jonah", "text": "3 February 2007. A fourth drop. The night they said Harlan fell off the spillway walkway. Nobody ever asked why the water moved."},
-      {"end": true}
-    ], "effects": {"evidence": ["ev_jonah_confession"], "trust": {"jonah": 1}, "notes": [{"id": "n_sensor", "title": "dock sensor export (Jonah)", "body": "Caleb built it, summer 2006. Jonah kept it running. Release signature: -0.4 m over 9 min.\n\nThree a year until 2019. Monthly since 2020. Two in three days this month.\n\n10th 06:00 drop (scheduled)\n10th 18:00 drop (scheduled)\n11th 23:41 DROP - not in the log\n13th 23:41 DROP - not in the log\n\n18 Nov 2006 23:40 DROP - Caleb's own machine, his last night\n3 Feb 2007 23:41 DROP - the night Harlan 'fell'"}], "journal": "Jonah's sensor: night drops at 23:41 on the 11th and the 13th. And 23:40 on 18 November 2006. Same script, one minute off."}, "next": "b_mara"},
-
-    "b_mara": {"type": "branch", "if": {"trust": {"who": "mara", "min": 1}}, "then": "ma1", "else": "ma_cold"},
-    "ma1": {"type": "message", "thread": "mara", "text": "I couldn't sleep either. {player}, I have to tell you something and then I need you to not hate me.", "delay": 1.3, "next": "ma2"},
-    "ma2": {"type": "message", "thread": "mara", "text": "I told Ardis about Wren's project. Weeks ago. Over coffee. I said my girlfriend's obsessed with the old town and she's asking people about 2006 and I laughed about it.", "next": "ma3"},
-    "ma3": {"type": "message", "thread": "mara", "text": "And I file the 2006 minutes. About the Voss boy. About who he'd gone to see. I have never said a word, then or after.", "next": "ma3b"},
-    "ma3b": {"type": "message", "thread": "mara", "text": "After Wren vanished I gave Ardis our shared-plan login. So the police can help, I said. That is the second viewer on your phone. It was never me. It was my password.", "next": "c_mara4"},
-    "c_mara4": {"type": "choice", "thread": "mara", "options": [
-      {"text": "Thank you for telling me. It matters. It might save her.", "next": "ma4_kind", "effects": {"trust": {"mara": 1}, "evidence": ["ev_mara_secret"], "pins": ["mara"], "flags": ["mara_gave_login"]}},
-      {"text": "You laughed about it. With her.", "next": "ma4_hard", "effects": {"evidence": ["ev_mara_secret"], "flags": ["mara_gave_login"]}},
-      {"text": "Will you say this to the police?", "next": "ma4_police", "effects": {"trust": {"mara": 1}, "evidence": ["ev_mara_secret"], "flags": ["mara_will_testify", "mara_gave_login"]}}
-    ]},
-    "ma4_kind": {"type": "message", "thread": "mara", "text": "Bring her home and I'll say it to anyone.", "next": "s_cliff"},
-    "ma4_hard": {"type": "message", "thread": "mara", "text": "Yes. I did. I've been hearing myself do it every night for eleven days.", "next": "s_cliff"},
-    "ma4_police": {"type": "message", "thread": "mara", "text": "Yes. Tell me when.", "next": "s_cliff"},
-    "ma_cold": {"type": "message", "thread": "mara", "text": "I've said too much to you already. Please don't contact me again unless it's about Wren.", "delay": 1.3, "next": "s_cliff",
-      "effects": {"journal": "Mara has closed the door. Whatever she knows about 2006, she is keeping it."}},
-
-    "s_cliff": {"type": "scene", "image": "loc_spillway", "lines": [
-      "Two records of the same night.",
-      "Jonah's card: a drop at 23:41 on the 13th, nine minutes long. The gates opened.",
-      "Ardis Locke's official log: no night work. Never have been.",
-      "One of these was written by a machine on a dock piling. The other was written by the person who called you after the bell."
-    ], "next": "n_memo2"},
-    "n_memo2": {"type": "notification", "app": "calls", "title": "Voice memo", "body": "the bell isn't the orchard",
-      "effects": {"call_log": [{"id": "vm_memo2", "contact": "wren", "direction": "in", "label": "Voice memo · undated", "duration": 9, "voicemail": "vm_wren_memo2"}]}, "next": "s_next"},
-    "s_next": {"type": "scene", "lines": [
-      "The sensor projection: next release, tomorrow night, 23:41.",
-      "Same minute they have used for twenty years."
-    ], "next": "t_card"},
-    "t_card": {"type": "title", "kicker": "THE HOLLOWMERE FILES", "title": "Episode 4", "subtitle": "Static", "next": "end4"},
-    "end4": {"type": "end_episode", "teaser": "Episode 5 - The Warden. Mark the lies. Name the voice. Choose the road.", "next_episode": "ep5"}
+      "next": "mg_live"
+    },
+    "mg_live": {
+      "type": "minigame",
+      "game": "live_static",
+      "title": "LIVE \u00b7 signal unstable",
+      "config": {
+        "from": "wren",
+        "brief": "She is typing. First in code - someone else is reading. Each message vanishes. Answer before time runs out - or stay quiet.",
+        "steps": [
+          {
+            "text": "\ud83e\udd89\ud83c\udf19",
+            "timer": 18,
+            "options": [
+              {
+                "text": "\ud83e\udd89\ud83c\udf19",
+                "effects": {
+                  "flags": [
+                    "live_emoji_ok",
+                    "live_here"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              },
+              {
+                "text": "\ud83c\udf0a\ud83d\udd11",
+                "effects": {
+                  "flags": [
+                    "live_emoji_wrong"
+                  ]
+                }
+              },
+              {
+                "text": "is this you",
+                "effects": {
+                  "flags": [
+                    "live_emoji_wrong",
+                    "live_doubt"
+                  ]
+                }
+              }
+            ],
+            "timeout_effects": {
+              "flags": [
+                "live_silent_0"
+              ]
+            }
+          },
+          {
+            "text": "john. is this working. tell me this is working",
+            "timer": 20,
+            "options": [
+              {
+                "text": "it's working. i'm here.",
+                "effects": {
+                  "flags": [
+                    "live_here"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              },
+              {
+                "text": "WREN. where are you",
+                "effects": {
+                  "flags": [
+                    "live_where"
+                  ]
+                }
+              },
+              {
+                "text": "is this really you?",
+                "effects": {
+                  "flags": [
+                    "live_doubt"
+                  ]
+                }
+              }
+            ],
+            "timeout_effects": {
+              "flags": [
+                "live_silent_1"
+              ]
+            }
+          },
+          {
+            "text": "can't stay on. he's watching the road and the signal only reaches when the fog lifts",
+            "timer": 18,
+            "options": [
+              {
+                "text": "who is he?",
+                "effects": {
+                  "flags": [
+                    "live_asked_who"
+                  ]
+                }
+              },
+              {
+                "text": "are you hurt?",
+                "effects": {
+                  "flags": [
+                    "live_asked_hurt"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              },
+              {
+                "text": "tell me what you need",
+                "effects": {
+                  "flags": [
+                    "live_asked_need"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              }
+            ],
+            "timeout_effects": {
+              "flags": [
+                "live_silent_2"
+              ]
+            }
+          },
+          {
+            "text": "you left it open. i came in. i'm sorry i didn't wake you. i needed somewhere they'd never look and you were the only person here who wasn't here in 2006",
+            "timer": 20,
+            "options": [
+              {
+                "text": "i know. i found the wifi link. i'm not angry.",
+                "effects": {
+                  "flags": [
+                    "live_forgave"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              },
+              {
+                "text": "you could have woken me.",
+                "effects": {
+                  "flags": [
+                    "live_hurt"
+                  ]
+                }
+              },
+              {
+                "text": "you did the right thing.",
+                "effects": {
+                  "flags": [
+                    "live_affirmed"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              }
+            ],
+            "timeout_effects": {
+              "flags": [
+                "live_silent_3"
+              ]
+            }
+          },
+          {
+            "text": "i'm where the bell is. don't come. not yet. he checks the shore path at dawn",
+            "timer": 18,
+            "options": [
+              {
+                "text": "i'm coming now.",
+                "effects": {
+                  "flags": [
+                    "live_said_coming"
+                  ]
+                }
+              },
+              {
+                "text": "tell me when. i'll be ready.",
+                "effects": {
+                  "flags": [
+                    "live_patient"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              },
+              {
+                "text": "i'm going to the police.",
+                "effects": {
+                  "flags": [
+                    "live_said_police"
+                  ]
+                }
+              }
+            ],
+            "timeout_effects": {
+              "flags": [
+                "live_silent_4"
+              ]
+            }
+          },
+          {
+            "text": "if i go quiet for real: jonah has the numbers. the sensor. trust him even when he won't say anything. fog's closing. i",
+            "timer": 15,
+            "options": [
+              {
+                "text": "wren-",
+                "effects": {
+                  "flags": [
+                    "live_last_wren"
+                  ]
+                }
+              },
+              {
+                "text": "i'll trust him. stay hidden.",
+                "effects": {
+                  "flags": [
+                    "live_trust_jonah"
+                  ],
+                  "trust": {
+                    "jonah": 1
+                  }
+                }
+              },
+              {
+                "text": "i'll find you.",
+                "effects": {
+                  "flags": [
+                    "live_find_you"
+                  ],
+                  "trust": {
+                    "wren": 1
+                  }
+                }
+              }
+            ],
+            "timeout_effects": {
+              "flags": [
+                "live_silent_5"
+              ]
+            }
+          }
+        ]
+      },
+      "hints": [],
+      "evidence": "ev_live_wren",
+      "effects": {
+        "flags": [
+          "wren_alive_confirmed"
+        ],
+        "pins": [
+          "c_bell"
+        ],
+        "journal": "She is alive. She is where the bell is. Jonah has 'the numbers'."
+      },
+      "next": "s_after_live"
+    },
+    "s_after_live": {
+      "type": "scene",
+      "image": "loc_spillway",
+      "lines": [
+        "Gone. The thread is exactly as it was. Not one word survived.",
+        "But you read them. She is alive. She is at the bell. Someone checks the shore path at dawn.",
+        "And the phone, exhausted, does one more thing: it drops five voicemails from last night into your inbox, all at once."
+      ],
+      "next": "fx_vms"
+    },
+    "fx_vms": {
+      "type": "effects",
+      "effects": {
+        "call_log": [
+          {
+            "id": "vm_c_mara",
+            "contact": "mara",
+            "direction": "in",
+            "label": "Last night \u00b7 voicemail",
+            "duration": 12,
+            "voicemail": "vm_mara"
+          },
+          {
+            "id": "vm_c_jonah",
+            "contact": "jonah",
+            "direction": "in",
+            "label": "Last night \u00b7 voicemail",
+            "duration": 9,
+            "voicemail": "vm_jonah"
+          },
+          {
+            "id": "vm_c_deacon",
+            "contact": "deacon",
+            "direction": "in",
+            "label": "Last night \u00b7 voicemail",
+            "duration": 11,
+            "voicemail": "vm_deacon"
+          },
+          {
+            "id": "vm_c_unknown",
+            "contact": "warden",
+            "direction": "in",
+            "label": "Last night \u00b7 voicemail",
+            "duration": 5,
+            "voicemail": "vm_unknown"
+          },
+          {
+            "id": "vm_c_ardis",
+            "contact": "ardis",
+            "direction": "in",
+            "label": "Last night \u00b7 voicemail",
+            "duration": 13,
+            "voicemail": "vm_ardis"
+          }
+        ]
+      },
+      "next": "n_vms"
+    },
+    "n_vms": {
+      "type": "notification",
+      "app": "calls",
+      "title": "5 voicemails",
+      "body": "Delivered late \u00b7 times scrambled by the mirror",
+      "next": "g_vms"
+    },
+    "g_vms": {
+      "type": "goal",
+      "text": "Five voicemails from last night, out of order. Open the call log.",
+      "target": {
+        "app": "calls"
+      },
+      "next": "s_vms"
+    },
+    "s_vms": {
+      "type": "scene",
+      "voice": "voice_stop",
+      "lines": [
+        "Five people called you last night while you slept. The mirror mixed up the times.",
+        "But the town has a clock: the siren sounds sixty seconds before they let the water out, and the bell rings when the boom takes the surge.",
+        "Whatever is in the background of each message tells you when it was left."
+      ],
+      "next": "mg_order"
+    },
+    "mg_order": {
+      "type": "minigame",
+      "game": "order",
+      "title": "Reconstruct last night",
+      "config": {
+        "brief": "Drag the voicemails into the order they were left. Use what you hear behind each voice.",
+        "items": [
+          {
+            "id": "vm_mara",
+            "who": "mara",
+            "text": "\"If you've heard from her, anything at all, please call me back.\"",
+            "cue": "TV in the background: the late news sign-off jingle."
+          },
+          {
+            "id": "vm_jonah",
+            "who": "jonah",
+            "text": "\"Stay away from the marina. I mean it. Please.\"",
+            "cue": "Water lapping a dock. No siren. Quiet."
+          },
+          {
+            "id": "vm_deacon",
+            "who": "deacon",
+            "text": "\"Come after close. Don't tell anyone.\"",
+            "cue": "Kitchen fan - and through a window, the two-tone siren starting."
+          },
+          {
+            "id": "vm_unknown",
+            "who": "warden",
+            "text": "\"Stop looking. She's alive if you stop.\"",
+            "cue": "Inside a car, engine off. A single bell strike, close - the second strike. Gates closing."
+          },
+          {
+            "id": "vm_ardis",
+            "who": "ardis",
+            "text": "\"I've been home all evening, so forgive the hour. If the police have Wren's phone I'd like to know.\"",
+            "cue": "Office hum. The bell, fading, through glass."
+          }
+        ],
+        "answer": [
+          "vm_mara",
+          "vm_jonah",
+          "vm_deacon",
+          "vm_unknown",
+          "vm_ardis"
+        ]
+      },
+      "hints": [
+        "The late news signs off at 11:30. That one is first.",
+        "The siren always comes before the first bell.",
+        "Two messages have the bell. One is close (gates closing). One is fading through glass. Close first."
+      ],
+      "evidence": "ev_timeline",
+      "effects": {
+        "pins": [
+          "c_siren"
+        ],
+        "journal": "Order: Mara, Jonah, Deacon (siren starting), the Warden (second bell, close), Ardis (bell fading). Ardis said she was home all evening. There is no bell at her home. There is one fifty metres from the Authority office."
+      },
+      "next": "s_order"
+    },
+    "s_order": {
+      "type": "scene",
+      "lines": [
+        "Ardis Locke's voicemail was left after the siren, after the bell.",
+        "\"I've been home all evening.\" Through the glass behind her: the bell, fading.",
+        "The only building with an office window fifty metres from the boom is the Reservoir Authority."
+      ],
+      "next": "a1"
+    },
+    "a1": {
+      "type": "message",
+      "thread": "ardis",
+      "text": "Good morning {player}. I've had the Authority pull the release log for the nights in question, since people are asking. Official copy attached.",
+      "delay": 1.2,
+      "next": "a2",
+      "effects": {
+        "pages": [
+          "release_log_pdf"
+        ]
+      }
+    },
+    "a2": {
+      "type": "message",
+      "thread": "ardis",
+      "text": "hollowmere-authority.gov/log/extract - it should put the siren stories to bed. No night work. Never have been.",
+      "next": "g_log"
+    },
+    "g_log": {
+      "type": "goal",
+      "text": "Open the release log extract Ardis sent.",
+      "target": {
+        "app": "browser",
+        "page": "release_log_pdf"
+      },
+      "next": "s_log",
+      "effects": {
+        "pins": [
+          "c_log"
+        ],
+        "journal": "Ardis sent the official release log. 11th and 13th: no night work. Signed accurate - Office of the Chair. Her office."
+      }
+    },
+    "s_log": {
+      "type": "scene",
+      "lines": [
+        "Signed accurate - Office of the Chair.",
+        "The one record everyone in Hollowmere trusts to place people in time, and it is signed by the person who benefits from the times.",
+        "Jonah has the numbers."
+      ],
+      "next": "b_jonah"
+    },
+    "b_jonah": {
+      "type": "branch",
+      "if": {
+        "flag": "jonah_shut_down"
+      },
+      "then": "c_jonah_apology",
+      "else": "jo_in"
+    },
+    "c_jonah_apology": {
+      "type": "choice",
+      "thread": "jonah",
+      "options": [
+        {
+          "text": "I shouldn't have said his name on the phone. I'm sorry. Wren told me to trust you.",
+          "next": "jo_forgive",
+          "effects": {
+            "trust": {
+              "jonah": 2
+            },
+            "flags": [
+              "jonah_apologised"
+            ],
+            "unflag": [
+              "jonah_shut_down"
+            ]
+          }
+        },
+        {
+          "text": "Wren says you have numbers. I need them.",
+          "next": "jo_cold",
+          "effects": {
+            "flags": [
+              "jonah_demanded"
+            ]
+          }
+        }
+      ]
+    },
+    "jo_forgive": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "She told you that.",
+      "delay": 1.5,
+      "next": "jo_forgive2"
+    },
+    "jo_forgive2": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Okay. Okay. Pick up.",
+      "next": "call_jonah"
+    },
+    "jo_cold": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Wren says. Present tense.",
+      "delay": 1.5,
+      "next": "jo_cold2"
+    },
+    "jo_cold2": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Pick up. Don't talk. Listen.",
+      "next": "call_jonah"
+    },
+    "jo_in": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Pick up.",
+      "delay": 1.0,
+      "next": "call_jonah"
+    },
+    "call_jonah": {
+      "type": "call",
+      "contact": "jonah",
+      "incoming": true,
+      "script": [
+        {
+          "from": "jonah",
+          "text": "I gave her the notebook. One page, then she wanted them all. I should have burned it in 2006. I didn't."
+        },
+        {
+          "from": "jonah",
+          "text": "Caleb was seventeen. He found the report in the bins behind the town hall and he took it to the one adult who'd ever been decent to him. She sat on the council. She told him she'd handle it."
+        },
+        {
+          "from": "jonah",
+          "text": "Three days later he was a runaway. And the release log for that night said the spillway house was locked and empty."
+        },
+        {
+          "choice": [
+            {
+              "text": "You've been logging the water yourself.",
+              "goto": 4
+            },
+            {
+              "text": "Why didn't you go to the police?",
+              "goto": 7
+            },
+            {
+              "text": "Say her name, Jonah.",
+              "goto": 10,
+              "effects": {
+                "flags": [
+                  "jonah_named_ardis"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "from": "jonah",
+          "text": "Caleb built a pressure sensor on the dock that summer. He was seventeen. I've kept it running every minute since. It writes the level to a card. Nobody knows it's there."
+        },
+        {
+          "from": "jonah",
+          "text": "Nobody looked for it because nobody knew Caleb built things. He was 'the runaway'. That's all he got to be."
+        },
+        {
+          "choice": [
+            {
+              "text": "Go on.",
+              "goto": 12,
+              "default": true
+            }
+          ]
+        },
+        {
+          "from": "jonah",
+          "text": "I did. In 2009. Chief Pell told me Caleb was a runaway and I should think about my future."
+        },
+        {
+          "from": "jonah",
+          "text": "Pell's retired now. He plays golf with Everett Reed. So I kept my mouth shut and my sensor running."
+        },
+        {
+          "choice": [
+            {
+              "text": "Go on.",
+              "goto": 12,
+              "default": true
+            }
+          ]
+        },
+        {
+          "from": "jonah",
+          "text": "\u2026Locke. Ardis Locke. There. Twenty years and I've never said it into a phone."
+        },
+        {
+          "choice": [
+            {
+              "text": "Go on.",
+              "goto": 12,
+              "default": true
+            }
+          ]
+        },
+        {
+          "from": "jonah",
+          "text": "She was the adult Caleb trusted. She's the adult Mara trusts. And she's been texting you, hasn't she. 'Anything you need.'"
+        },
+        {
+          "from": "jonah",
+          "text": "When the gates open, the level drops four tenths of a metre in nine minutes.",
+          "effects": {
+            "flags": [
+              "jonah_sensor_explained"
+            ]
+          }
+        },
+        {
+          "from": "jonah",
+          "text": "The card has a drop at 23:41 on the 13th. The night Wren went. And 23:41 on the 11th. Official log: nothing. I'm sending you the file."
+        },
+        {
+          "choice": [
+            {
+              "text": "Go on.",
+              "goto": 16,
+              "default": true
+            },
+            {
+              "text": "What about inspector Harlan?",
+              "goto": 17,
+              "effects": {
+                "evidence": [
+                  "ev_harlan_2007"
+                ],
+                "flags": [
+                  "asked_harlan"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "end": true
+        },
+        {
+          "from": "jonah",
+          "text": "3 February 2007. A fourth drop. The night they said Harlan fell off the spillway walkway. Nobody ever asked why the water moved."
+        },
+        {
+          "end": true
+        }
+      ],
+      "effects": {
+        "evidence": [
+          "ev_jonah_confession"
+        ],
+        "trust": {
+          "jonah": 1
+        },
+        "notes": [
+          {
+            "id": "n_sensor",
+            "title": "dock sensor export (Jonah)",
+            "body": "Caleb built it, summer 2006. Jonah kept it running. Release signature: -0.4 m over 9 min.\n\nThree a year until 2019. Monthly since 2020. Two in three days this month.\n\n10th 06:00 drop (scheduled)\n10th 18:00 drop (scheduled)\n11th 23:41 DROP - not in the log\n13th 23:41 DROP - not in the log\n\n18 Nov 2006 23:40 DROP - Caleb's own machine, his last night\n3 Feb 2007 23:41 DROP - the night Harlan 'fell'"
+          }
+        ],
+        "journal": "Jonah's sensor: night drops at 23:41 on the 11th and the 13th. And 23:40 on 18 November 2006. Same script, one minute off."
+      },
+      "next": "b_mara"
+    },
+    "b_mara": {
+      "type": "branch",
+      "if": {
+        "trust": {
+          "who": "mara",
+          "min": 1
+        }
+      },
+      "then": "ma1",
+      "else": "ma_cold"
+    },
+    "ma1": {
+      "type": "message",
+      "thread": "mara",
+      "text": "I couldn't sleep either. {player}, I have to tell you something and then I need you to not hate me.",
+      "delay": 1.3,
+      "next": "ma2"
+    },
+    "ma2": {
+      "type": "message",
+      "thread": "mara",
+      "text": "I told Ardis about Wren's project. Weeks ago. Over coffee. I said my girlfriend's obsessed with the old town and she's asking people about 2006 and I laughed about it.",
+      "next": "ma3"
+    },
+    "ma3": {
+      "type": "message",
+      "thread": "mara",
+      "text": "And I file the 2006 minutes. About the Voss boy. About who he'd gone to see. I have never said a word, then or after.",
+      "next": "ma3b"
+    },
+    "ma3b": {
+      "type": "message",
+      "thread": "mara",
+      "text": "After Wren vanished I gave Ardis our shared-plan login. So the police can help, I said. That is the second viewer on your phone. It was never me. It was my password.",
+      "next": "c_mara4"
+    },
+    "c_mara4": {
+      "type": "choice",
+      "thread": "mara",
+      "options": [
+        {
+          "text": "Thank you for telling me. It matters. It might save her.",
+          "next": "ma4_kind",
+          "effects": {
+            "trust": {
+              "mara": 1
+            },
+            "evidence": [
+              "ev_mara_secret"
+            ],
+            "pins": [
+              "mara"
+            ],
+            "flags": [
+              "mara_gave_login"
+            ]
+          }
+        },
+        {
+          "text": "You laughed about it. With her.",
+          "next": "ma4_hard",
+          "effects": {
+            "evidence": [
+              "ev_mara_secret"
+            ],
+            "flags": [
+              "mara_gave_login"
+            ]
+          }
+        },
+        {
+          "text": "Will you say this to the police?",
+          "next": "ma4_police",
+          "effects": {
+            "trust": {
+              "mara": 1
+            },
+            "evidence": [
+              "ev_mara_secret"
+            ],
+            "flags": [
+              "mara_will_testify",
+              "mara_gave_login"
+            ]
+          }
+        }
+      ]
+    },
+    "ma4_kind": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Bring her home and I'll say it to anyone.",
+      "next": "s_cliff"
+    },
+    "ma4_hard": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Yes. I did. I've been hearing myself do it every night for eleven days.",
+      "next": "s_cliff"
+    },
+    "ma4_police": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Yes. Tell me when.",
+      "next": "s_cliff"
+    },
+    "ma_cold": {
+      "type": "message",
+      "thread": "mara",
+      "text": "I've said too much to you already. Please don't contact me again unless it's about Wren.",
+      "delay": 1.3,
+      "next": "s_cliff",
+      "effects": {
+        "journal": "Mara has closed the door. Whatever she knows about 2006, she is keeping it."
+      }
+    },
+    "s_cliff": {
+      "type": "scene",
+      "image": "loc_spillway",
+      "lines": [
+        "Two records of the same night.",
+        "Jonah's card: a drop at 23:41 on the 13th, nine minutes long. The gates opened.",
+        "Ardis Locke's official log: no night work. Never have been.",
+        "One of these was written by a machine on a dock piling. The other was written by the person who called you after the bell."
+      ],
+      "next": "n_memo2"
+    },
+    "n_memo2": {
+      "type": "notification",
+      "app": "calls",
+      "title": "Voice memo",
+      "body": "the bell isn't the orchard",
+      "effects": {
+        "call_log": [
+          {
+            "id": "vm_memo2",
+            "contact": "wren",
+            "direction": "in",
+            "label": "Voice memo \u00b7 undated",
+            "duration": 9,
+            "voicemail": "vm_wren_memo2"
+          }
+        ]
+      },
+      "next": "s_next"
+    },
+    "s_next": {
+      "type": "scene",
+      "lines": [
+        "The sensor projection: next release, tomorrow night, 23:41.",
+        "Same minute they have used for twenty years."
+      ],
+      "next": "t_card"
+    },
+    "t_card": {
+      "type": "title",
+      "kicker": "THE HOLLOWMERE FILES",
+      "title": "Episode 4",
+      "subtitle": "Static",
+      "next": "new_ep4_m1"
+    },
+    "end4": {
+      "type": "end_episode",
+      "teaser": "Episode 5 - The Warden. Mark the lies. Name the voice. Choose the road.",
+      "next_episode": "ep5"
+    },
+    "new_ep4_m1": {
+      "type": "message",
+      "thread": "deacon",
+      "text": "I know what you're doing. Back off or you'll end up like Wren.",
+      "delay": 2.0,
+      "next": "new_ep4_m2"
+    },
+    "new_ep4_m2": {
+      "type": "message",
+      "thread": "deacon",
+      "text": "I left a little present for you on your porch.",
+      "delay": 1.0,
+      "next": "new_ep4_mg"
+    },
+    "new_ep4_g1": {
+      "type": "effects",
+      "next": "new_ep4_mg"
+    },
+    "new_ep4_mg": {
+      "type": "minigame",
+      "game": "feed_scrub",
+      "title": "Porch Drop-off",
+      "config": {
+        "target_time": "12:00",
+        "brief": "Scrub the security feed to 12:00 to see what Deacon left."
+      },
+      "hints": [
+        "Scrub to exactly 12:00."
+      ],
+      "next": "new_ep4_s1"
+    },
+    "new_ep4_s1": {
+      "type": "scene",
+      "lines": [
+        "A black box with a timer counting down.",
+        "It's not a bomb. It's an audio jammer.",
+        "He's isolating you. The town's sirens start to wail in the distance."
+      ],
+      "next": "end4"
+    }
   }
 }

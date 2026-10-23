@@ -1,0 +1,68 @@
+{
+  "id": "ep17",
+  "number": 17,
+  "title": "The State Police",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "The sirens fade as state troopers swarm the dam.",
+        "You hand over the detonator.",
+        "But the captain looks at it, then looks at you.",
+        "\"Put them in zip-ties. They are the prime suspect.\""
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "They are in on it. The state governor is Ardis's brother.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "I can hack their cruiser's locking mechanism, but you have to align the frequency.",
+      "next": "g1",
+      "delay": 1.0
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Open the cloud to hack the cruiser lock.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "signal_hack",
+      "title": "Cruiser Override",
+      "config": {
+        "target_freq": 105.0,
+        "target_amp": 75.0,
+        "brief": "Match the police radio frequency to pop the locks."
+      },
+      "hints": [
+        "Adjust freq to 105 and amp to 75."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "The cruiser doors click open.",
+        "You roll out into the muddy ditch as they look the other way.",
+        "You are now a fugitive."
+      ],
+      "next": "end17"
+    },
+    "end17": {
+      "type": "end_episode",
+      "teaser": "Episode 18 - The Mines",
+      "next_episode": "ep18"
+    }
+  }
+}

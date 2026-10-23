@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/audio.dart';
 import 'core/theme.dart';
 import 'core/whisper.dart';
 import 'engine/story_engine.dart';
+import 'l10n/l10n.dart';
 import 'features/shell/ending_screen.dart';
 import 'features/shell/menu_screen.dart';
 import 'features/shell/phone_shell.dart';
@@ -16,16 +18,27 @@ class HollowmereApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lang = ref.watch(localeProvider);
+    L10nCatalog.language = lang;
     return MaterialApp(
       title: 'The Hollowmere Files',
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
+      locale: lang.locale,
+      supportedLocales: [for (final l in AppLanguage.values) l.locale],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       // MaterialApp's own DefaultTextStyle is the debug fallback (red type,
       // yellow double underline). Anything not sitting under a Scaffold/Material
       // - overlays, nested-navigator siblings, title cards - picks that up.
       // Pin a real style at the root so every screen inherits it.
       builder: (context, child) {
-        return DefaultTextStyle(
+        return L10nScope(
+          language: lang,
+          child: DefaultTextStyle(
           style: const TextStyle(
             inherit: false,
             color: HmColors.text,
@@ -43,6 +56,7 @@ class HollowmereApp extends ConsumerWidget {
               child: child ?? const SizedBox.shrink(),
             ),
           ),
+        ),
         );
       },
       home: const _Root(),

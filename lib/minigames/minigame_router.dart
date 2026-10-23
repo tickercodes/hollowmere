@@ -4,6 +4,7 @@ import '../engine/story_engine.dart';
 import 'audio_tag_game.dart';
 import 'board_connect_game.dart';
 import 'cipher_game.dart';
+import 'key_cipher_game.dart';
 import 'feed_scrub_game.dart';
 import 'live_static_game.dart';
 import 'log_diff_game.dart';
@@ -12,6 +13,9 @@ import 'passcode_game.dart';
 import 'photo_spot_game.dart';
 import 'sudoku_game.dart';
 
+import 'wire_cut_game.dart';
+import 'signal_hack_game.dart';
+
 /// Every mini-game id a script may reference. Kept as a constant so the
 /// script validator (and tests) can reject unknown games at load time.
 const minigameIds = {
@@ -19,6 +23,7 @@ const minigameIds = {
   'photo_spot',
   'order',
   'cipher',
+  'key_cipher',
   'sudoku',
   'audio_tag',
   'feed_scrub',
@@ -27,6 +32,8 @@ const minigameIds = {
   'log_diff',
   'voice_match',
   'accuse',
+  'wire_cut',
+  'signal_hack',
 };
 
 class MinigameRouter extends StatelessWidget {
@@ -39,6 +46,7 @@ class MinigameRouter extends StatelessWidget {
         'photo_spot' => PhotoSpotGame(interaction: interaction),
         'order' => OrderGame(interaction: interaction),
         'cipher' => CipherGame(interaction: interaction),
+        'key_cipher' => KeyCipherGame(interaction: interaction),
         'sudoku' => SudokuGame(interaction: interaction),
         'audio_tag' => AudioTagGame(interaction: interaction),
         'feed_scrub' => FeedScrubGame(interaction: interaction),
@@ -47,6 +55,8 @@ class MinigameRouter extends StatelessWidget {
         'log_diff' => LogDiffGame(interaction: interaction),
         'voice_match' => VoiceMatchGame(interaction: interaction),
         'accuse' => AccuseGame(interaction: interaction),
+        'wire_cut' => WireCutGame(interaction: interaction),
+        'signal_hack' => SignalHackGame(interaction: interaction),
         _ => throw StateError('Unknown minigame "${interaction.game}"'),
       };
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../content/photos.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 
 /// Full-screen story beats layered above the phone: title cards, scenes
 /// (location image + narration), and the end-of-episode card.
@@ -21,7 +22,10 @@ class StoryOverlays extends ConsumerWidget {
         ),
       SceneInteraction(:final node) => _SceneCard(node: node),
       EpisodeEndInteraction(:final node, :final episode) => _EpisodeEndCard(
-          episodeTitle: 'Episode ${episode.number} - ${episode.title}',
+          episodeTitle: context.fmt('Episode {n} - {title}', {
+            'n': episode.number,
+            'title': episode.title,
+          }),
           teaser: node['teaser'] as String?,
           hasNext: node['next_episode'] != null,
         ),
@@ -77,12 +81,12 @@ class _TitleCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (kicker != null) ...[
-                Text(kicker!.toUpperCase(),
+                Text(context.tr(kicker!).toUpperCase(),
                     style: monoStyle.copyWith(color: HmColors.teal, letterSpacing: 3)),
                 const SizedBox(height: 18),
               ],
               _FadeIn(
-                child: Text(title,
+                child: Text(context.tr(title),
                     textAlign: TextAlign.center,
                     style: displayStyle.copyWith(fontSize: 30)),
               ),
@@ -90,7 +94,7 @@ class _TitleCard extends ConsumerWidget {
                 const SizedBox(height: 14),
                 _FadeIn(
                   delay: 500,
-                  child: Text(subtitle!,
+                  child: Text(context.tr(subtitle!),
                       textAlign: TextAlign.center,
                       style: const TextStyle(color: HmColors.textDim, fontSize: 15, height: 1.5)),
                 ),
@@ -98,7 +102,7 @@ class _TitleCard extends ConsumerWidget {
               const SizedBox(height: 48),
               _FadeIn(
                 delay: 1200,
-                child: Text('tap to continue',
+                child: Text(context.tr('tap to continue'),
                     style: monoStyle.copyWith(color: HmColors.textDim, fontSize: 11)),
               ),
             ],
@@ -159,7 +163,7 @@ class _SceneCardState extends ConsumerState<_SceneCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (title != null)
-                      Text(title.toUpperCase(),
+                      Text(context.tr(title).toUpperCase(),
                           style: monoStyle.copyWith(color: HmColors.teal, letterSpacing: 3)),
                     const SizedBox(height: 14),
                     AnimatedSize(
@@ -167,7 +171,7 @@ class _SceneCardState extends ConsumerState<_SceneCard> {
                       curve: Curves.easeOutCubic,
                       alignment: Alignment.topLeft,
                       child: Text(
-                        lines[_line],
+                        context.tr(lines[_line]),
                         key: ValueKey(_line),
                         style: const TextStyle(
                           fontSize: 17,
@@ -191,7 +195,7 @@ class _SceneCardState extends ConsumerState<_SceneCard> {
                             ),
                           ),
                         const Spacer(),
-                        Text(last ? 'continue' : 'tap',
+                        Text(context.tr(last ? 'continue' : 'tap'),
                             style: monoStyle.copyWith(color: HmColors.textDim, fontSize: 11)),
                       ],
                     ),
@@ -229,7 +233,7 @@ class _EpisodeEndCard extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('END OF', style: monoStyle.copyWith(color: HmColors.teal, letterSpacing: 3)),
+            Text(context.tr('END OF'), style: monoStyle.copyWith(color: HmColors.teal, letterSpacing: 3)),
             const SizedBox(height: 12),
             Text(episodeTitle, textAlign: TextAlign.center,
                 style: displayStyle.copyWith(fontSize: 24)),
@@ -237,15 +241,15 @@ class _EpisodeEndCard extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _Stat('evidence', '${game.evidenceCount}'),
-                _Stat('hints', '${game.hintsUsed.values.fold(0, (a, b) => a + b)}'),
-                _Stat('trust · J', '${game.trustOf('jonah')}'),
-                _Stat('trust · D', '${game.trustOf('deacon')}'),
+                _Stat(context.tr('evidence'), '${game.evidenceCount}'),
+                _Stat(context.tr('hints'), '${game.hintsUsed.values.fold(0, (a, b) => a + b)}'),
+                _Stat(context.tr('trust · J'), '${game.trustOf('jonah')}'),
+                _Stat(context.tr('trust · D'), '${game.trustOf('deacon')}'),
               ],
             ),
             if (teaser != null) ...[
               const SizedBox(height: 36),
-              Text(teaser!,
+              Text(context.tr(teaser!),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       color: HmColors.textDim, fontStyle: FontStyle.italic, height: 1.5)),
@@ -253,12 +257,12 @@ class _EpisodeEndCard extends ConsumerWidget {
             const SizedBox(height: 48),
             FilledButton(
               onPressed: engine.dismissOverlay,
-              child: Text(hasNext ? 'Next episode' : 'Finish'),
+              child: Text(context.tr(hasNext ? 'Next episode' : 'Finish')),
             ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: engine.backToMenu,
-              child: const Text('Back to menu', style: TextStyle(color: HmColors.textDim)),
+              child: Text(context.tr('Back to menu'), style: const TextStyle(color: HmColors.textDim)),
             ),
           ],
         ),
@@ -278,7 +282,7 @@ class _Stat extends StatelessWidget {
         child: Column(
           children: [
             Text(value, style: displayStyle.copyWith(fontSize: 22)),
-            Text(label, style: monoStyle.copyWith(fontSize: 10, color: HmColors.textDim)),
+            Text(context.tr(label), style: monoStyle.copyWith(fontSize: 10, color: HmColors.textDim)),
           ],
         ),
       );

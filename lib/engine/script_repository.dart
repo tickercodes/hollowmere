@@ -6,7 +6,7 @@ import 'script.dart';
 class ScriptRepository {
   ScriptRepository(Map<String, EpisodeScript> episodes) : _episodes = episodes;
 
-  static const episodeIds = ['ep1', 'ep2', 'ep3', 'ep4', 'ep5', 'ep6'];
+  static const episodeIds = ['ep1', 'ep2', 'ep3', 'ep4', 'ep5', 'ep6', 'ep7', 'ep8', 'ep9', 'ep10', 'ep11', 'ep12', 'ep13', 'ep14', 'ep15', 'ep16', 'ep17', 'ep18', 'ep19', 'ep20'];
 
   final Map<String, EpisodeScript> _episodes;
 

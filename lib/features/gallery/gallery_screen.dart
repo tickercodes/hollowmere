@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../content/photos.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/widgets.dart';
 
 /// "Wren's Library": the mirrored photo roll. Locked items render as blurred
@@ -50,7 +51,10 @@ class _GalleryScreenState extends ConsumerState<GalleryScreen> {
     final unlocked = gallery.where((g) => !g.locked).length;
     return AppScaffold(
       title: "Wren's Library",
-      subtitle: '$unlocked of $total items synced',
+      subtitle: context.fmt('{found} of {total} items synced', {
+        'found': unlocked,
+        'total': total,
+      }),
       body: gallery.isEmpty
           ? const EmptyHint('Nothing has synced from her library yet.',
               icon: Icons.cloud_off_rounded)
@@ -133,7 +137,7 @@ class PhotoViewer extends ConsumerWidget {
         flexibleSpace: const ColoredBox(color: Colors.black),
         leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded), onPressed: onBack),
-        title: Text(photo.caption, style: const TextStyle(fontSize: 16)),
+        title: Text(context.tr(photo.caption), style: const TextStyle(fontSize: 16)),
       ),
       body: Column(
         children: [
@@ -153,14 +157,17 @@ class PhotoViewer extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(photo.meta, style: monoStyle.copyWith(color: HmColors.textDim)),
+                Text(context.tr(photo.meta), style: monoStyle.copyWith(color: HmColors.textDim)),
                 if (photo.hotspots.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       const Icon(Icons.search_rounded, size: 16, color: HmColors.amber),
                       const SizedBox(width: 6),
-                      Text('$found / ${photo.hotspots.length} details examined',
+                      Text(context.fmt('{found} / {total} details examined', {
+                        'found': found,
+                        'total': photo.hotspots.length,
+                      }),
                           style: monoStyle.copyWith(fontSize: 11, color: HmColors.amber)),
                     ],
                   ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
 import 'engine/save_store.dart';
 import 'engine/script_repository.dart';
 import 'engine/story_engine.dart';
+import 'l10n/l10n.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +22,8 @@ Future<void> main() async {
     ScriptRepository.loadFromAssets(),
     PrefsSaveStore.open(),
   ]);
+  await restoreLanguage(await SharedPreferences.getInstance());
+  await L10nCatalog.loadAssets(rootBundle.loadString);
 
   runApp(ProviderScope(
     overrides: [

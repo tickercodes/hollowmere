@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import 'theme.dart';
 
 enum AppNoticeTone { info, error, success }
@@ -81,7 +82,7 @@ class TopNoticeStrip extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(16, 7, 16, 7),
                           child: Text(
-                            notice.message,
+                            context.tr(notice.message),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

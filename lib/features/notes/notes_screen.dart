@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme.dart';
 import '../../engine/game_state.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/widgets.dart';
 
 /// Wren's mirrored notes (and her search history, stored as `search_*`).
@@ -46,11 +47,11 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(n.title,
+                      Text(context.tr(n.title),
                           style: const TextStyle(
                               color: HmColors.paperInk, fontWeight: FontWeight.w700, fontSize: 16)),
                       const SizedBox(height: 8),
-                      Text(n.body,
+                      Text(context.tr(n.body),
                           style: const TextStyle(color: HmColors.paperInk, height: 1.5, fontSize: 14.5)),
                     ],
                   ),
@@ -61,7 +62,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
   }
 }
 
-/// Sam's own running recap, appended by scripts. Doubles as a "previously on".
+/// John's own running recap, appended by scripts. Doubles as a "previously on".
 class JournalScreen extends ConsumerWidget {
   const JournalScreen({super.key});
 
@@ -88,7 +89,7 @@ class JournalScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _ledgerLine(game),
+                  context.tr(_ledgerLine(game)),
                   textAlign: TextAlign.center,
                   style: monoStyle.copyWith(fontSize: 10, color: HmColors.textDim, height: 1.4),
                 ),
@@ -115,7 +116,7 @@ class JournalScreen extends ConsumerWidget {
                               color: i == 0 ? HmColors.teal : HmColors.hairline,
                             ),
                           ),
-                          Expanded(child: Text(lines[i], style: const TextStyle(height: 1.5))),
+                          Expanded(child: Text(context.tr(lines[i], playerName: game.playerName), style: const TextStyle(height: 1.5))),
                         ],
                       ),
                     ),
@@ -148,7 +149,7 @@ class _Meter extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Text(label, style: monoStyle.copyWith(fontSize: 10, color: HmColors.textDim)),
+          Text(context.tr(label), style: monoStyle.copyWith(fontSize: 10, color: HmColors.textDim)),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

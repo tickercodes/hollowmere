@@ -5,6 +5,8 @@ import '../../content/photos.dart';
 import '../../core/glass.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
+import '../settings/language_picker.dart';
 
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
@@ -39,11 +41,11 @@ class MenuScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 24),
-                  Text('A FOUND-PHONE MYSTERY',
+                  Text(context.tr('A FOUND-PHONE MYSTERY'),
                       textAlign: TextAlign.center,
                       style: monoStyle.copyWith(color: HmColors.teal, letterSpacing: 3)),
                   const SizedBox(height: 10),
-                  Text('THE\nHOLLOWMERE\nFILES',
+                  Text(context.tr('THE\nHOLLOWMERE\nFILES'),
                       textAlign: TextAlign.center,
                       style: displayStyle.copyWith(fontSize: 34, height: 1.1)),
                   const Spacer(),
@@ -51,26 +53,31 @@ class MenuScreen extends ConsumerWidget {
                     FilledButton.icon(
                       onPressed: engine.resume,
                       icon: const Icon(Icons.play_arrow_rounded),
-                      label: Text(
-                          'Continue - Episode ${scripts.episode(game.episodeId).number}'),
+                      label: Text(context.fmt('Continue - Episode {n}', {
+                        'n': scripts.episode(game.episodeId).number,
+                      })),
                     ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     onPressed: () => _startNew(context, ref, hasProgress),
                     icon: const Icon(Icons.fiber_manual_record, size: 14),
-                    label: const Text('New game'),
+                    label: Text(context.tr('New game')),
                   ),
                   if (game.completedEpisodes.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
                       onPressed: () => _episodeSelect(context, ref),
                       icon: const Icon(Icons.list_rounded),
-                      label: const Text('Episodes'),
+                      label: Text(context.tr('Episodes')),
                     ),
                   ],
                   const SizedBox(height: 28),
+                  TextButton(
+                    onPressed: () => showLanguagePicker(context, ref),
+                    child: Text(ref.watch(localeProvider).label),
+                  ),
                   Text(
-                    'Headphones help. You never have to wait in real time.',
+                    context.tr('Use headphones for a better experience.'),
                     textAlign: TextAlign.center,
                     style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim),
                   ),
@@ -118,7 +125,7 @@ class MenuScreen extends ConsumerWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: Text('EPISODES',
+              child: Text(c.tr('EPISODES'),
                   style: monoStyle.copyWith(color: HmColors.teal, letterSpacing: 2.4, fontSize: 11)),
             ),
             for (final ep in scripts.all)
@@ -127,8 +134,8 @@ class MenuScreen extends ConsumerWidget {
                     done.contains('ep${ep.number - 1}') ||
                     done.contains(ep.id),
                 leading: Text('${ep.number}', style: displayStyle.copyWith(fontSize: 20)),
-                title: Text(ep.title),
-                subtitle: Text(done.contains(ep.id) ? 'Completed' : 'Locked',
+                title: Text(c.tr(ep.title)),
+                subtitle: Text(c.tr(done.contains(ep.id) ? 'Completed' : 'Locked'),
                     style: const TextStyle(color: HmColors.textDim)),
                 onTap: () {
                   Navigator.pop(c);

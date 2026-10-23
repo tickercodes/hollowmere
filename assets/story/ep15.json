@@ -1,0 +1,94 @@
+{
+  "id": "ep15",
+  "number": 15,
+  "title": "The Final Countdown",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "You reach the top of the dam.",
+        "The rain is a torrential downpour.",
+        "Jonah stands by the detonator console. He looks back at you."
+      ],
+      "next": "j1"
+    },
+    "j1": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "I'm sorry. I really am.",
+      "next": "j2",
+      "delay": 1.0
+    },
+    "j2": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "But the town is built on poison. The mines have to be flooded to hide the toxins. Or we all go to prison.",
+      "next": "j3",
+      "delay": 1.0
+    },
+    "j3": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "You can't stop this.",
+      "next": "w1",
+      "delay": 1.0
+    },
+    "w1": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Don't listen to him. You can shut down his console by sending a feedback loop to his earpiece.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "calls",
+      "title": "Jonah's Frequency",
+      "body": "102.4 MHz",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Open the Calls app and trigger a feedback loop.",
+      "target": {
+        "app": "calls"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "live_static",
+      "title": "Feedback Loop",
+      "config": {
+        "frequency": 102.4,
+        "brief": "Tune the frequency to 102.4 to deafen Jonah and make him drop the detonator."
+      },
+      "hints": [
+        "Tune to 102.4"
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "Jonah screams, clutching his ear, and drops the detonator.",
+        "You lunge forward and grab it.",
+        "But the timer is still ticking. 10 seconds."
+      ],
+      "next": "w2"
+    },
+    "w2": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Enter the abort code. It's the passcode we used.",
+      "next": "end15",
+      "delay": 1.0
+    },
+    "end15": {
+      "type": "end_episode",
+      "teaser": "Episode 16 - The Spillway",
+      "next_episode": "ep16"
+    }
+  }
+}

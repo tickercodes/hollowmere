@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme.dart';
+import '../l10n/l10n.dart';
 import '../engine/story_engine.dart';
 import '../features/calls/calls_screen.dart';
+import 'minigame_config.dart';
 import 'minigame_scaffold.dart';
 
 /// Log Discrepancy. config:
@@ -21,17 +23,30 @@ class _LogDiffGameState extends ConsumerState<LogDiffGame> {
   final _marked = <int>{};
 
   Map<String, dynamic> get cfg => widget.interaction.node.config;
-  List<Map<String, dynamic>> get rows => (cfg['rows'] as List).cast<Map<String, dynamic>>();
+  List<Map<String, dynamic>> get rows => MinigameConfig.logRows(cfg);
 
   void _check() {
-    final answer = {for (var i = 0; i < rows.length; i++) if (rows[i]['mismatch'] == true) i};
+    final answer = {
+      for (var i = 0; i < rows.length; i++)
+        if (rows[i]['mismatch'] == true) i,
+    };
     if (_marked.length == answer.length && _marked.containsAll(answer)) {
       ref.minigameSuccess(context, message: 'Every discrepancy marked.');
     } else {
       final wrong = _marked.difference(answer).length;
       final missed = answer.difference(_marked).length;
-      ref.minigameFail(context, widget.interaction.puzzleId,
-          '${wrong > 0 ? '$wrong marked rows agree. ' : ''}${missed > 0 ? '$missed disagreement${missed == 1 ? '' : 's'} not marked.' : ''}');
+      final parts = <String>[
+        if (wrong > 0)
+          L10nCatalog.format('{n} marked rows agree.', {'n': wrong}),
+        if (missed > 0)
+          L10nCatalog.format(
+            missed == 1
+                ? '{n} disagreement not marked.'
+                : '{n} disagreements not marked.',
+            {'n': missed},
+          ),
+      ];
+      ref.minigameFail(context, widget.interaction.puzzleId, parts.join(' '));
     }
   }
 
@@ -41,7 +56,10 @@ class _LogDiffGameState extends ConsumerState<LogDiffGame> {
       interaction: widget.interaction,
       scroll: false,
       brief: cfg['brief'] as String? ?? 'Two records of the same nights. Mark every row where they do not match.',
-      bottom: CheckBar(onCheck: _check, status: '${_marked.length} marked'),
+      bottom: CheckBar(
+        onCheck: _check,
+        status: context.fmt('{n} marked', {'n': _marked.length}),
+      ),
       child: Expanded(
         child: Column(
           children: [
@@ -50,8 +68,24 @@ class _LogDiffGameState extends ConsumerState<LogDiffGame> {
               child: Row(
                 children: [
                   const SizedBox(width: 92),
-                  Expanded(child: Text((cfg['left_title'] as String?) ?? 'Official', style: monoStyle.copyWith(fontSize: 11, color: HmColors.amber))),
-                  Expanded(child: Text((cfg['right_title'] as String?) ?? 'Sensor', style: monoStyle.copyWith(fontSize: 11, color: HmColors.teal))),
+                  Expanded(
+                    child: Text(
+                      context.tr((cfg['left_title'] as String?) ?? 'Official'),
+                      style: monoStyle.copyWith(
+                        fontSize: 11,
+                        color: HmColors.amber,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      context.tr((cfg['right_title'] as String?) ?? 'Sensor'),
+                      style: monoStyle.copyWith(
+                        fontSize: 11,
+                        color: HmColors.teal,
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 40),
                 ],
               ),
@@ -64,24 +98,54 @@ class _LogDiffGameState extends ConsumerState<LogDiffGame> {
                   final r = rows[i];
                   final marked = _marked.contains(i);
                   return GestureDetector(
-                    onTap: () => setState(() => marked ? _marked.remove(i) : _marked.add(i)),
+                    onTap: () => setState(
+                      () => marked ? _marked.remove(i) : _marked.add(i),
+                    ),
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 6),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
-                        color: marked ? HmColors.danger.withValues(alpha: 0.12) : HmColors.surface,
+                        color: marked
+                            ? HmColors.danger.withValues(alpha: 0.12)
+                            : HmColors.surface,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: marked ? HmColors.danger : HmColors.hairline),
+                        border: Border.all(
+                          color: marked ? HmColors.danger : HmColors.hairline,
+                        ),
                       ),
                       child: Row(
                         children: [
-                          SizedBox(width: 84, child: Text(r['time'] as String, style: monoStyle.copyWith(fontSize: 12))),
-                          Expanded(child: Text(r['left'] as String, style: const TextStyle(fontSize: 13))),
-                          Expanded(child: Text(r['right'] as String, style: const TextStyle(fontSize: 13))),
+                          SizedBox(
+                            width: 84,
+                            child: Text(
+                              context.tr(r['time'] as String),
+                              style: monoStyle.copyWith(fontSize: 12),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              context.tr(r['left'] as String),
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              context.tr(r['right'] as String),
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ),
                           SizedBox(
                             width: 36,
-                            child: Icon(marked ? Icons.flag_rounded : Icons.flag_outlined,
-                                color: marked ? HmColors.danger : HmColors.textDim, size: 20),
+                            child: Icon(
+                              marked ? Icons.flag_rounded : Icons.flag_outlined,
+                              color: marked
+                                  ? HmColors.danger
+                                  : HmColors.textDim,
+                              size: 20,
+                            ),
                           ),
                         ],
                       ),
@@ -111,8 +175,8 @@ class _VoiceMatchGameState extends ConsumerState<VoiceMatchGame> {
   final _picks = <String, String>{};
 
   Map<String, dynamic> get cfg => widget.interaction.node.config;
-  List<Map<String, dynamic>> get clips => (cfg['clips'] as List).cast<Map<String, dynamic>>();
-  List<String> get options => (cfg['options'] as List).cast<String>();
+  List<Map<String, dynamic>> get clips => MinigameConfig.voiceClips(cfg);
+  List<String> get options => MinigameConfig.voiceOptions(cfg);
 
   void _check() {
     var right = 0;
@@ -122,7 +186,14 @@ class _VoiceMatchGameState extends ConsumerState<VoiceMatchGame> {
     if (right == clips.length) {
       ref.minigameSuccess(context, message: 'Voices matched.');
     } else {
-      ref.minigameFail(context, widget.interaction.puzzleId, '$right of ${clips.length} correct. Listen to what is behind the voice.');
+      ref.minigameFail(
+        context,
+        widget.interaction.puzzleId,
+        L10nCatalog.format(
+          '{right} of {total} correct. Listen to what is behind the voice.',
+          {'right': right, 'total': clips.length},
+        ),
+      );
     }
   }
 
@@ -141,17 +212,22 @@ class _VoiceMatchGameState extends ConsumerState<VoiceMatchGame> {
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Column(
                   children: [
-                    _ClipPlayer(voicemailId: c['voicemail'] as String, obscured: true),
+                    _ClipPlayer(
+                      voicemailId: c['voicemail'] as String,
+                      obscured: true,
+                    ),
                     const SizedBox(height: 6),
                     Wrap(
                       spacing: 8,
                       children: [
                         for (final o in options)
                           ChoiceChip(
-                            label: Text(_labelFor(o)),
+                            label: Text(context.tr(_labelFor(o))),
                             selected: _picks[c['voicemail']] == o,
                             selectedColor: HmColors.tealDim,
-                            onSelected: (_) => setState(() => _picks[c['voicemail'] as String] = o),
+                            onSelected: (_) => setState(
+                              () => _picks[c['voicemail'] as String] = o,
+                            ),
                           ),
                       ],
                     ),
@@ -165,13 +241,14 @@ class _VoiceMatchGameState extends ConsumerState<VoiceMatchGame> {
   }
 
   String _labelFor(String id) => switch (id) {
-        'deacon' => 'Deacon Moss',
-        'jonah' => 'Jonah Hale',
-        'ardis' => 'Ardis Locke',
-        'mara' => 'Mara Ellison',
-        'tess' => 'Tess Quinn',
-        _ => id,
-      };
+    'deacon' => 'Deacon Moss',
+    'jonah' => 'Jonah Hale',
+    'ardis' => 'Ardis Locke',
+    'mara' => 'Mara Ellison',
+    'tess' => 'Tess Quinn',
+    'caleb' => 'Caleb Voss',
+    _ => id,
+  };
 }
 
 class _ClipPlayer extends StatelessWidget {
@@ -181,9 +258,9 @@ class _ClipPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => VoicemailPlayer(
-        key: ValueKey('clip:$voicemailId'),
-        voicemailId: voicemailId,
-        compact: true,
-        obscureCaller: obscured,
-      );
+    key: ValueKey('clip:$voicemailId'),
+    voicemailId: voicemailId,
+    compact: true,
+    obscureCaller: obscured,
+  );
 }

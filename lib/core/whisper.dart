@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import 'theme.dart';
 
 /// A leaked caption that appears when an interstitial voice plays.
@@ -49,7 +50,7 @@ class WhisperOverlay extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                         child: Text(
-                          event.caption,
+                          context.tr(event.caption),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 13,

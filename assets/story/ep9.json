@@ -1,0 +1,221 @@
+{
+  "id": "ep9",
+  "number": 9,
+  "title": "The Chase",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "You slip out the basement window.",
+        "The rain is deafening. You hear Deacon kicking in your front door.",
+        "You need to get to the Spillway House. The only place with answers."
+      ],
+      "next": "w1"
+    },
+    "w1": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "You made it out. Good.",
+      "next": "w2",
+      "delay": 1.0
+    },
+    "w2": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Deacon will track your phone's GPS. You need to spoof it.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "cloud",
+      "title": "Spoofer App",
+      "body": "Installed",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Open the Cloud and configure the GPS spoofer.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "order",
+      "title": "Route Configuration",
+      "config": {
+        "items": [
+          "Marina",
+          "Diner",
+          "Town Hall",
+          "Spillway"
+        ],
+        "correct": [
+          "Diner",
+          "Town Hall",
+          "Marina",
+          "Spillway"
+        ],
+        "brief": "Order the GPS waypoints to create a fake trail. Start at Diner, end at Spillway."
+      },
+      "hints": [
+        "Diner -> Town Hall -> Marina -> Spillway"
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "Your phone's location now shows you heading towards the Diner.",
+        "In reality, you are sprinting through the flooded woods towards the Spillway."
+      ],
+      "next": "w3"
+    },
+    "w3": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "The Spillway house has a biometric lock. I managed to get Caleb's voice print before he vanished.",
+      "next": "notif2",
+      "delay": 1.0
+    },
+    "notif2": {
+      "type": "notification",
+      "app": "calls",
+      "title": "Voice Print",
+      "body": "Caleb's Voice",
+      "next": "g2"
+    },
+    "g2": {
+      "type": "goal",
+      "text": "Open the Calls app and match Caleb's voice.",
+      "target": {
+        "app": "calls"
+      },
+      "next": "mg2"
+    },
+    "mg2": {
+      "type": "minigame",
+      "game": "voice_match",
+      "title": "Biometric Bypass",
+      "config": {
+        "target": "voice_alive",
+        "brief": "Adjust the pitch and speed to match Caleb's voice print."
+      },
+      "hints": [
+        "Match the waveforms visually."
+      ],
+      "next": "s3"
+    },
+    "s3": {
+      "type": "scene",
+      "lines": [
+        "The door to the Spillway House clicks open.",
+        "Inside, it's pitch black. The smell of mildew and old paper.",
+        "You turn on your flashlight. The walls are covered in blueprints of the dam."
+      ],
+      "next": "w4"
+    },
+    "w4": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Look at the blueprints. The dam wasn't built to hold the water. It was built to funnel it.",
+      "next": "c1",
+      "delay": 1.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "wren_ghost",
+      "options": [
+        {
+          "text": "Funnel it where?",
+          "next": "w5"
+        },
+        {
+          "text": "I don't understand.",
+          "next": "w5"
+        }
+      ]
+    },
+    "w5": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Into the old silver mines beneath the town. The town is built on a hollow crust.",
+      "next": "w6",
+      "delay": 1.0
+    },
+    "w6": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "If they blow the dam, the water rushes into the mines. The entire town of Hollowmere will collapse into a sinkhole.",
+      "next": "s4",
+      "delay": 1.0
+    },
+    "s4": {
+      "type": "scene",
+      "lines": [
+        "Mass murder. To cover up what? What is in those mines?",
+        "You find a locked safe in the floorboards. It requires a Sudoku sequence."
+      ],
+      "next": "g3"
+    },
+    "g3": {
+      "type": "goal",
+      "text": "Solve the Sudoku lock on the safe.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg3"
+    },
+    "mg3": {
+      "type": "minigame",
+      "game": "sudoku",
+      "title": "Safe Lock",
+      "config": {
+        "grid": [
+          [
+            5,
+            3,
+            0
+          ],
+          [
+            6,
+            0,
+            0
+          ],
+          [
+            0,
+            9,
+            8
+          ]
+        ],
+        "brief": "Solve the mini Sudoku puzzle to open the safe."
+      },
+      "hints": [
+        "Make sure no row, column, or block has duplicate numbers."
+      ],
+      "next": "s5",
+      "effects": {
+        "evidence": [
+          "ev_spillway_log"
+        ]
+      }
+    },
+    "s5": {
+      "type": "scene",
+      "lines": [
+        "The safe opens.",
+        "Inside is a single ledger. The true history of Hollowmere.",
+        "Ardis's father didn't discover silver in the mines. He discovered something else."
+      ],
+      "next": "end9"
+    },
+    "end9": {
+      "type": "end_episode",
+      "teaser": "Episode 10 - The Architect",
+      "next_episode": "ep10"
+    }
+  }
+}

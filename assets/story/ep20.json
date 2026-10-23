@@ -1,0 +1,88 @@
+{
+  "id": "ep20",
+  "number": 20,
+  "title": "The Extraction",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "The facility's alarms blare. Red emergency lights bathe the servers.",
+        "Extraction complete.",
+        "You pull the drive, but the exit is blocked by heavily armed men."
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You have to use the ventilation shaft above the core. I'll overload the cooling system to create a distraction.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You need to manually synchronize the fan frequencies so they tear themselves apart.",
+      "next": "g1",
+      "delay": 1.0
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Open the cloud to overload the cooling fans.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "signal_hack",
+      "title": "Cooling Overload",
+      "config": {
+        "target_freq": 115.0,
+        "target_amp": 95.0,
+        "brief": "Push the frequency and amplitude to their maximum structural limits to shatter the fan blades."
+      },
+      "hints": [
+        "Match the highest peaks."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "A deafening screech fills the room as the massive exhaust fans shatter.",
+        "Thick white coolant smoke floods the room.",
+        "You scramble up the scaffolding and into the vents, completely unseen."
+      ],
+      "next": "m3"
+    },
+    "m3": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You made it out.",
+      "next": "m4",
+      "delay": 1.0
+    },
+    "m4": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "We have the data. The governor, the cartel, Ardis... they are finished.",
+      "next": "s3",
+      "delay": 1.0
+    },
+    "s3": {
+      "type": "scene",
+      "lines": [
+        "You emerge into the freezing night air, miles from Hollowmere.",
+        "You look at the drive in your hand. The truth.",
+        "The game is finally over."
+      ],
+      "next": "end20"
+    },
+    "end20": {
+      "type": "end_episode"
+    }
+  }
+}

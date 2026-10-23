@@ -1,0 +1,126 @@
+{
+  "id": "ep11",
+  "number": 11,
+  "title": "The Archives",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "You break into the Town Hall. It's eerily quiet.",
+        "The archives are in the basement.",
+        "Rows upon rows of dusty files."
+      ],
+      "next": "m1",
+      "image": "loc_town_hall_archive"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Where are you? Deacon was at the diner looking for you.",
+      "next": "c1",
+      "delay": 2.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "mara",
+      "options": [
+        {
+          "text": "I'm at the Town Hall. Don't tell him.",
+          "next": "m2"
+        },
+        {
+          "text": "I'm far away.",
+          "next": "m2_lie"
+        }
+      ]
+    },
+    "m2": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Town Hall? Are you crazy? Ardis is headed there now!",
+      "next": "m3",
+      "delay": 1.0
+    },
+    "m2_lie": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Good. Stay safe. But I saw Ardis's car heading to the Town Hall.",
+      "next": "m3",
+      "delay": 1.0
+    },
+    "m3": {
+      "type": "message",
+      "thread": "mara",
+      "text": "I'm coming to help you.",
+      "next": "w1",
+      "delay": 1.0
+    },
+    "w1": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Mara is not who you think she is.",
+      "next": "w2",
+      "delay": 1.0
+    },
+    "w2": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Check the staff logs. See when she started working at the diner.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "board",
+      "title": "New File",
+      "body": "Staff Logs",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Check the board to cross-reference Mara's employment.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "board_connect",
+      "title": "The Inside Woman",
+      "config": {
+        "connections": [
+          {
+            "from": "mara",
+            "to": "ardis"
+          }
+        ],
+        "brief": "Connect Mara to Ardis to reveal the informant link."
+      },
+      "hints": [
+        "Connect Mara to Ardis."
+      ],
+      "next": "s2",
+      "effects": {
+        "pins": [
+          "mara_informant"
+        ]
+      }
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "Mara started the exact day Wren began investigating.",
+        "She was planted there to watch Wren. Now she's watching you.",
+        "You hear footsteps upstairs. Ardis."
+      ],
+      "next": "end11"
+    },
+    "end11": {
+      "type": "end_episode",
+      "teaser": "Episode 12 - Betrayal",
+      "next_episode": "ep12"
+    }
+  }
+}

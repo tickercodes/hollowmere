@@ -80,6 +80,7 @@ const characters = <String, Character>{
     id: 'warden',
     name: 'THE WARDEN',
     subtitle: 'No caller ID',
+    portrait: '$_p/portrait_warden.jpg',
   ),
   'news': Character(
     id: 'news',
@@ -90,9 +91,28 @@ const characters = <String, Character>{
     id: 'roy',
     name: 'Roy Tarrant',
     subtitle: 'Reed Hydro · site security',
+    portrait: '$_p/portrait_roy.jpg',
     defaultLabel: 'Unknown number',
   ),
   'player': Character(id: 'player', name: 'You', subtitle: ''),
+  'unknown': Character(
+    id: 'unknown',
+    name: 'Unknown',
+    subtitle: 'no caller ID',
+    portrait: '$_p/portrait_unknown.jpg',
+  ),
+  'unknown_stalker': Character(
+    id: 'unknown_stalker',
+    name: 'Unknown',
+    subtitle: 'blocked number',
+    portrait: '$_p/portrait_unknown.jpg',
+  ),
+  'wren_ghost': Character(
+    id: 'wren_ghost',
+    name: 'Wren',
+    subtitle: 'the mirror · unstable',
+    portrait: '$_p/portrait_wren.jpg',
+  ),
 };
 
 Character characterOf(String id) =>

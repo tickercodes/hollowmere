@@ -1,0 +1,111 @@
+{
+  "id": "ep19",
+  "number": 19,
+  "title": "The Blackout",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "You navigate deeper into the subterranean facility.",
+        "The air is thick with the heat of hundreds of servers.",
+        "A massive steel door blocks the main data hub."
+      ],
+      "next": "m1",
+      "image": "ev_server_farm"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "That's the Core. All of Ardis's offshore accounts, the state governor's bribes, the cartel ledgers... it's all in there.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "I can route you the server room's manual override, but it's heavily encrypted.",
+      "next": "g1",
+      "delay": 1.0
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Hack the server node override.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "wire_cut",
+      "title": "Core Firewall",
+      "config": {
+        "wires": [
+          "red",
+          "purple",
+          "black"
+        ],
+        "correct_order": [
+          "black",
+          "red",
+          "purple"
+        ],
+        "brief": "Cut the ground wire (black), then the primary power (red), then data (purple)."
+      },
+      "hints": [
+        "Black, Red, Purple."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "The heavy steel door slides open.",
+        "Inside, a single terminal blinks with a global map.",
+        "You insert the extraction drive."
+      ],
+      "next": "m3"
+    },
+    "m3": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Data is extracting. 50%... 70%...",
+      "next": "m4",
+      "delay": 1.0
+    },
+    "m4": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Wait. Someone just triggered the lockdown protocols.",
+      "next": "c1",
+      "delay": 1.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "unknown",
+      "options": [
+        {
+          "text": "Who is it?",
+          "next": "m5"
+        },
+        {
+          "text": "Can you stop it?",
+          "next": "m5"
+        }
+      ]
+    },
+    "m5": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "It's the Governor's personal detail. They've found the facility.",
+      "next": "end19",
+      "delay": 1.0
+    },
+    "end19": {
+      "type": "end_episode",
+      "teaser": "Episode 20 - The Extraction",
+      "next_episode": "ep20"
+    }
+  }
+}

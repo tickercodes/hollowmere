@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../content/voicemails.dart';
 import '../core/notice.dart';
 import '../core/theme.dart';
+import '../l10n/l10n.dart';
 import '../engine/story_engine.dart';
 import '../features/calls/calls_screen.dart';
 import '../features/shell/widgets.dart';
@@ -37,16 +38,25 @@ class _AudioTagGameState extends ConsumerState<AudioTagGame> {
       }
     }
     if (hit == null) {
-      ref.minigameFail(context, widget.interaction.puzzleId,
-          'Nothing there at ${_pos.toStringAsFixed(0)}s. Move to where the line jumps.');
+      ref.minigameFail(
+        context,
+        widget.interaction.puzzleId,
+        L10nCatalog.format(
+          'Nothing there at {n}s. Move to where the line jumps.',
+          {'n': _pos.toStringAsFixed(0)},
+        ),
+      );
       return;
     }
     if (_found.contains(hit.id)) {
-      showAppNotice('Already tagged: ${hit.label}');
+      showAppNotice(L10nCatalog.format('Already tagged: {label}', {'label': hit.label}));
       return;
     }
     setState(() => _found.add(hit!.id));
-    showAppNotice('${hit.label} - ${hit.detail}', duration: const Duration(seconds: 4));
+    showAppNotice(
+      L10nCatalog.format('{label} - {detail}', {'label': hit.label, 'detail': hit.detail}),
+      duration: const Duration(seconds: 4),
+    );
     if (required.every(_found.contains)) {
       Future.delayed(const Duration(milliseconds: 1800), () {
         if (mounted) ref.minigameSuccess(context, message: 'Background tagged.');
@@ -65,7 +75,10 @@ class _AudioTagGameState extends ConsumerState<AudioTagGame> {
         child: Row(
           children: [
             Expanded(
-              child: Text('${_found.length} / ${required.length} sounds tagged',
+              child: Text(context.fmt('{found} / {total} sounds tagged', {
+                'found': _found.length,
+                'total': required.length,
+              }),
                   style: monoStyle.copyWith(color: HmColors.textDim, fontSize: 12)),
             ),
             ShellChipButton(label: 'Tag this sound', onTap: _tag),
@@ -100,10 +113,13 @@ class _AudioTagGameState extends ConsumerState<AudioTagGame> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${c.label} · ${c.at.toStringAsFixed(0)}s',
+                                Text(context.fmt('{label} · {at}s', {
+                                  'label': c.label,
+                                  'at': c.at.toStringAsFixed(0),
+                                }),
                                     style: const TextStyle(fontWeight: FontWeight.w600, color: HmColors.amber)),
                                 const SizedBox(height: 4),
-                                Text(c.detail, style: const TextStyle(color: HmColors.textDim, fontSize: 13, height: 1.4)),
+                                Text(context.tr(c.detail), style: const TextStyle(color: HmColors.textDim, fontSize: 13, height: 1.4)),
                               ],
                             );
                           })
@@ -111,7 +127,7 @@ class _AudioTagGameState extends ConsumerState<AudioTagGame> {
                             children: [
                               const Icon(Icons.graphic_eq_rounded, color: HmColors.textDim, size: 18),
                               const SizedBox(width: 10),
-                              Text('unidentified sound', style: monoStyle.copyWith(color: HmColors.textDim)),
+                              Text(context.tr('unidentified sound'), style: monoStyle.copyWith(color: HmColors.textDim)),
                             ],
                           ),
                   ),

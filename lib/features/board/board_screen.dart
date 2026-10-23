@@ -9,6 +9,7 @@ import '../../core/glass.dart';
 import '../../core/theme.dart';
 import '../../engine/game_state.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/widgets.dart';
 
 /// Fixed positions (normalised) so the board reads like the concept art:
@@ -96,22 +97,22 @@ class _BoardScreenState extends ConsumerState<BoardScreen> {
                 if (pin.character != null) Avatar(pin.character!, size: 48, revealed: true),
                 if (pin.character != null) const SizedBox(width: 12),
                 Expanded(
-                  child: Text(pin.label, style: displayStyle.copyWith(fontSize: 20)),
+                  child: Text(c.tr(pin.label), style: displayStyle.copyWith(fontSize: 20)),
                 ),
               ],
             ),
             const SizedBox(height: 10),
             if (pin.character != null)
-              Text(characterOf(pin.character!).subtitle,
+              Text(c.tr(characterOf(pin.character!).subtitle),
                   style: const TextStyle(color: HmColors.textDim)),
-            if (pin.note != null) Text(pin.note!, style: const TextStyle(height: 1.5)),
+            if (pin.note != null) Text(c.tr(pin.note!), style: const TextStyle(height: 1.5)),
             if (related.isNotEmpty) ...[
               const SizedBox(height: 14),
               const SectionLabel('Evidence on file'),
               for (final e in related)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
-                  child: Text('• ${e.title}', style: const TextStyle(fontSize: 14)),
+                  child: Text('• ${c.tr(e.title)}', style: const TextStyle(fontSize: 14)),
                 ),
             ],
             const SizedBox(height: 8),
@@ -132,10 +133,13 @@ class _BoardScreenState extends ConsumerState<BoardScreen> {
     final game = ref.watch(storyEngineProvider.select((s) => s.game));
     return AppScaffold(
       title: 'Case Board',
-      subtitle: '${game.boardPins.length} pins · ${game.boardLinks.length} connections',
+      subtitle: context.fmt('{pins} pins · {links} connections', {
+        'pins': game.boardPins.length,
+        'links': game.boardLinks.length,
+      }),
       actions: [
         IconButton(
-          tooltip: 'Evidence',
+          tooltip: context.tr('Evidence'),
           icon: const Icon(Icons.folder_special_rounded),
           onPressed: () => Navigator.of(context).pushNamed('/evidence'),
         ),
@@ -171,8 +175,8 @@ class _BoardScreenState extends ConsumerState<BoardScreen> {
                       }),
                       icon: Icon(_connectMode ? Icons.close_rounded : Icons.link_rounded),
                       label: Text(_connectMode
-                          ? (_pending == null ? 'Pick first pin' : 'Pick second pin')
-                          : 'Connect'),
+                          ? context.tr(_pending == null ? 'Pick first pin' : 'Pick second pin')
+                          : context.tr('Connect')),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -180,7 +184,7 @@ class _BoardScreenState extends ConsumerState<BoardScreen> {
                     child: OutlinedButton.icon(
                       onPressed: () => Navigator.of(context).pushNamed('/evidence'),
                       icon: const Icon(Icons.folder_special_rounded),
-                      label: Text('Evidence · ${game.evidenceCount}'),
+                      label: Text(context.fmt('Evidence · {n}', {'n': game.evidenceCount})),
                     ),
                   ),
                 ],
@@ -325,7 +329,7 @@ class _PositionedPin extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 3),
                       child: Text(
-                        pin.label,
+                        context.tr(pin.label),
                         maxLines: 2,
                         textAlign: TextAlign.center,
                         style: TextStyle(

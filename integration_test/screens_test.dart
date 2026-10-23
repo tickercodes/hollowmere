@@ -52,7 +52,7 @@ void main() {
     void popToHome() => shellNavigatorKey.currentState?.popUntil((r) => r.isFirst);
 
     // ---------------------------------------------------------------- Ep 1
-    engine.newGame(playerName: 'Sam');
+    engine.newGame(playerName: 'John');
     await until((i) => i is TitleInteraction);
     await settle();
     await _shot(binding, tester, '02_cold_open_title');

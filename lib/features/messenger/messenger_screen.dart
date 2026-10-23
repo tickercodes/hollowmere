@@ -7,6 +7,7 @@ import '../../core/notice.dart';
 import '../../core/theme.dart';
 import '../../engine/game_state.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/phone_shell.dart';
 import '../shell/widgets.dart';
 
@@ -21,12 +22,27 @@ class MessengerScreen extends ConsumerStatefulWidget {
 
 class _MessengerScreenState extends ConsumerState<MessengerScreen> {
   String? _open;
+  bool _goalReported = false;
 
   @override
   void initState() {
     super.initState();
     _open = widget.initialThread;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _reportOpen());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeReportGoal());
+  }
+
+  /// Goals only complete when this screen reports itself. If the goal appears
+  /// while the thread is already open, initState has already run, so report
+  /// again when the objective shows up.
+  void _maybeReportGoal() {
+    final interaction = ref.read(storyEngineProvider).interaction;
+    if (interaction is! GoalInteraction) {
+      _goalReported = false;
+      return;
+    }
+    if (_goalReported) return;
+    _goalReported = true;
+    _reportOpen();
   }
 
   void _reportOpen() {
@@ -47,6 +63,16 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<Interaction>(
+      storyEngineProvider.select((s) => s.interaction),
+      (_, _) => _maybeReportGoal(),
+    );
+    if (!_goalReported &&
+        ref.read(storyEngineProvider).interaction is GoalInteraction) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _maybeReportGoal();
+      });
+    }
     final open = _open;
     if (open != null) {
       return ThreadView(thread: open, onBack: () => _select(null));
@@ -87,27 +113,34 @@ class _ThreadList extends ConsumerWidget {
                 final preview = last == null
                     ? ''
                     : last.image != null && last.text.isEmpty
-                        ? 'Photo'
-                        : fillPlayer(last.text, game.playerName);
+                    ? context.tr('Photo')
+                    : context.tr(last.text, playerName: game.playerName);
                 return ListTile(
                   onTap: () => onOpen(id),
                   leading: Avatar(id, size: 46),
-                  title: Text(displayName(ref, id),
-                      style: TextStyle(
-                          fontWeight: unread ? FontWeight.w700 : FontWeight.w500)),
+                  title: Text(
+                    displayName(ref, id),
+                    style: TextStyle(
+                      fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
+                    ),
+                  ),
                   subtitle: Text(
                     preview,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: unread ? HmColors.text : HmColors.textDim),
+                      color: unread ? HmColors.text : HmColors.textDim,
+                    ),
                   ),
                   trailing: unread
                       ? Container(
                           width: 10,
                           height: 10,
                           decoration: const BoxDecoration(
-                              shape: BoxShape.circle, color: HmColors.teal))
+                            shape: BoxShape.circle,
+                            color: HmColors.teal,
+                          ),
+                        )
                       : null,
                 );
               },
@@ -136,7 +169,9 @@ class ThreadView extends ConsumerWidget {
       title: displayName(ref, thread),
       subtitle: c.subtitle.isEmpty ? null : c.subtitle,
       leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded), onPressed: onBack),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        onPressed: onBack,
+      ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 12),
@@ -169,9 +204,12 @@ class ThreadView extends ConsumerWidget {
                   itemCount: msgs.length + (typing ? 1 : 0),
                   itemBuilder: (context, i) {
                     if (typing && i == 0) return const _TypingBubble();
-                    final msgIndex = typing ? msgs.length - i : msgs.length - 1 - i;
+                    final msgIndex = typing
+                        ? msgs.length - i
+                        : msgs.length - 1 - i;
                     final m = msgs[msgIndex];
-                    final showTail = msgIndex == msgs.length - 1 ||
+                    final showTail =
+                        msgIndex == msgs.length - 1 ||
                         msgs[msgIndex + 1].from != m.from;
                     return _Bubble(
                       key: ValueKey(m.id),
@@ -185,7 +223,11 @@ class ThreadView extends ConsumerWidget {
             ),
           ),
           if (choice != null)
-            _ChoiceBar(choice: choice, engine: engine, playerName: session.game.playerName)
+            _ChoiceBar(
+              choice: choice,
+              engine: engine,
+              playerName: session.game.playerName,
+            )
           else
             _Composer(thread: thread, typing: typing),
         ],
@@ -208,8 +250,10 @@ class _Bubble extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mine = message.isPlayer;
-    final playerName = ref.watch(storyEngineProvider.select((s) => s.game.playerName));
-    final body = fillPlayer(message.text, playerName);
+    final playerName = ref.watch(
+      storyEngineProvider.select((s) => s.game.playerName),
+    );
+    final body = context.tr(message.text, playerName: playerName);
     final radius = BorderRadius.only(
       topLeft: const Radius.circular(18),
       topRight: const Radius.circular(18),
@@ -219,12 +263,12 @@ class _Bubble extends ConsumerWidget {
     final color = message.saved
         ? HmColors.teal.withValues(alpha: 0.18)
         : message.deleted
-            ? HmColors.glitchMagenta.withValues(alpha: 0.12)
-            : message.vanishing
-                ? HmColors.glitchCyan.withValues(alpha: 0.12)
-                : mine
-                    ? HmColors.bubbleOut
-                    : HmColors.bubbleIn;
+        ? HmColors.glitchMagenta.withValues(alpha: 0.12)
+        : message.vanishing
+        ? HmColors.glitchCyan.withValues(alpha: 0.12)
+        : mine
+        ? HmColors.bubbleOut
+        : HmColors.bubbleIn;
     final photo = message.image == null ? null : photoOf(message.image!);
     final holdable = message.vanishing || message.deleted;
 
@@ -239,19 +283,26 @@ class _Bubble extends ConsumerWidget {
         alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width * 0.78),
+            maxWidth: MediaQuery.sizeOf(context).width * 0.78,
+          ),
           child: GestureDetector(
             onLongPress: holdable
                 ? () {
                     final engine = ref.read(storyEngineProvider.notifier);
                     final ok = engine.saveVanishing(thread, message.id);
-                    final remain = GameState.ghostSaveCap -
+                    final remain =
+                        GameState.ghostSaveCap -
                         engine.game.ghostsSavedThisEpisode;
-                    showAppNotice(ok
-                        ? 'Saved. $remain left this episode.'
-                        : message.saved
-                            ? 'Already saved.'
-                            : 'You can only save five vanishing messages per episode.');
+                    showAppNotice(
+                      ok
+                          ? L10nCatalog.format(
+                              'Saved. {n} left this episode.',
+                              {'n': remain},
+                            )
+                          : message.saved
+                          ? 'Already saved.'
+                          : 'You can only save five vanishing messages per episode.',
+                    );
                   }
                 : null,
             child: Container(
@@ -262,7 +313,8 @@ class _Bubble extends ConsumerWidget {
                     ? Border.all(
                         color: message.saved
                             ? HmColors.teal
-                            : HmColors.glitchMagenta.withValues(alpha: 0.5))
+                            : HmColors.glitchMagenta.withValues(alpha: 0.5),
+                      )
                     : null,
               ),
               clipBehavior: Clip.antiAlias,
@@ -280,7 +332,10 @@ class _Bubble extends ConsumerWidget {
                     ),
                   if (body.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       child: Text(
                         body,
                         style: TextStyle(
@@ -299,23 +354,43 @@ class _Bubble extends ConsumerWidget {
                   if (message.vanishing && !message.saved)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
-                      child: Text('hold to save  ·  ${GameState.ghostSaveCap - ref.watch(storyEngineProvider.select((s) => s.game.ghostsSavedThisEpisode))} left',
-                          style: monoStyle.copyWith(
-                              fontSize: 10, color: HmColors.glitchCyan)),
+                      child: Text(
+                        context.fmt('hold to save  ·  {n} left', {
+                          'n':
+                              GameState.ghostSaveCap -
+                              ref.watch(
+                                storyEngineProvider.select(
+                                  (s) => s.game.ghostsSavedThisEpisode,
+                                ),
+                              ),
+                        }),
+                        style: monoStyle.copyWith(
+                          fontSize: 10,
+                          color: HmColors.glitchCyan,
+                        ),
+                      ),
                     ),
                   if (message.saved)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
-                      child: Text('saved from the mirror',
-                          style: monoStyle.copyWith(
-                              fontSize: 10, color: HmColors.teal)),
+                      child: Text(
+                        context.tr('saved from the mirror'),
+                        style: monoStyle.copyWith(
+                          fontSize: 10,
+                          color: HmColors.teal,
+                        ),
+                      ),
                     )
                   else if (message.deleted)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
-                      child: Text('message unavailable · hold to save',
-                          style: monoStyle.copyWith(
-                              fontSize: 10, color: HmColors.glitchMagenta)),
+                      child: Text(
+                        context.tr('message unavailable · hold to save'),
+                        style: monoStyle.copyWith(
+                          fontSize: 10,
+                          color: HmColors.glitchMagenta,
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -336,8 +411,9 @@ class _TypingBubble extends StatefulWidget {
 class _TypingBubbleState extends State<_TypingBubble>
     with SingleTickerProviderStateMixin {
   late final _ctrl = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 900))
-    ..repeat();
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat();
 
   @override
   void dispose() {
@@ -370,9 +446,11 @@ class _TypingBubbleState extends State<_TypingBubble>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: HmColors.textDim.withValues(
-                          alpha: 0.35 +
-                              0.65 *
-                                  ((1 + (_ctrl.value * 3 - i).clamp(-1, 1)) / 2)),
+                        alpha:
+                            0.35 +
+                            0.65 *
+                                ((1 + (_ctrl.value * 3 - i).clamp(-1, 1)) / 2),
+                      ),
                     ),
                   ),
               ],
@@ -420,17 +498,22 @@ class _ChoiceBar extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10, left: 2),
                     child: Text(
-                      prompt ?? 'Choose a reply',
+                      context.tr(prompt ?? 'Choose a reply'),
                       style: monoStyle.copyWith(
-                          fontSize: 11, color: HmColors.textDim, letterSpacing: 0.6),
+                        fontSize: 11,
+                        color: HmColors.textDim,
+                        letterSpacing: 0.6,
+                      ),
                     ),
                   ),
                   for (final i in visible)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: _OptionButton(
-                        text: fillPlayer(
-                            choice.node.options[i]['text'] as String, playerName),
+                        text: context.tr(
+                          choice.node.options[i]['text'] as String,
+                          playerName: playerName,
+                        ),
                         tag: choice.node.options[i]['tag'] as String?,
                         onTap: () => engine.choose(i),
                       ),
@@ -453,33 +536,35 @@ class _OptionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-        color: Colors.transparent,
-        child: InkWell(
+    color: Colors.transparent,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: HmColors.bubbleOut.withValues(alpha: 0.45),
           borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: HmColors.bubbleOut.withValues(alpha: 0.45),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: HmColors.teal.withValues(alpha: 0.45)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(text,
-                      style: const TextStyle(fontSize: 15, height: 1.35)),
-                ),
-                if (tag != null) ...[
-                  const SizedBox(width: 8),
-                  Pill(tag!, color: HmColors.textDim),
-                ],
-              ],
-            ),
-          ),
+          border: Border.all(color: HmColors.teal.withValues(alpha: 0.45)),
         ),
-      );
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 15, height: 1.35),
+              ),
+            ),
+            if (tag != null) ...[
+              const SizedBox(width: 8),
+              Pill(tag!, color: HmColors.textDim),
+            ],
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 class _Composer extends StatelessWidget {
@@ -489,11 +574,13 @@ class _Composer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hint = typing
-        ? 'tap anywhere to skip'
-        : thread == 'wren'
-            ? 'Your last message was never read'
-            : 'Waiting…';
+    final hint = context.tr(
+      typing
+          ? 'tap anywhere to skip'
+          : thread == 'wren'
+          ? 'Your last message was never read'
+          : 'Waiting…',
+    );
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       decoration: const BoxDecoration(
@@ -511,8 +598,10 @@ class _Composer extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
             border: Border.all(color: HmColors.hairline),
           ),
-          child: Text(hint,
-              style: monoStyle.copyWith(fontSize: 12, color: HmColors.textDim)),
+          child: Text(
+            hint,
+            style: monoStyle.copyWith(fontSize: 12, color: HmColors.textDim),
+          ),
         ),
       ),
     );

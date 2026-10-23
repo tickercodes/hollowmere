@@ -1,0 +1,98 @@
+{
+  "id": "ep13",
+  "number": 13,
+  "title": "The Tunnels",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "The tunnels are flooded up to your knees.",
+        "The water is freezing.",
+        "A heavy iron door blocks your path."
+      ],
+      "next": "w1"
+    },
+    "w1": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "The door mechanism is rusted, but there's a sequence of levers.",
+      "next": "w2",
+      "delay": 1.0
+    },
+    "w2": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "I found a note about this in Caleb's journal.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "cloud",
+      "title": "Caleb's Note",
+      "body": "Lever Sequence",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Open the cloud to figure out the lever sequence.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "order",
+      "title": "Iron Door",
+      "config": {
+        "items": [
+          "Left",
+          "Center",
+          "Right",
+          "Top"
+        ],
+        "correct": [
+          "Center",
+          "Left",
+          "Right",
+          "Top"
+        ],
+        "brief": "Order the levers based on Caleb's drawing."
+      },
+      "hints": [
+        "Center, Left, Right, Top"
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "The door groans and swings open.",
+        "Beyond it is the central pumping station.",
+        "But the pumps are off. The water is rising fast."
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "They've initiated the final sequence. You have 30 minutes.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You need to manually restart the pumps. It's a complex grid puzzle on the mainframe.",
+      "next": "end13",
+      "delay": 1.0
+    },
+    "end13": {
+      "type": "end_episode",
+      "teaser": "Episode 14 - Lockdown",
+      "next_episode": "ep14"
+    }
+  }
+}

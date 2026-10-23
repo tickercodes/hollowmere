@@ -15,7 +15,7 @@ Where this document and a script disagree, the script in `assets/story/` wins.
 - Ardis stays kind for longer. Every tell is fair-play and visible on replay.
 - Four red herrings, each with a real secret: Tess, Jonah, Mara, Deacon.
 - Trust Ledger: Jonah (sensor), Tess (emoji + feed), Deacon (2006 photo), Mara (testimony + login).
-- Sam once stayed quiet about a bad number and someone else paid for it.
+- John once stayed quiet about a bad number and someone else paid for it.
 - New muscle: Roy Tarrant. Wren's "he."
 - Continuity: sensor at 23:41 (siren ~30s before gates); Wren vanished on the 13th; the 11th is her earlier watch night; Caleb built the sensor in 2006.
 
@@ -25,7 +25,7 @@ Where this document and a script disagree, the script in `assets/story/` wins.
 
 **Logline:** Eleven days after Wren vanished, her phone starts copying itself onto yours. Every notification you get, someone else might be getting too.
 
-**You (Sam)**, 24, renameable. You tested pedestrian bridges. One reading didn't add up. You said nothing. The colleague who spoke up was let go. You moved here eight months ago to be someone nobody asks anything of. Wren noticed.
+**You (John)**, 24, renameable. You tested pedestrian bridges. One reading didn't add up. You said nothing. The colleague who spoke up was let go. You moved here eight months ago to be someone nobody asks anything of. Wren noticed.
 
 Last message, 11:47 PM on the 13th: *still up? come by, I'll leave the door open.* Delivered. Never read. You went upstairs. Wren stood in your kitchen.
 
@@ -104,4 +104,4 @@ See `assets/story/ep1.json`–`ep6.json` and `lib/content/endings.dart`.
 
 ## 8. What the game is about
 
-You were never hired. You were implicated. You spent your life avoiding moments like this, and Wren picked you anyway. The kindest voice in town benefits from a book that says the water never moves at night. The ghost story is the crime scene. Sam becomes a witness who will not look away, and says it out loud.
+You were never hired. You were implicated. You spent your life avoiding moments like this, and Wren picked you anyway. The kindest voice in town benefits from a book that says the water never moves at night. The ghost story is the crime scene. John becomes a witness who will not look away, and says it out loud.

@@ -7,6 +7,7 @@ import '../../content/photos.dart';
 import '../../core/theme.dart';
 import '../../engine/game_state.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import 'app_registry.dart';
 import 'phone_shell.dart';
 
@@ -20,6 +21,7 @@ class HomeScreen extends ConsumerWidget {
     final dock = phoneApps.where((a) => a.dock).toList();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -31,52 +33,64 @@ class HomeScreen extends ConsumerWidget {
             child: Image.asset(wallpaperWren, fit: BoxFit.cover),
           ),
           SafeArea(
-            child: Column(
-              children: [
-                const _StatusBar(),
-                const SizedBox(height: 8),
-                _MirrorStatus(level: game.mirrorLevel),
-                const SizedBox(height: 8),
-                _HoursSinceRead(hours: game.hoursSinceRead, read: game.has('message_read')),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GridView.count(
-                    crossAxisCount: 4,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 22,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.78,
-                    children: [
-                      for (final app in grid)
-                        _AppIcon(
-                          app: app,
-                          unlocked: game.unlockedApps.contains(app.id),
-                          badge: _badgeFor(app.id, game),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      children: [
+                        const _StatusBar(),
+                        const SizedBox(height: 8),
+                        _MirrorStatus(level: game.mirrorLevel),
+                        const SizedBox(height: 8),
+                        _HoursSinceRead(hours: game.hoursSinceRead, read: game.has('message_read')),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                          child: GridView.count(
+                            crossAxisCount: 4,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            mainAxisSpacing: 22,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.78,
+                            children: [
+                              for (final app in grid)
+                                _AppIcon(
+                                  app: app,
+                                  unlocked: game.unlockedApps.contains(app.id),
+                                  badge: _badgeFor(app.id, game),
+                                ),
+                            ],
+                          ),
                         ),
-                    ],
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: HmColors.surface.withValues(alpha: 0.7),
+                            borderRadius: BorderRadius.circular(28),
+                            border: Border.all(color: HmColors.hairline),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              for (final app in dock)
+                                _AppIcon(app: app, unlocked: true, badge: 0, compact: true),
+                            ],
+                          ),
+                        ),
+                        if (game.sirenEndsAtMs != null) const SizedBox(height: 36),
+                      ],
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: HmColors.surface.withValues(alpha: 0.7),
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(color: HmColors.hairline),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      for (final app in dock)
-                        _AppIcon(app: app, unlocked: true, badge: 0, compact: true),
-                    ],
-                  ),
-                ),
-              ],
+                );
+              },
             ),
+          ),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(child: _SirenCountdown()),
           ),
         ],
       ),
@@ -169,9 +183,73 @@ class _MirrorStatus extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text("Wren's phone · ${labels[level.clamp(0, 3)]}",
+          Text(context.fmt("Wren's phone · {status}", {'status': labels[level.clamp(0, 3)]}),
               style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
         ],
+      ),
+    );
+  }
+}
+
+/// Episode 6 countdown. Only the home screen shows it, just above the dock.
+class _SirenCountdown extends ConsumerStatefulWidget {
+  const _SirenCountdown();
+
+  @override
+  ConsumerState<_SirenCountdown> createState() => _SirenCountdownState();
+}
+
+class _SirenCountdownState extends ConsumerState<_SirenCountdown> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ends = ref.watch(
+      storyEngineProvider.select((s) => s.game.sirenEndsAtMs),
+    );
+    if (ends == null) return const SizedBox.shrink();
+    final left = Duration(
+      milliseconds: (ends - DateTime.now().millisecondsSinceEpoch).clamp(
+        0,
+        1 << 30,
+      ),
+    );
+    final h = left.inHours;
+    final m = left.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = left.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 4, 24, 12),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: HmColors.surfaceRaised.withValues(alpha: 0.92),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: HmColors.danger.withValues(alpha: 0.7)),
+          ),
+          child: Text(
+            context.fmt('SIREN  {time}', {'time': '$h:$m:$s'}),
+            style: monoStyle.copyWith(
+              fontSize: 11,
+              color: HmColors.danger,
+              letterSpacing: 1.5,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -193,7 +271,9 @@ class _HoursSinceRead extends StatelessWidget {
         border: Border.all(color: HmColors.hairline),
       ),
       child: Text(
-        read ? 'Last message · Read' : 'Hours since last read: $hours',
+        read
+            ? context.tr('Last message · Read')
+            : context.fmt('Hours since last read: {hours}', {'hours': hours}),
         style: monoStyle.copyWith(
           fontSize: 11,
           color: read ? HmColors.ok : HmColors.amber,
@@ -267,7 +347,7 @@ class _AppIcon extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-            Text(app.label,
+            Text(context.tr(app.label),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

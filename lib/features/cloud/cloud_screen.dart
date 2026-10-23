@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/widgets.dart';
 
-/// The app Sam never installed. Shows mirror sync status and, once the story
+/// The app John never installed. Shows mirror sync status and, once the story
 /// reveals it, the pairing record that proves Wren connected on purpose.
 class CloudScreen extends ConsumerStatefulWidget {
   const CloudScreen({super.key});
@@ -44,7 +45,7 @@ class _CloudScreenState extends ConsumerState<CloudScreen> {
                   children: [
                     const Icon(Icons.cloud_sync_rounded, color: HmColors.teal),
                     const SizedBox(width: 10),
-                    Text('Mirror ${labels[level.clamp(0, 3)]}',
+                    Text(context.fmt('Mirror {status}', {'status': labels[level.clamp(0, 3)]}),
                         style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   ],
                 ),
@@ -56,13 +57,20 @@ class _CloudScreenState extends ConsumerState<CloudScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'This phone is getting files from Wren\'s phone. '
-                  'Photos: $synced synced. Messages: ${game.threads.length} threads. '
-                  'Calls: ${game.callLog.length} entries.',
+                  context.fmt(
+                    "This phone is getting files from Wren's phone. "
+                    'Photos: {photos} synced. Messages: {threads} threads. '
+                    'Calls: {calls} entries.',
+                    {
+                      'photos': synced,
+                      'threads': game.threads.length,
+                      'calls': game.callLog.length,
+                    },
+                  ),
                   style: const TextStyle(color: HmColors.textDim, fontSize: 13, height: 1.5),
                 ),
                 const SizedBox(height: 10),
-                Text('you cannot stop this', style: monoStyle.copyWith(fontSize: 11, color: HmColors.amber)),
+                Text(context.tr('you cannot stop this'), style: monoStyle.copyWith(fontSize: 11, color: HmColors.amber)),
               ],
             ),
           ),
@@ -70,7 +78,7 @@ class _CloudScreenState extends ConsumerState<CloudScreen> {
           const SectionLabel('Account'),
           const _Row('Library owner', 'wren.calloway'),
           const _Row('Owner device', 'Wren\'s phone · last sync unknown'),
-          _Row('This device', '${game.playerName}\'s phone'),
+          _Row('This device', context.fmt("{name}'s phone", {'name': game.playerName})),
           const SizedBox(height: 12),
           const SectionLabel('Paired devices'),
           if (!showPairing)
@@ -84,14 +92,16 @@ class _CloudScreenState extends ConsumerState<CloudScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Device 2 · ${game.playerName.toUpperCase()}-COTTAGE-WIFI',
+                  Text(context.fmt('Device 2 · {name}-COTTAGE-WIFI', {
+                    'name': game.playerName.toUpperCase(),
+                  }),
                       style: monoStyle.copyWith(color: HmColors.teal)),
                   const SizedBox(height: 6),
-                  Text('Linked 11 days ago · 11:52 PM\nHow: your home wifi. She said yes.',
+                  Text(context.tr('Linked 11 days ago · 11:52 PM\nHow: your home wifi. She said yes.'),
                       style: monoStyle.copyWith(fontSize: 12)),
                   const SizedBox(height: 6),
-                  const Text('Five minutes after your message. From inside your house.',
-                      style: TextStyle(color: HmColors.textDim, fontSize: 13)),
+                  Text(context.tr('Five minutes after your message. From inside your house.'),
+                      style: const TextStyle(color: HmColors.textDim, fontSize: 13)),
                 ],
               ),
             ),
@@ -107,13 +117,13 @@ class _CloudScreenState extends ConsumerState<CloudScreen> {
                 children: [
                   Text('M. ELLISON', style: monoStyle.copyWith(color: HmColors.amber)),
                   const SizedBox(height: 6),
-                  Text('Plan: shared backup\nNetwork: RESERVOIR-AUTH-STAFF',
+                  Text(context.tr('Plan: shared backup\nNetwork: RESERVOIR-AUTH-STAFF'),
                       style: monoStyle.copyWith(fontSize: 12)),
                   const SizedBox(height: 6),
                   Text(
-                    game.has('mara_gave_login')
-                        ? 'Signed in as Wren\'s girlfriend. It was her password. Not her.'
-                        : 'Active recently. The shared plan has another reader.',
+                    context.tr(game.has('mara_gave_login')
+                        ? "Signed in as Wren's girlfriend. It was her password. Not her."
+                        : 'Active recently. The shared plan has another reader.'),
                     style: const TextStyle(color: HmColors.textDim, fontSize: 13),
                   ),
                 ],
@@ -136,8 +146,8 @@ class _Row extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(width: 110, child: Text(k, style: const TextStyle(color: HmColors.textDim))),
-            Expanded(child: Text(v)),
+            SizedBox(width: 110, child: Text(context.tr(k), style: const TextStyle(color: HmColors.textDim))),
+            Expanded(child: Text(context.tr(v))),
           ],
         ),
       );

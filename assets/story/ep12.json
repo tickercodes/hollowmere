@@ -1,0 +1,93 @@
+{
+  "id": "ep12",
+  "number": 12,
+  "title": "Betrayal",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "You hide behind a filing cabinet.",
+        "Ardis's voice echoes in the basement.",
+        "\"I know you're down here. It's over.\""
+      ],
+      "next": "w1"
+    },
+    "w1": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "There's a secret exit behind the north wall.",
+      "next": "w2",
+      "delay": 1.0
+    },
+    "w2": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "But it's locked with an old numerical keypad. It requires the date of the town's founding.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "gallery",
+      "title": "Old Photo",
+      "body": "Inspection Report",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Find the founding year in the inspection report photo.",
+      "target": {
+        "app": "gallery",
+        "photo": "ev_inspection_report"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "photo_spot",
+      "title": "Founding Year",
+      "config": {
+        "image": "ev_inspection_report",
+        "target": {
+          "x": 50,
+          "y": 50,
+          "r": 30
+        },
+        "brief": "Spot the founding date stamped on the document."
+      },
+      "hints": [
+        "Look at the top left corner of the report for the year '1892'."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "1892.",
+        "You punch it into the keypad. The wall slides open.",
+        "You slip into the darkness just as Ardis turns the corner."
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "That was close. But you're not safe yet.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You are now in the old maintenance tunnels. They lead straight to the dam.",
+      "next": "end12",
+      "delay": 1.0
+    },
+    "end12": {
+      "type": "end_episode",
+      "teaser": "Episode 13 - The Tunnels",
+      "next_episode": "ep13"
+    }
+  }
+}

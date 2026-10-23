@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../content/photos.dart';
 import '../core/theme.dart';
 import '../engine/story_engine.dart';
+import '../features/shell/widgets.dart';
+import '../l10n/l10n.dart';
+import 'minigame_config.dart';
 import 'minigame_scaffold.dart';
 
 /// Photo Zoom & Spot. config: {"photo": id, "required": [hotspot ids]}
@@ -21,10 +24,16 @@ class _PhotoSpotGameState extends ConsumerState<PhotoSpotGame> {
   final _controller = TransformationController();
   int _misses = 0;
   String? _lastDetail;
+  String? _lastDetailBody;
 
-  Photo get photo => photoOf(widget.interaction.node.config['photo'] as String);
+  /// Opened with every required spot already found on a previous visit.
+  bool _replay = false;
+  bool _finishing = false;
+
+  Photo get photo => photoOf(MinigameConfig.photoId(widget.interaction.node.config));
   List<String> get required =>
-      ((widget.interaction.node.config['required'] as List?) ?? photo.hotspots.map((h) => h.id).toList())
+      ((widget.interaction.node.config['required'] as List?) ??
+              photo.hotspots.map((h) => h.id).toList())
           .cast<String>();
 
   @override
@@ -34,6 +43,13 @@ class _PhotoSpotGameState extends ConsumerState<PhotoSpotGame> {
     for (final h in photo.hotspots) {
       if (flags.contains('spot_${photo.id}_${h.id}')) _found.add(h.id);
     }
+    _replay = required.isNotEmpty && required.every(_found.contains);
+  }
+
+  void _complete() {
+    if (_finishing) return;
+    _finishing = true;
+    ref.minigameSuccess(context, message: 'Every detail examined.');
   }
 
   void _tap(Offset scenePoint, Size imageSize) {
@@ -41,8 +57,11 @@ class _PhotoSpotGameState extends ConsumerState<PhotoSpotGame> {
     final ny = scenePoint.dy / imageSize.height;
     Hotspot? hit;
     for (final h in photo.hotspots) {
-      final d = Offset(h.dx - nx, (h.dy - ny) * (imageSize.height / imageSize.width));
-      if (d.distance < 0.09) {
+      final d = Offset(
+        h.dx - nx,
+        (h.dy - ny) * (imageSize.height / imageSize.width),
+      );
+      if (d.distance < h.radius) {
         hit = h;
         break;
       }
@@ -50,7 +69,11 @@ class _PhotoSpotGameState extends ConsumerState<PhotoSpotGame> {
     if (hit == null) {
       _misses++;
       if (_misses % 3 == 0) {
-        ref.minigameFail(context, widget.interaction.puzzleId, 'Nothing there. Look at edges, reflections, lights.');
+        ref.minigameFail(
+          context,
+          widget.interaction.puzzleId,
+          'Nothing there. Look at edges, reflections, lights.',
+        );
       }
       return;
     }
@@ -59,17 +82,21 @@ class _PhotoSpotGameState extends ConsumerState<PhotoSpotGame> {
       return;
     }
     setState(() => _found.add(hit!.id));
-    ref.read(storyEngineProvider.notifier).applyEffects({'flags': ['spot_${photo.id}_${hit.id}']});
+    ref.read(storyEngineProvider.notifier).applyEffects({
+      'flags': ['spot_${photo.id}_${hit.id}'],
+    });
     _detail(hit);
     if (required.every(_found.contains)) {
       Future.delayed(const Duration(milliseconds: 1500), () {
-        if (mounted) ref.minigameSuccess(context, message: 'Every detail examined.');
+        if (mounted)
+          ref.minigameSuccess(context, message: 'Every detail examined.');
       });
     }
   }
 
   void _detail(Hotspot h) {
-    setState(() => _lastDetail = '${h.label}: ${h.detail}');
+    setState(() => _lastDetail = h.label);
+    _lastDetailBody = h.detail;
   }
 
   @override
@@ -84,85 +111,134 @@ class _PhotoSpotGameState extends ConsumerState<PhotoSpotGame> {
     return MinigameScaffold(
       interaction: widget.interaction,
       scroll: false,
-      brief: cfg['brief'] as String? ?? 'Pinch to zoom. Tap anything that looks out of place.',
-      bottom: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+      brief:
+          cfg['brief'] as String? ??
+          'Pinch to zoom. Tap anything that looks out of place.',
+      bottom: SizedBox(
+        height: 56,
+        child: Row(
           children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 6,
-              children: [
-                for (final id in required)
-                  _SpotChip(
-                    found: _found.contains(id),
-                    label: _found.contains(id)
-                        ? photo.hotspots.firstWhere((h) => h.id == id).label
-                        : 'detail ${required.indexOf(id) + 1}',
-                  ),
-              ],
-            ),
-            if (_lastDetail != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                _lastDetail!,
-                style: const TextStyle(
-                  color: Color(0xFFF4F7F8),
-                  fontSize: 15,
-                  height: 1.4,
-                  fontWeight: FontWeight.w600,
-                  decoration: TextDecoration.none,
-                ),
+            Expanded(
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.fromLTRB(16, 8, 8, 10),
+                children: [
+                  for (final id in required) ...[
+                    _SpotChip(
+                      found: _found.contains(id),
+                      label: _found.contains(id)
+                          ? photo.hotspots.firstWhere((h) => h.id == id).label
+                          : context.fmt('detail {n}', {
+                              'n': required.indexOf(id) + 1,
+                            }),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                ],
               ),
-            ],
+            ),
+            if (_replay)
+              Padding(
+                padding: const EdgeInsets.only(right: 16, bottom: 2),
+                child: ShellChipButton(label: 'Complete', onTap: _complete),
+              ),
           ],
         ),
       ),
       child: Expanded(
-        child: LayoutBuilder(
-          builder: (context, box) {
-            final w = box.maxWidth;
-            final h = w / photo.aspect;
-            final size = Size(w, h);
-            return Center(
-              child: ClipRect(
-                child: InteractiveViewer(
-                  transformationController: _controller,
-                  maxScale: 5,
-                  child: GestureDetector(
-                    onTapUp: (d) => _tap(d.localPosition, size),
-                    child: SizedBox(
-                      width: w,
-                      height: h,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.asset(photo.asset, fit: BoxFit.cover),
-                          for (final hs in photo.hotspots)
-                            if (_found.contains(hs.id))
-                              Positioned(
-                                left: hs.dx * w - 18,
-                                top: hs.dy * h - 18,
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: HmColors.amber, width: 2),
-                                    boxShadow: [BoxShadow(color: HmColors.amber.withValues(alpha: 0.5), blurRadius: 12)],
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            LayoutBuilder(
+              builder: (context, box) {
+                final aspect = photo.aspect;
+                var w = box.maxWidth;
+                var h = w / aspect;
+                if (h > box.maxHeight && box.maxHeight.isFinite) {
+                  h = box.maxHeight;
+                  w = h * aspect;
+                }
+                final size = Size(w, h);
+                return Center(
+                  child: ClipRect(
+                    child: InteractiveViewer(
+                      transformationController: _controller,
+                      maxScale: 5,
+                      child: GestureDetector(
+                        onTapUp: (d) => _tap(d.localPosition, size),
+                        child: SizedBox(
+                          key: const ValueKey('photo-spot-frame'),
+                          width: w,
+                          height: h,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.asset(photo.asset, fit: BoxFit.cover),
+                              for (final hs in photo.hotspots)
+                                if (_found.contains(hs.id))
+                                  Positioned(
+                                    left: hs.dx * w - 18,
+                                    top: hs.dy * h - 18,
+                                    child: Container(
+                                      width: 36,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: HmColors.amber,
+                                          width: 2,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: HmColors.amber.withValues(
+                                              alpha: 0.5,
+                                            ),
+                                            blurRadius: 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                        ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            if (_lastDetail != null)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0x00000000), Color(0xE6000000)],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 28, 16, 10),
+                      child: Text(
+                        '${context.tr(_lastDetail!)}: ${context.tr(_lastDetailBody ?? '')}',
+                        style: const TextStyle(
+                          color: Color(0xFFF4F7F8),
+                          fontSize: 15,
+                          height: 1.4,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.none,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            );
-          },
+          ],
         ),
       ),
     );
@@ -182,7 +258,8 @@ class _SpotChip extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
-            color: found ? HmColors.ok.withValues(alpha: 0.7) : HmColors.hairline),
+          color: found ? HmColors.ok.withValues(alpha: 0.7) : HmColors.hairline,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -194,7 +271,7 @@ class _SpotChip extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            label,
+            context.tr(label),
             style: TextStyle(
               color: found ? HmColors.text : const Color(0xFFF4F7F8),
               fontSize: 13,

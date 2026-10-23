@@ -16,11 +16,27 @@ class Sudoku {
   /// Row-major puzzle, 0 for empty.
   final List<int> puzzle;
 
-  int get boxRows => size == 6 ? 2 : 3;
-  int get boxCols => size == 6 ? 3 : 3;
+  int get boxRows => size == 6 ? 2 : size == 3 ? 1 : 3;
+  int get boxCols => size == 6 ? 3 : size == 3 ? 1 : 3;
+
+  /// Builds a puzzle from an explicit grid. Returns null when the grid is
+  /// not a square of 3/6/9 or contains values larger than [size].
+  static Sudoku? tryFromGrid(List<List<int>> rows) {
+    if (rows.isEmpty) return null;
+    final size = rows.length;
+    if (size != 3 && size != 6 && size != 9) return null;
+    if (rows.any((r) => r.length != size)) return null;
+    final puzzle = [for (final r in rows) ...r];
+    if (puzzle.any((v) => v < 0 || v > size)) return null;
+    final solution = List<int>.from(puzzle);
+    if (countSolutions(puzzle, size, limit: 2, writeInto: solution) != 1) {
+      return null;
+    }
+    return Sudoku._(size, solution, puzzle);
+  }
 
   static Sudoku generate({required int seed, int size = 9, required int givens}) {
-    assert(size == 9 || size == 6, 'Only 9x9 and 6x6 are supported');
+    assert(size == 9 || size == 6 || size == 3, 'Unsupported size');
     final rng = math.Random(seed);
     final solution = _solvedGrid(size, rng);
     final puzzle = List<int>.from(solution);
@@ -42,8 +58,8 @@ class Sudoku {
   /// A fully solved grid: pattern-fill then shuffle digits, rows within bands,
   /// bands, columns within stacks, and stacks. Always valid.
   static List<int> _solvedGrid(int size, math.Random rng) {
-    final br = size == 6 ? 2 : 3;
-    final bc = 3;
+    final br = size == 6 ? 2 : size == 3 ? 1 : 3;
+    final bc = size == 6 ? 3 : size == 3 ? 1 : 3;
     int pattern(int r, int c) => (bc * (r % br) + r ~/ br + c) % size;
 
     final digits = List.generate(size, (i) => i + 1)..shuffle(rng);
@@ -68,11 +84,11 @@ class Sudoku {
   }
 
   /// Counts solutions up to [limit] using backtracking with MRV ordering.
-  static int countSolutions(List<int> grid, int size, {int limit = 2}) {
+  static int countSolutions(List<int> grid, int size, {int limit = 2, List<int>? writeInto}) {
     final g = List<int>.from(grid);
     var count = 0;
-    final br = size == 6 ? 2 : 3;
-    const bc = 3;
+    final br = size == 6 ? 2 : size == 3 ? 1 : 3;
+    final bc = size == 6 ? 3 : size == 3 ? 1 : 3;
 
     bool ok(int idx, int v) {
       final r = idx ~/ size, c = idx % size;
@@ -106,6 +122,11 @@ class Sudoku {
       }
       if (best == -1) {
         count++;
+        if (writeInto != null && count == 1) {
+          for (var i = 0; i < g.length; i++) {
+            writeInto[i] = g[i];
+          }
+        }
         return;
       }
       for (final v in bestVals!) {

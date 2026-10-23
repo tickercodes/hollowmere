@@ -1,0 +1,286 @@
+{
+  "id": "ep8",
+  "number": 8,
+  "title": "The Ticking Clock",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "Midnight.",
+        "The rain is pounding against the window.",
+        "Jonah just messaged you. He never texts this late."
+      ],
+      "next": "j1"
+    },
+    "j1": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "I'm outside your house. Let me in.",
+      "next": "c1",
+      "delay": 2.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "jonah",
+      "options": [
+        {
+          "text": "Why?",
+          "next": "j2"
+        },
+        {
+          "text": "I'm not home.",
+          "next": "j2_lie"
+        }
+      ]
+    },
+    "j2": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Because they know you accessed the server.",
+      "next": "j3",
+      "delay": 1.0
+    },
+    "j2_lie": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Don't lie to me. I see your light on. They know you accessed the server.",
+      "next": "j3",
+      "delay": 1.0
+    },
+    "j3": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "I was trying to protect Wren. I failed. I won't fail you.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "calls",
+      "title": "Incoming Call",
+      "body": "Jonah",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Answer Jonah's call.",
+      "target": {
+        "app": "calls"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "live_static",
+      "title": "Jonah's Warning",
+      "config": {
+        "frequency": 92.5,
+        "brief": "Tune the frequency to hear what Jonah is saying."
+      },
+      "hints": [
+        "Tune to 92.5 MHz."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "Over the crackling audio: 'Get out of the house. Now. Look out the window.'"
+      ],
+      "next": "j4",
+      "voice": "voice_radio"
+    },
+    "j4": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Did you see the black SUV? It's Ardis's men.",
+      "next": "j5",
+      "delay": 1.0
+    },
+    "j5": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "You need to lock your doors and connect to my secure feed so I can guide you out the back.",
+      "next": "notif2",
+      "delay": 1.0
+    },
+    "notif2": {
+      "type": "notification",
+      "app": "messages",
+      "title": "Secure Feed Sent",
+      "body": "Video Link",
+      "next": "g2"
+    },
+    "g2": {
+      "type": "goal",
+      "text": "Open Messenger to view Jonah's video feed.",
+      "target": {
+        "app": "messages"
+      },
+      "next": "mg2"
+    },
+    "mg2": {
+      "type": "minigame",
+      "game": "feed_scrub",
+      "title": "Security Cam",
+      "config": {
+        "target_time": "02:15",
+        "brief": "Scrub the security feed to 02:15 to see who is at the back door."
+      },
+      "hints": [
+        "The timestamp you want is 02:15."
+      ],
+      "next": "s3"
+    },
+    "s3": {
+      "type": "scene",
+      "lines": [
+        "At 02:15, the camera shows a man with a crowbar.",
+        "He's wearing a Hollowmere Police uniform.",
+        "Deacon."
+      ],
+      "next": "j6"
+    },
+    "j6": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "It's Deacon. He's working for Ardis.",
+      "next": "c2",
+      "delay": 1.0
+    },
+    "c2": {
+      "type": "choice",
+      "thread": "jonah",
+      "options": [
+        {
+          "text": "What do I do?",
+          "next": "j7"
+        },
+        {
+          "text": "I'm calling the police.",
+          "next": "j7_pol"
+        }
+      ]
+    },
+    "j7": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Run. Head to the marina. Locker 14.",
+      "next": "j8",
+      "delay": 1.0
+    },
+    "j7_pol": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "Deacon IS the police! Run to the marina. Locker 14.",
+      "next": "j8",
+      "delay": 1.0
+    },
+    "j8": {
+      "type": "message",
+      "thread": "jonah",
+      "text": "I'll distract him. Go!",
+      "next": "gl1",
+      "delay": 1.0
+    },
+    "gl1": {
+      "type": "glitch",
+      "ghost": {
+        "thread": "wren",
+        "from": "wren",
+        "text": "jonah is lying"
+      },
+      "next": "s4"
+    },
+    "s4": {
+      "type": "scene",
+      "lines": [
+        "A glitch.",
+        "Wren's thread just updated.",
+        "'jonah is lying'"
+      ],
+      "next": "c3"
+    },
+    "c3": {
+      "type": "choice",
+      "thread": "wren_ghost",
+      "options": [
+        {
+          "text": "Wren?",
+          "next": "w1"
+        },
+        {
+          "text": "Who is this?",
+          "next": "w1"
+        }
+      ]
+    },
+    "w1": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "He wasn't protecting me. He was watching me.",
+      "next": "w2",
+      "delay": 1.0
+    },
+    "w2": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "Solve the board connect. Connect Jonah to the Mayor.",
+      "next": "notif3",
+      "delay": 1.0
+    },
+    "notif3": {
+      "type": "notification",
+      "app": "board",
+      "title": "New Evidence",
+      "body": "Jonah's Payroll",
+      "next": "g3"
+    },
+    "g3": {
+      "type": "goal",
+      "text": "Open the Board and connect Jonah to Ardis.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg3"
+    },
+    "mg3": {
+      "type": "minigame",
+      "game": "board_connect",
+      "title": "Follow the Money",
+      "config": {
+        "connections": [
+          {
+            "from": "jonah",
+            "to": "ardis"
+          }
+        ],
+        "brief": "Draw a line from Jonah to Ardis to reveal the payroll link."
+      },
+      "hints": [
+        "Connect Jonah's pin to Ardis's pin."
+      ],
+      "next": "s5",
+      "effects": {
+        "pins": [
+          "payroll"
+        ]
+      }
+    },
+    "s5": {
+      "type": "scene",
+      "lines": [
+        "The connection solidifies.",
+        "Jonah has been on Ardis Locke's private payroll for three years.",
+        "He's not here to save you. He's here to finish the job."
+      ],
+      "next": "end8"
+    },
+    "end8": {
+      "type": "end_episode",
+      "teaser": "Episode 9 - The Chase",
+      "next_episode": "ep9"
+    }
+  }
+}

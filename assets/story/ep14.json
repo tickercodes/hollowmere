@@ -1,0 +1,117 @@
+{
+  "id": "ep14",
+  "number": 14,
+  "title": "Lockdown",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "The pumping station mainframe.",
+        "Dusty screens flicker to life.",
+        "Warning: Overload Imminent."
+      ],
+      "next": "w1"
+    },
+    "w1": {
+      "type": "message",
+      "thread": "wren_ghost",
+      "text": "This is it. The Sudoku failsafe.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "board",
+      "title": "Grid Access",
+      "body": "Mainframe UI",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Solve the Mainframe grid to restart the pumps.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "sudoku",
+      "title": "Pump Restart",
+      "config": {
+        "grid": [
+          [
+            0,
+            2,
+            0
+          ],
+          [
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "brief": "Solve the 3x3 grid to balance the pressure valves."
+      },
+      "hints": [
+        "Fill in the missing numbers 1, 2, 3 so no row/col repeats."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "The pumps roar to life.",
+        "The water level in the tunnel begins to drop.",
+        "But then, an alarm blares. A manual override."
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Someone is at the dam. They overrode your command.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "It's Jonah. He's at the primary detonator.",
+      "next": "c1",
+      "delay": 1.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "unknown",
+      "options": [
+        {
+          "text": "I thought Deacon was their enforcer.",
+          "next": "m3"
+        },
+        {
+          "text": "Jonah? No...",
+          "next": "m3"
+        }
+      ]
+    },
+    "m3": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Deacon is just the muscle. Jonah is Ardis's true loyalist.",
+      "next": "end14",
+      "delay": 1.0
+    },
+    "end14": {
+      "type": "end_episode",
+      "teaser": "Episode 15 - The Final Countdown",
+      "next_episode": "ep15"
+    }
+  }
+}

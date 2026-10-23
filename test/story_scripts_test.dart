@@ -15,6 +15,7 @@ import 'package:hollowmere_files/engine/script.dart';
 import 'package:hollowmere_files/engine/script_repository.dart';
 import 'package:hollowmere_files/features/shell/app_registry.dart';
 import 'package:hollowmere_files/minigames/logic/sudoku.dart';
+import 'package:hollowmere_files/minigames/minigame_config.dart';
 import 'package:hollowmere_files/minigames/minigame_router.dart';
 
 /// Loads every episode straight from disk (no Flutter binding needed).
@@ -103,7 +104,7 @@ void main() {
             final from = n['from'] as String?;
             if (from != null) expect(characters.containsKey(from), isTrue, reason: '$where from');
             if (n['image'] != null) {
-              expect(photos.containsKey(n['image']), isTrue, reason: '$where image');
+              expect(() => photoOf(n['image'] as String), returnsNormally, reason: '$where image');
             }
           case 'choice':
             expect(characters.containsKey(n['thread']), isTrue, reason: '$where thread');
@@ -115,7 +116,7 @@ void main() {
           case 'scene':
             expect(n['lines'], isA<List>(), reason: where);
             if (n['image'] != null) {
-              expect(photos.containsKey(n['image']), isTrue, reason: '$where scene image');
+              expect(() => photoOf(n['image'] as String), returnsNormally, reason: '$where scene image');
             }
           case 'notification':
             expect(appIds.contains(n['app']), isTrue, reason: '$where app ${n['app']}');
@@ -123,7 +124,7 @@ void main() {
             final target = Map<String, String>.from(n['target'] as Map);
             expect(appIds.contains(target['app']), isTrue, reason: '$where goal app');
             if (target['photo'] != null) {
-              expect(photos.containsKey(target['photo']), isTrue, reason: '$where goal photo');
+              expect(() => photoOf(target['photo']!), returnsNormally, reason: '$where goal photo');
             }
             if (target['thread'] != null) {
               expect(characters.containsKey(target['thread']), isTrue, reason: '$where goal thread');
@@ -242,21 +243,34 @@ void _checkMinigameConfig(StoryNode n, String where) {
     case 'passcode':
       expect(c['answer'], isA<String>(), reason: where);
     case 'photo_spot':
-      expect(photos.containsKey(c['photo']), isTrue, reason: where);
-      final ids = photoOf(c['photo'] as String).hotspots.map((h) => h.id).toSet();
+      final photoId = MinigameConfig.photoId(c);
+      expect(() => photoOf(photoId), returnsNormally, reason: where);
+      final ids = photoOf(photoId).hotspots.map((h) => h.id).toSet();
       for (final r in (c['required'] as List?) ?? const []) {
         expect(ids.contains(r), isTrue, reason: '$where hotspot $r');
       }
     case 'order':
-      final items = (c['items'] as List).cast<Map<String, dynamic>>().map((i) => i['id']).toSet();
-      expect((c['answer'] as List).toSet(), items, reason: where);
+      final items = MinigameConfig.orderItems(c).map((i) => i['id']).toSet();
+      expect(MinigameConfig.orderAnswer(c).toSet(), items, reason: where);
+    case 'key_cipher':
+      expect(c['ciphertext'], isA<String>(), reason: where);
+      expect(c['key'], isA<List>(), reason: where);
+      final markIds = (c['marks'] as List)
+          .cast<Map<String, dynamic>>()
+          .map((m) => m['id'])
+          .toSet();
+      expect((c['key'] as List).every(markIds.contains), isTrue, reason: where);
     case 'cipher':
-      expect(c['cipher'], isA<String>(), reason: where);
       expect(c['answer'], isA<String>(), reason: where);
-      expect(c['legend'], isA<Map>(), reason: where);
+      if (c['type'] == 'shift' || c['ciphertext'] != null) {
+        expect(c['ciphertext'], isA<String>(), reason: where);
+        expect(c['shift'], isA<int>(), reason: where);
+      } else {
+        expect(c['cipher'], isA<String>(), reason: where);
+        expect(c['legend'], isA<Map>(), reason: where);
+      }
     case 'sudoku':
-      expect(c['seed'], isA<int>(), reason: where);
-      expect(c['shaded'], isA<List>(), reason: where);
+      expect(c['seed'] != null || c['grid'] != null, isTrue, reason: where);
     case 'audio_tag':
       expect(voicemails.containsKey(c['voicemail']), isTrue, reason: where);
       final cues = voicemailOf(c['voicemail'] as String).cues.map((x) => x.id).toSet();
@@ -264,21 +278,25 @@ void _checkMinigameConfig(StoryNode n, String where) {
         expect(cues.contains(r), isTrue, reason: '$where cue $r');
       }
     case 'feed_scrub':
-      expect(c['target'], isA<String>(), reason: where);
+      expect(c['target'] != null || c['target_time'] != null, isTrue, reason: where);
     case 'board_connect':
-      for (final pair in (c['required'] as List)) {
-        for (final p in (pair as List)) {
+      for (final pair in MinigameConfig.boardRequired(c)) {
+        for (final p in pair) {
           expect(boardPins.containsKey(p), isTrue, reason: '$where pin $p');
         }
       }
     case 'live_static':
-      expect((c['steps'] as List), isNotEmpty, reason: where);
+      expect(
+        MinigameConfig.liveSteps(c).isNotEmpty || MinigameConfig.tuneFrequency(c) != null,
+        isTrue,
+        reason: where,
+      );
     case 'log_diff':
-      expect((c['rows'] as List), isNotEmpty, reason: where);
+      expect(MinigameConfig.logRows(c), isNotEmpty, reason: where);
     case 'voice_match':
-      for (final clip in (c['clips'] as List).cast<Map<String, dynamic>>()) {
+      for (final clip in MinigameConfig.voiceClips(c)) {
         expect(voicemails.containsKey(clip['voicemail']), isTrue, reason: where);
-        expect((c['options'] as List).contains(clip['answer']), isTrue, reason: where);
+        expect(MinigameConfig.voiceOptions(c).contains(clip['answer']), isTrue, reason: where);
       }
     case 'accuse':
       for (final s in (c['suspects'] as List)) {

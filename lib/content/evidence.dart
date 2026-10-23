@@ -65,7 +65,7 @@ const evidenceCatalog = <String, EvidenceItem>{
   'ev_pairing': EvidenceItem(
     id: 'ev_pairing',
     title: 'How her phone linked to yours',
-    summary: 'Linked to SAM-COTTAGE-WIFI, eleven days ago, 11:52 PM. She came by.',
+    summary: 'Linked to JOHN-COTTAGE-WIFI, eleven days ago, 11:52 PM. She came by.',
     episode: 2,
   ),
   'ev_deleted_post': EvidenceItem(
@@ -164,6 +164,13 @@ const evidenceCatalog = <String, EvidenceItem>{
     summary: 'A fourth drop the night inspector Harlan "fell" from the spillway walkway.',
     episode: 4,
   ),
+  'ev_spillway_log': EvidenceItem(
+    id: 'ev_spillway_log',
+    title: 'Spillway house log',
+    summary: 'Blueprints and a detonation sequence hidden in the spillway office.',
+    photo: 'loc_spillway',
+    episode: 9,
+  ),
 };
 
 /// A pin on the case board: a suspect (portrait) or a clue (note card).
@@ -199,7 +206,11 @@ const boardPins = <String, BoardPin>{
   'c_log': BoardPin(id: 'c_log', label: 'release log', note: 'Ardis sent it. The sensor does not match.'),
   'c_sedan': BoardPin(id: 'c_sedan', label: 'council car', note: 'In the puddle. In the 2006 photo.'),
   'c_rota': BoardPin(id: 'c_rota', label: 'rota swap', note: 'Deacon on Thursday nights. Window faces spillway.'),
-  'c_pairing': BoardPin(id: 'c_pairing', label: 'linked 11:52', note: 'SAM-COTTAGE-WIFI. She came inside.'),
+  'c_pairing': BoardPin(id: 'c_pairing', label: 'linked 11:52', note: 'JOHN-COTTAGE-WIFI. She came inside.'),
   'c_relays': BoardPin(id: 'c_relays', label: 'frost relays', note: '"he\'s down there." 38 of 41 orchard relays salvaged.'),
   'roy': BoardPin(id: 'roy', label: 'R. TARRANT', character: 'roy'),
+  'mayor_tape': BoardPin(id: 'mayor_tape', label: 'MAYOR TAPE', note: 'Corrupted recording. Someone kept downloading the town map.'),
+  'payroll': BoardPin(id: 'payroll', label: 'PAYROLL', note: 'Jonah on Ardis\'s books.'),
+  'mara_informant': BoardPin(id: 'mara_informant', label: 'INFORMANT', note: 'Mara started the day Wren began investigating.'),
+  'unknown_number': BoardPin(id: 'unknown_number', label: 'UNKNOWN', note: 'A number that should not have this phone.'),
 };

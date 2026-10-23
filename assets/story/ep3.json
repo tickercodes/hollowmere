@@ -4,148 +4,704 @@
   "title": "The Old Town",
   "start": "t_open",
   "nodes": {
-    "t_open": {"type": "title", "kicker": "THE 25TH", "title": "9:15 AM", "subtitle": "Episode 3 - The Old Town", "next": "p1"},
-
-    "p1": {"type": "message", "thread": "tess", "text": "ok so. her feed. she deleted something last week and i saw it before she did", "delay": 1.0, "next": "p2",
-      "effects": {"hours": 288}},
-    "p2": {"type": "message", "thread": "tess", "text": "i'm sending you her feed login. don't post anything. don't like anything. the police have the account flagged", "next": "p3",
-      "effects": {"unlock_apps": ["feed"], "feed": [
-        {"id": "post1", "author": "wren", "text": "hollowmere below - 01. the ridge road at dawn, before they built the town on top of the town.", "time": "5 wks ago"},
-        {"id": "post3", "author": "wren", "text": "hollowmere below - 03. a doorframe, six metres down. someone painted it blue once.", "time": "4 wks ago"},
-        {"id": "post7", "author": "wren", "text": "hollowmere below - 07. 38.", "time": "2 wks ago", "image": "relay_field", "cached": "hollowmere below - 07. he's down there. they all knew."},
-        {"id": "post9", "author": "wren", "text": "hollowmere below - 09. asked the historical society about the bell. got a very polite non-answer.", "time": "2 wks ago"},
-        {"id": "post12", "author": "wren", "text": "hollowmere below - 12. the gauge-spire. the only thing that still breaks the surface in a dry summer.", "time": "13 days ago", "image": "gauge_spire"},
-        {"id": "post13", "author": "wren", "text": "if you were in hollowmere in 2006 and you'll talk to me on the record, DM. i'll keep you anonymous. i keep files, not names.", "time": "12 days ago"}
-      ]}},
-    "p3": {"type": "message", "thread": "tess", "text": "one of the 'hollowmere below' posts got edited. the caption changed. there's an archive site that saves everything, compare them", "next": "g_feed"},
-    "g_feed": {"type": "goal", "text": "Open her Feed and find the post whose caption was changed.", "target": {"app": "feed"}, "next": "mg_feed"},
-    "mg_feed": {"type": "minigame", "game": "feed_scrub", "title": "Feed · cached vs live", "config": {"target": "post7",
-      "brief": "Twelve photos of the drowned village. One caption was changed after posting. Select a post and compare it with the saved copy."},
-      "hints": ["The historical society page mentioned frost relays. Which photo shows the orchard?", "The live caption is only a number now. Thirty-eight.", "Frame 07."],
-      "evidence": "ev_deleted_post", "effects": {"pins": ["c_relays"], "pages": ["cache_wren_post"], "unlock_photos": ["relay_field"], "journal": "Saved caption on frame 07: \"he's down there. they all knew.\""}, "next": "s_feed"},
-    "s_feed": {"type": "scene", "image": "relay_field", "lines": [
-      "\"he's down there. they all knew.\"",
-      "She posted it, thought about it for an hour, and cut it down to a number: 38.",
-      "The frost-relay grid. Forty-one numbered posts meant to be salvaged. The Authority pulled thirty-eight."
-    ], "next": "g_history"},
-    "g_history": {"type": "goal", "text": "Search the browser for the drowned village - the historical society has a page on the bell.", "target": {"app": "browser", "page": "historical_society"}, "next": "s_bell",
-      "effects": {"flags": ["read_bell_page"], "evidence": ["ev_bell_legend"], "journal": "The bell is not the orchard relays. It rings only when the boom cable jerks. Twenty years of a ghost story is twenty years of night releases."}},
-    "s_bell": {"type": "scene", "image": "loc_spillway", "lines": [
-      "The bell on foggy nights is not the drowned orchard calling pickers.",
-      "It rings when the boom cable jerks - when the gates open, and again when they close.",
-      "Thirty-one seconds into her recording: one strike. The gates opening.",
-      "The legend was the log all along."
-    ], "next": "d1"},
-
-    "d1": {"type": "message", "thread": "deacon", "text": "It's Deacon Moss, from the Waterline. Wren left her camera bag in the staff room. You should come and get it.", "delay": 1.2, "next": "d2"},
-    "d2": {"type": "message", "thread": "deacon", "text": "Come after close. Ten. Don't tell anyone you're coming. I mean that kindly.", "next": "c_deacon"},
-    "c_deacon": {"type": "choice", "thread": "deacon", "options": [
-      {"text": "I'll be there at ten.", "next": "d3", "effects": {"trust": {"deacon": 1}}},
-      {"text": "Why does it have to be a secret?", "next": "d3_why"},
-      {"text": "Give it to the police, Deacon.", "next": "d3_police", "effects": {"trust": {"deacon": -1}, "flags": ["deacon_pushed_police"]}}
-    ]},
-    "d3_why": {"type": "message", "thread": "deacon", "text": "Because I've owned a diner in this town for nineteen years and I know who reads what. Ten o'clock.", "next": "d3"},
-    "d3_police": {"type": "message", "thread": "deacon", "text": "The police were here twice. They didn't ask about a bag. Ten o'clock, or I put it in the bins.", "next": "d3"},
-    "d3": {"type": "message", "thread": "deacon", "text": "Kitchen door. Round the back.", "next": "call_deacon",
-      "effects": {"pins": ["deacon"], "contacts": {"deacon": "Deacon Moss"}}},
-
-    "call_deacon": {"type": "call", "contact": "deacon", "incoming": true, "script": [
-      {"from": "deacon", "text": "Sorry - easier to talk. Look, before you come. The police asked where I was the night she went. I'll tell you what I told them."},
-      {"from": "deacon", "text": "I was on the Thursday day shift. I left at four. I was home by five. I didn't see her after her shift ended at three."},
-      {"choice": [
-        {"text": "That's very precise.", "goto": 3, "effects": {"flags": ["noticed_rehearsed"]}},
-        {"text": "Okay. See you at ten.", "goto": 4}
-      ]},
-      {"from": "deacon", "text": "It's precise because it's true. Thursday day shift. Left at four. Home by five. Ten o'clock, kitchen door."},
-      {"from": "deacon", "text": "Ten. Kitchen door."},
-      {"end": true}
-    ], "next": "s_diner"},
-    "s_diner": {"type": "scene", "image": "loc_diner", "title": "The Waterline, 10:04 PM", "voice": "voice_quiet", "lines": [
-      "The kitchen smells of bleach and fryer oil. Deacon hands you a canvas camera bag without a word and goes to the front to count the till.",
-      "The zip is done up backwards. The inner pocket is empty.",
-      "On the wall by the walk-in: the staff rota. Thursday's night shift has a name crossed out and new initials written over it.",
-      "You photograph it while he isn't looking."
-    ], "effects": {"unlock_photos": ["diner_rota"], "journal": "Deacon's alibi is word-for-word the same twice. The rota on his wall says something else. The bag zip is backwards."}, "next": "g_rota"},
-    "g_rota": {"type": "goal", "text": "Open your photo of the staff rota and look closely.", "target": {"app": "gallery", "photo": "diner_rota"}, "next": "mg_rota"},
-    "mg_rota": {"type": "minigame", "game": "photo_spot", "title": "Staff rota - The Waterline", "config": {"photo": "diner_rota", "required": ["swap", "window"],
-      "brief": "He said Thursday day shift, home by five. Find what the rota says, and what you can see from where he stood."},
-      "hints": ["Look at the Thursday column, evening row.", "The initials written over the crossed-out name are his.", "Look at what the kitchen window faces."],
-      "evidence": "ev_rota", "effects": {"pins": ["c_rota"], "journal": "Deacon put himself on the Thursday NIGHT shift. The kitchen window looks straight at the spillway house."}, "next": "wd1"},
-
-    "wd1": {"type": "message", "thread": "warden", "text": "Stop.", "delay": 1.5, "next": "wd2"},
-    "wd2": {"type": "message", "thread": "warden", "text": "She's alive if you stop.", "next": "c_warden1"},
-    "c_warden1": {"type": "choice", "thread": "warden", "options": [
-      {"text": "Okay. I'll stop.", "next": "wd3_obey", "effects": {"flags": ["warden_obeyed_1"], "journal": "The Warden told me to stop. I said I would."}},
-      {"text": "Who is this?", "next": "wd3_who"},
-      {"text": "Prove she's alive.", "next": "wd3_prove", "effects": {"flags": ["warden_defied_1"]}}
-    ]},
-    "wd3_obey": {"type": "message", "thread": "warden", "text": "Good. Delete the recording. Don't go to the archive.", "next": "wd4"},
-    "wd3_who": {"type": "message", "thread": "warden", "text": "Someone who was here in 2006. Don't go to the archive.", "next": "wd4"},
-    "wd3_prove": {"type": "message", "thread": "warden", "text": "I can't. That's the point. Don't go to the archive.", "next": "wd4"},
-    "wd4": {"type": "message", "thread": "warden", "text": "(No caller ID · number withheld)", "next": "s_warden",
-      "effects": {"pins": ["warden"], "notes": [{"id": "n_warden", "title": "THE WARDEN", "body": "Hidden number. Knows about the recording. Knows about the archive - which I have not told anyone about. Says 'she's alive if you stop' - present tense. Either they know where she is, or they want me to think so."}]}},
-    "s_warden": {"type": "scene", "voice": "voice_alive", "lines": [
-      "Nobody knows about the archive. You only learned about it tonight, from a line of pencil inside a notebook cover.",
-      "Whoever the Warden is, they have seen the notebook. Or they were with the person who wrote in it.",
-      "Page 2 is the archive."
-    ], "next": "mg_grid2"},
-
-    "mg_grid2": {"type": "minigame", "game": "sudoku", "title": "Caleb's notebook - page 2", "config": {"seed": 1986, "size": 9, "givens": 62,
-      "shaded": [[1, 6], [3, 6], [5, 3], [7, 3]], "expected_code": "1986", "code_label": "archive drawer",
-      "brief": "Page 2. Most of the grid is already filled. 1–9 in every row, column and box. The pencil-shaded cells carry the drawer number."},
-      "hints": ["Look for a row, column or box with only one empty square.", "A missing digit that can only go in one cell is forced.", "Read the shaded cells top to bottom. The year the first dam went up."],
-      "effects": {"journal": "Page 2 solves to 1986."}, "next": "s_archive"},
-    "s_archive": {"type": "scene", "image": "loc_archive", "title": "Town hall archive, 11:50 PM", "lines": [
-      "The basement door was never locked. Nothing down here was ever worth stealing.",
-      "The flood-line marks on the wall are higher than your head. Steel drawers, most of them rusted shut. One row is numbered by year.",
-      "Drawer 1986 has a combination wheel, and the dust on it has been moved twice."
-    ], "next": "mg_pad2"},
-    "mg_pad2": {"type": "minigame", "game": "passcode", "title": "Drawer 1986", "config": {"answer": "1986", "label": "Combination - 4 digits", "clue": "The year on the drawer is the code on the page."},
-      "hints": ["It is the number you just uncovered.", "The year the first dam went up.", "1-9-8-6."],
-      "effects": {"flags": ["opened_archive"], "unlock_photos": ["inspection_report"], "journal": "Drawer 1986: an empty waterproof case, a filed copy of the 2006 report stamped PASS, and a photocopy of the same page stamped FAIL."}, "next": "s_drawer"},
-    "s_drawer": {"type": "scene", "image": "inspection_report", "lines": [
-      "An empty waterproof case - the box. She took what was inside.",
-      "Left behind on purpose: the filed 2006 inspection report, stamped PASS. And under it, a photocopy of the same page. Stamped FAIL.",
-      "Her handwriting on a sticky note: \"keep this safe. - W\"",
-      "Her photo of the original, taken here at 12:58 AM the night she vanished, has just synced to your phone."
-    ], "next": "g_report"},
-    "g_report": {"type": "goal", "text": "Open her photo of the original report.", "target": {"app": "gallery", "photo": "inspection_report"}, "next": "mg_report"},
-    "mg_report": {"type": "minigame", "game": "photo_spot", "title": "IMG_4471 - the original", "config": {"photo": "inspection_report", "required": ["stamp", "signature"],
-      "brief": "This is the page that was never filed. Find the result and the name."},
-      "hints": ["The result is stamped in the middle of the page.", "Look at the signature block near the bottom.", "The engineer's name appears in the Courier's 2006 vote story too."],
-      "evidence": "ev_report", "effects": {"pins": ["c_report"], "pages": ["courier_vote", "harlan_obit"], "journal": "Original 2006 inspection: FAIL. Filed copy: PASS. Signed J. M. Harlan - who died in 2007."}, "next": "s_midpoint"},
-
-    "s_midpoint": {"type": "scene", "image": "gauge_spire", "lines": [
-      "You had it backwards.",
-      "This was never about a girl who wandered too close to a stalker at a marina. Wren was looking into a boy. Caleb Voss found this report in 2006 and took it to one adult he trusted. The report went into a drawer marked PASS. Caleb went into the water.",
-      "Wren found the same report. She told one adult. And eleven days ago the siren sounded at night, exactly like it did in 2006.",
-      "The same crime. Repeating."
-    ], "effects": {"flags": ["midpoint_reached"], "mirror": 2, "journal": "Midpoint: two crimes, one pattern. A teenager finds the report, tells one adult, and the spillway log erases the night."}, "next": "mm1"},
-
-    "mm1": {"type": "message", "thread": "mara", "text": "{player}. Ardis says you've been asking about Caleb Voss.", "delay": 1.4, "next": "mm2"},
-    "mm2": {"type": "message", "thread": "mara", "text": "Please don't. Please. Not that name. Not now.", "next": "c_mara3"},
-    "c_mara3": {"type": "choice", "thread": "mara", "options": [
-      {"text": "Mara - I never told Ardis anything about Caleb.", "next": "mm3_never", "effects": {"flags": ["told_mara_ardis_knows"], "trust": {"mara": 1}}},
-      {"text": "Why does that scare you?", "next": "mm3_why"},
-      {"text": "I'll stop.", "next": "mm3_stop", "effects": {"flags": ["promised_mara_stop"]}}
-    ]},
-    "mm3_never": {"type": "message", "thread": "mara", "text": "Then how does she", "next": "mm4"},
-    "mm3_why": {"type": "message", "thread": "mara", "text": "Because I file the 2006 minutes and I know whose name is missing from the vote. That's all I'm going to say tonight.", "next": "mm4"},
-    "mm3_stop": {"type": "message", "thread": "mara", "text": "Thank you. I'm sorry. I'm so sorry.", "next": "mm4"},
-    "mm4": {"type": "message", "thread": "mara", "text": "Don't answer that. Go to sleep.", "next": "s_cliff",
-      "effects": {"journal": "Mara: 'Ardis says you've been asking about Caleb Voss.' I never told Ardis. I only searched for him - on this phone."}},
-    "s_cliff": {"type": "scene", "lines": [
-      "You never told Ardis Locke about Caleb Voss.",
-      "You searched for him. On this phone. Through the mirror."
-    ], "next": "g_viewer"},
-    "g_viewer": {"type": "goal", "text": "Open Cloud Backup. Look at who else is watching.", "target": {"app": "cloud"}, "next": "s_viewer",
-      "effects": {"flags": ["saw_second_viewer", "cloud_pairing_visible"], "evidence": ["ev_second_viewer"], "journal": "Second viewer: M. ELLISON, network RESERVOIR-AUTH-STAFF, active two minutes ago."}},
-    "s_viewer": {"type": "scene", "lines": [
-      "M. ELLISON. Shared backup. Network: RESERVOIR-AUTH-STAFF.",
-      "The mirror runs both ways. And it is signed in as Wren's girlfriend.",
-      "You do not yet know if it is Mara - or someone using her."
-    ], "next": "t_card"},
-    "t_card": {"type": "title", "kicker": "THE HOLLOWMERE FILES", "title": "Episode 3", "subtitle": "The Old Town", "next": "end3"},
-    "end3": {"type": "end_episode", "teaser": "Episode 4 - Static. The mirror breaks open. She is typing.", "next_episode": "ep4"}
+    "t_open": {
+      "type": "title",
+      "kicker": "THE 25TH",
+      "title": "9:15 AM",
+      "subtitle": "Episode 3 - The Old Town",
+      "next": "p1"
+    },
+    "p1": {
+      "type": "message",
+      "thread": "tess",
+      "text": "ok so. her feed. she deleted something last week and i saw it before she did",
+      "delay": 1.0,
+      "next": "p2",
+      "effects": {
+        "hours": 288
+      }
+    },
+    "p2": {
+      "type": "message",
+      "thread": "tess",
+      "text": "i'm sending you her feed login. don't post anything. don't like anything. the police have the account flagged",
+      "next": "p3",
+      "effects": {
+        "unlock_apps": [
+          "feed"
+        ],
+        "feed": [
+          {
+            "id": "post1",
+            "author": "wren",
+            "text": "hollowmere below - 01. the ridge road at dawn, before they built the town on top of the town.",
+            "time": "5 wks ago"
+          },
+          {
+            "id": "post3",
+            "author": "wren",
+            "text": "hollowmere below - 03. a doorframe, six metres down. someone painted it blue once.",
+            "time": "4 wks ago"
+          },
+          {
+            "id": "post7",
+            "author": "wren",
+            "text": "hollowmere below - 07. 38.",
+            "time": "2 wks ago",
+            "image": "relay_field",
+            "cached": "hollowmere below - 07. he's down there. they all knew."
+          },
+          {
+            "id": "post9",
+            "author": "wren",
+            "text": "hollowmere below - 09. asked the historical society about the bell. got a very polite non-answer.",
+            "time": "2 wks ago"
+          },
+          {
+            "id": "post12",
+            "author": "wren",
+            "text": "hollowmere below - 12. the gauge-spire. the only thing that still breaks the surface in a dry summer.",
+            "time": "13 days ago",
+            "image": "gauge_spire"
+          },
+          {
+            "id": "post13",
+            "author": "wren",
+            "text": "if you were in hollowmere in 2006 and you'll talk to me on the record, DM. i'll keep you anonymous. i keep files, not names.",
+            "time": "12 days ago"
+          }
+        ]
+      }
+    },
+    "p3": {
+      "type": "message",
+      "thread": "tess",
+      "text": "one of the 'hollowmere below' posts got edited. the caption changed. there's an archive site that saves everything, compare them",
+      "next": "g_feed"
+    },
+    "g_feed": {
+      "type": "goal",
+      "text": "Open her Feed and find the post whose caption was changed.",
+      "target": {
+        "app": "feed"
+      },
+      "next": "mg_feed"
+    },
+    "mg_feed": {
+      "type": "minigame",
+      "game": "feed_scrub",
+      "title": "Feed \u00b7 cached vs live",
+      "config": {
+        "target": "post7",
+        "brief": "Twelve photos of the drowned village. One caption was changed after posting. Select a post and compare it with the saved copy."
+      },
+      "hints": [
+        "The historical society page mentioned frost relays. Which photo shows the orchard?",
+        "The live caption is only a number now. Thirty-eight.",
+        "Frame 07."
+      ],
+      "evidence": "ev_deleted_post",
+      "effects": {
+        "pins": [
+          "c_relays"
+        ],
+        "pages": [
+          "cache_wren_post"
+        ],
+        "unlock_photos": [
+          "relay_field"
+        ],
+        "journal": "Saved caption on frame 07: \"he's down there. they all knew.\""
+      },
+      "next": "s_feed"
+    },
+    "s_feed": {
+      "type": "scene",
+      "image": "relay_field",
+      "lines": [
+        "\"he's down there. they all knew.\"",
+        "She posted it, thought about it for an hour, and cut it down to a number: 38.",
+        "The frost-relay grid. Forty-one numbered posts meant to be salvaged. The Authority pulled thirty-eight."
+      ],
+      "next": "g_history"
+    },
+    "g_history": {
+      "type": "goal",
+      "text": "Search the browser for the drowned village - the historical society has a page on the bell.",
+      "target": {
+        "app": "browser",
+        "page": "historical_society"
+      },
+      "next": "s_bell",
+      "effects": {
+        "flags": [
+          "read_bell_page"
+        ],
+        "evidence": [
+          "ev_bell_legend"
+        ],
+        "journal": "The bell is not the orchard relays. It rings only when the boom cable jerks. Twenty years of a ghost story is twenty years of night releases."
+      }
+    },
+    "s_bell": {
+      "type": "scene",
+      "image": "loc_spillway",
+      "lines": [
+        "The bell on foggy nights is not the drowned orchard calling pickers.",
+        "It rings when the boom cable jerks - when the gates open, and again when they close.",
+        "Thirty-one seconds into her recording: one strike. The gates opening.",
+        "The legend was the log all along."
+      ],
+      "next": "d1"
+    },
+    "d1": {
+      "type": "message",
+      "thread": "deacon",
+      "text": "It's Deacon Moss, from the Waterline. Wren left her camera bag in the staff room. You should come and get it.",
+      "delay": 1.2,
+      "next": "d2"
+    },
+    "d2": {
+      "type": "message",
+      "thread": "deacon",
+      "text": "Come after close. Ten. Don't tell anyone you're coming. I mean that kindly.",
+      "next": "c_deacon"
+    },
+    "c_deacon": {
+      "type": "choice",
+      "thread": "deacon",
+      "options": [
+        {
+          "text": "I'll be there at ten.",
+          "next": "d3",
+          "effects": {
+            "trust": {
+              "deacon": 1
+            }
+          }
+        },
+        {
+          "text": "Why does it have to be a secret?",
+          "next": "d3_why"
+        },
+        {
+          "text": "Give it to the police, Deacon.",
+          "next": "d3_police",
+          "effects": {
+            "trust": {
+              "deacon": -1
+            },
+            "flags": [
+              "deacon_pushed_police"
+            ]
+          }
+        }
+      ]
+    },
+    "d3_why": {
+      "type": "message",
+      "thread": "deacon",
+      "text": "Because I've owned a diner in this town for nineteen years and I know who reads what. Ten o'clock.",
+      "next": "d3"
+    },
+    "d3_police": {
+      "type": "message",
+      "thread": "deacon",
+      "text": "The police were here twice. They didn't ask about a bag. Ten o'clock, or I put it in the bins.",
+      "next": "d3"
+    },
+    "d3": {
+      "type": "message",
+      "thread": "deacon",
+      "text": "Kitchen door. Round the back.",
+      "next": "call_deacon",
+      "effects": {
+        "pins": [
+          "deacon"
+        ],
+        "contacts": {
+          "deacon": "Deacon Moss"
+        }
+      }
+    },
+    "call_deacon": {
+      "type": "call",
+      "contact": "deacon",
+      "incoming": true,
+      "script": [
+        {
+          "from": "deacon",
+          "text": "Sorry - easier to talk. Look, before you come. The police asked where I was the night she went. I'll tell you what I told them."
+        },
+        {
+          "from": "deacon",
+          "text": "I was on the Thursday day shift. I left at four. I was home by five. I didn't see her after her shift ended at three."
+        },
+        {
+          "choice": [
+            {
+              "text": "That's very precise.",
+              "goto": 3,
+              "effects": {
+                "flags": [
+                  "noticed_rehearsed"
+                ]
+              }
+            },
+            {
+              "text": "Okay. See you at ten.",
+              "goto": 4
+            }
+          ]
+        },
+        {
+          "from": "deacon",
+          "text": "It's precise because it's true. Thursday day shift. Left at four. Home by five. Ten o'clock, kitchen door."
+        },
+        {
+          "from": "deacon",
+          "text": "Ten. Kitchen door."
+        },
+        {
+          "end": true
+        }
+      ],
+      "next": "s_diner"
+    },
+    "s_diner": {
+      "type": "scene",
+      "image": "loc_diner",
+      "title": "The Waterline, 10:04 PM",
+      "voice": "voice_quiet",
+      "lines": [
+        "The kitchen smells of bleach and fryer oil. Deacon hands you a canvas camera bag without a word and goes to the front to count the till.",
+        "The zip is done up backwards. The inner pocket is empty.",
+        "On the wall by the walk-in: the staff rota. Thursday's night shift has a name crossed out and new initials written over it.",
+        "You photograph it while he isn't looking."
+      ],
+      "effects": {
+        "unlock_photos": [
+          "diner_rota"
+        ],
+        "journal": "Deacon's alibi is word-for-word the same twice. The rota on his wall says something else. The bag zip is backwards."
+      },
+      "next": "g_rota"
+    },
+    "g_rota": {
+      "type": "goal",
+      "text": "Open your photo of the staff rota and look closely.",
+      "target": {
+        "app": "gallery",
+        "photo": "diner_rota"
+      },
+      "next": "mg_rota"
+    },
+    "mg_rota": {
+      "type": "minigame",
+      "game": "photo_spot",
+      "title": "Staff rota - The Waterline",
+      "config": {
+        "photo": "diner_rota",
+        "required": [
+          "swap",
+          "window"
+        ],
+        "brief": "He said Thursday day shift, home by five. Find what the rota says, and what you can see from where he stood."
+      },
+      "hints": [
+        "Look at the Thursday column, evening row.",
+        "The initials written over the crossed-out name are his.",
+        "Look at what the kitchen window faces."
+      ],
+      "evidence": "ev_rota",
+      "effects": {
+        "pins": [
+          "c_rota"
+        ],
+        "journal": "Deacon put himself on the Thursday NIGHT shift. The kitchen window looks straight at the spillway house."
+      },
+      "next": "wd1"
+    },
+    "wd1": {
+      "type": "message",
+      "thread": "warden",
+      "text": "Stop.",
+      "delay": 1.5,
+      "next": "wd2"
+    },
+    "wd2": {
+      "type": "message",
+      "thread": "warden",
+      "text": "She's alive if you stop.",
+      "next": "c_warden1"
+    },
+    "c_warden1": {
+      "type": "choice",
+      "thread": "warden",
+      "options": [
+        {
+          "text": "Okay. I'll stop.",
+          "next": "wd3_obey",
+          "effects": {
+            "flags": [
+              "warden_obeyed_1"
+            ],
+            "journal": "The Warden told me to stop. I said I would."
+          }
+        },
+        {
+          "text": "Who is this?",
+          "next": "wd3_who"
+        },
+        {
+          "text": "Prove she's alive.",
+          "next": "wd3_prove",
+          "effects": {
+            "flags": [
+              "warden_defied_1"
+            ]
+          }
+        }
+      ]
+    },
+    "wd3_obey": {
+      "type": "message",
+      "thread": "warden",
+      "text": "Good. Delete the recording. Don't go to the archive.",
+      "next": "wd4"
+    },
+    "wd3_who": {
+      "type": "message",
+      "thread": "warden",
+      "text": "Someone who was here in 2006. Don't go to the archive.",
+      "next": "wd4"
+    },
+    "wd3_prove": {
+      "type": "message",
+      "thread": "warden",
+      "text": "I can't. That's the point. Don't go to the archive.",
+      "next": "wd4"
+    },
+    "wd4": {
+      "type": "message",
+      "thread": "warden",
+      "text": "(No caller ID \u00b7 number withheld)",
+      "next": "s_warden",
+      "effects": {
+        "pins": [
+          "warden"
+        ],
+        "notes": [
+          {
+            "id": "n_warden",
+            "title": "THE WARDEN",
+            "body": "Hidden number. Knows about the recording. Knows about the archive - which I have not told anyone about. Says 'she's alive if you stop' - present tense. Either they know where she is, or they want me to think so."
+          }
+        ]
+      }
+    },
+    "s_warden": {
+      "type": "scene",
+      "voice": "voice_alive",
+      "lines": [
+        "Nobody knows about the archive. You only learned about it tonight, from a line of pencil inside a notebook cover.",
+        "Whoever the Warden is, they have seen the notebook. Or they were with the person who wrote in it.",
+        "Page 2 is the archive."
+      ],
+      "next": "mg_grid2"
+    },
+    "mg_grid2": {
+      "type": "minigame",
+      "game": "sudoku",
+      "title": "Caleb's notebook - page 2",
+      "config": {
+        "seed": 1986,
+        "size": 9,
+        "givens": 62,
+        "shaded": [
+          [
+            1,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            7,
+            3
+          ]
+        ],
+        "expected_code": "1986",
+        "code_label": "archive drawer",
+        "brief": "Page 2. Most of the grid is already filled. 1\u20139 in every row, column and box. The pencil-shaded cells carry the drawer number."
+      },
+      "hints": [
+        "Look for a row, column or box with only one empty square.",
+        "A missing digit that can only go in one cell is forced.",
+        "Read the shaded cells top to bottom. The year the first dam went up."
+      ],
+      "effects": {
+        "journal": "Page 2 solves to 1986."
+      },
+      "next": "s_archive"
+    },
+    "s_archive": {
+      "type": "scene",
+      "image": "loc_archive",
+      "title": "Town hall archive, 11:50 PM",
+      "lines": [
+        "The basement door was never locked. Nothing down here was ever worth stealing.",
+        "The flood-line marks on the wall are higher than your head. Steel drawers, most of them rusted shut. One row is numbered by year.",
+        "Drawer 1986 has a combination wheel, and the dust on it has been moved twice."
+      ],
+      "next": "mg_pad2"
+    },
+    "mg_pad2": {
+      "type": "minigame",
+      "game": "passcode",
+      "title": "Drawer 1986",
+      "config": {
+        "answer": "1986",
+        "label": "Combination - 4 digits",
+        "clue": "The year on the drawer is the code on the page."
+      },
+      "hints": [
+        "It is the number you just uncovered.",
+        "The year the first dam went up.",
+        "1-9-8-6."
+      ],
+      "effects": {
+        "flags": [
+          "opened_archive"
+        ],
+        "unlock_photos": [
+          "inspection_report"
+        ],
+        "journal": "Drawer 1986: an empty waterproof case, a filed copy of the 2006 report stamped PASS, and a photocopy of the same page stamped FAIL."
+      },
+      "next": "s_drawer"
+    },
+    "s_drawer": {
+      "type": "scene",
+      "image": "inspection_report",
+      "lines": [
+        "An empty waterproof case - the box. She took what was inside.",
+        "Left behind on purpose: the filed 2006 inspection report, stamped PASS. And under it, a photocopy of the same page. Stamped FAIL.",
+        "Her handwriting on a sticky note: \"keep this safe. - W\"",
+        "Her photo of the original, taken here at 12:58 AM the night she vanished, has just synced to your phone."
+      ],
+      "next": "g_report"
+    },
+    "g_report": {
+      "type": "goal",
+      "text": "Open her photo of the original report.",
+      "target": {
+        "app": "gallery",
+        "photo": "inspection_report"
+      },
+      "next": "mg_report"
+    },
+    "mg_report": {
+      "type": "minigame",
+      "game": "photo_spot",
+      "title": "IMG_4471 - the original",
+      "config": {
+        "photo": "inspection_report",
+        "required": [
+          "stamp",
+          "signature"
+        ],
+        "brief": "This is the page that was never filed. Find the result and the name."
+      },
+      "hints": [
+        "The result is stamped in the middle of the page.",
+        "Look at the signature block near the bottom.",
+        "The engineer's name appears in the Courier's 2006 vote story too."
+      ],
+      "evidence": "ev_report",
+      "effects": {
+        "pins": [
+          "c_report"
+        ],
+        "pages": [
+          "courier_vote",
+          "harlan_obit"
+        ],
+        "journal": "Original 2006 inspection: FAIL. Filed copy: PASS. Signed J. M. Harlan - who died in 2007."
+      },
+      "next": "s_midpoint"
+    },
+    "s_midpoint": {
+      "type": "scene",
+      "image": "gauge_spire",
+      "lines": [
+        "You had it backwards.",
+        "This was never about a girl who wandered too close to a stalker at a marina. Wren was looking into a boy. Caleb Voss found this report in 2006 and took it to one adult he trusted. The report went into a drawer marked PASS. Caleb went into the water.",
+        "Wren found the same report. She told one adult. And eleven days ago the siren sounded at night, exactly like it did in 2006.",
+        "The same crime. Repeating."
+      ],
+      "effects": {
+        "flags": [
+          "midpoint_reached"
+        ],
+        "mirror": 2,
+        "journal": "Midpoint: two crimes, one pattern. A teenager finds the report, tells one adult, and the spillway log erases the night."
+      },
+      "next": "mm1"
+    },
+    "mm1": {
+      "type": "message",
+      "thread": "mara",
+      "text": "{player}. Ardis says you've been asking about Caleb Voss.",
+      "delay": 1.4,
+      "next": "mm2"
+    },
+    "mm2": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Please don't. Please. Not that name. Not now.",
+      "next": "c_mara3"
+    },
+    "c_mara3": {
+      "type": "choice",
+      "thread": "mara",
+      "options": [
+        {
+          "text": "Mara - I never told Ardis anything about Caleb.",
+          "next": "mm3_never",
+          "effects": {
+            "flags": [
+              "told_mara_ardis_knows"
+            ],
+            "trust": {
+              "mara": 1
+            }
+          }
+        },
+        {
+          "text": "Why does that scare you?",
+          "next": "mm3_why"
+        },
+        {
+          "text": "I'll stop.",
+          "next": "mm3_stop",
+          "effects": {
+            "flags": [
+              "promised_mara_stop"
+            ]
+          }
+        }
+      ]
+    },
+    "mm3_never": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Then how does she",
+      "next": "mm4"
+    },
+    "mm3_why": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Because I file the 2006 minutes and I know whose name is missing from the vote. That's all I'm going to say tonight.",
+      "next": "mm4"
+    },
+    "mm3_stop": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Thank you. I'm sorry. I'm so sorry.",
+      "next": "mm4"
+    },
+    "mm4": {
+      "type": "message",
+      "thread": "mara",
+      "text": "Don't answer that. Go to sleep.",
+      "next": "s_cliff",
+      "effects": {
+        "journal": "Mara: 'Ardis says you've been asking about Caleb Voss.' I never told Ardis. I only searched for him - on this phone."
+      }
+    },
+    "s_cliff": {
+      "type": "scene",
+      "lines": [
+        "You never told Ardis Locke about Caleb Voss.",
+        "You searched for him. On this phone. Through the mirror."
+      ],
+      "next": "g_viewer"
+    },
+    "g_viewer": {
+      "type": "goal",
+      "text": "Open Cloud Backup. Look at who else is watching.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "s_viewer",
+      "effects": {
+        "flags": [
+          "saw_second_viewer",
+          "cloud_pairing_visible"
+        ],
+        "evidence": [
+          "ev_second_viewer"
+        ],
+        "journal": "Second viewer: M. ELLISON, network RESERVOIR-AUTH-STAFF, active two minutes ago."
+      }
+    },
+    "s_viewer": {
+      "type": "scene",
+      "lines": [
+        "M. ELLISON. Shared backup. Network: RESERVOIR-AUTH-STAFF.",
+        "The mirror runs both ways. And it is signed in as Wren's girlfriend.",
+        "You do not yet know if it is Mara - or someone using her."
+      ],
+      "next": "t_card"
+    },
+    "t_card": {
+      "type": "title",
+      "kicker": "THE HOLLOWMERE FILES",
+      "title": "Episode 3",
+      "subtitle": "The Old Town",
+      "next": "new_ep3_s1"
+    },
+    "end3": {
+      "type": "end_episode",
+      "teaser": "Episode 4 - Static. The mirror breaks open. She is typing.",
+      "next_episode": "ep4"
+    },
+    "new_ep3_s1": {
+      "type": "scene",
+      "lines": [
+        "As you review the evidence, your power cuts out.",
+        "The whole house goes dark. Then, your computer monitor flickers to life.",
+        "A live feed of your own living room."
+      ],
+      "next": "new_ep3_mg"
+    },
+    "new_ep3_mg": {
+      "type": "minigame",
+      "game": "live_static",
+      "title": "Intruder Feed",
+      "config": {
+        "frequency": 105.1,
+        "brief": "Tune the frequency to hijack the camera feed and see who is controlling it."
+      },
+      "hints": [
+        "Tune to 105.1"
+      ],
+      "next": "new_ep3_s2"
+    },
+    "new_ep3_s2": {
+      "type": "scene",
+      "lines": [
+        "The feed clears. You see the IP address of the broadcaster.",
+        "It's coming from the Mayor's office.",
+        "They aren't just watching you. They are daring you to come find them."
+      ],
+      "next": "end3"
+    }
   }
 }

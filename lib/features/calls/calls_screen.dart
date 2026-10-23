@@ -10,6 +10,7 @@ import '../../core/audio.dart';
 import '../../core/theme.dart';
 import '../../engine/game_state.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/widgets.dart';
 
 /// Mirrored call log with an inline voicemail player.
@@ -85,7 +86,7 @@ class _CallTile extends ConsumerWidget {
     };
     final d = entry.durationSeconds;
     final duration = d == null
-        ? (entry.direction == 'missed' ? 'Missed' : '')
+        ? (entry.direction == 'missed' ? context.tr('Missed') : '')
         : '${d ~/ 60}:${(d % 60).toString().padLeft(2, '0')}';
     return ListTile(
       leading: Avatar(entry.contact, size: 44),
@@ -94,7 +95,7 @@ class _CallTile extends ConsumerWidget {
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
-          Text('${entry.label}${duration.isEmpty ? '' : ' · $duration'}',
+          Text('${context.tr(entry.label)}${duration.isEmpty ? '' : ' · $duration'}',
               style: const TextStyle(color: HmColors.textDim, fontSize: 12)),
         ],
       ),
@@ -278,10 +279,10 @@ class VoicemailPlayerState extends ConsumerState<VoicemailPlayer> {
                   children: [
                     Text(
                         widget.obscureCaller
-                            ? 'Recording · unidentified'
-                            : 'Voicemail · ${displayName(ref, vm.from)}',
+                            ? context.tr('Recording · unidentified')
+                            : context.fmt('Voicemail · {name}', {'name': displayName(ref, vm.from)}),
                         style: const TextStyle(fontWeight: FontWeight.w600)),
-                    Text(widget.obscureCaller ? 'background: ?' : vm.background,
+                    Text(widget.obscureCaller ? context.tr('background: ?') : context.tr(vm.background),
                         style: monoStyle.copyWith(fontSize: 10, color: HmColors.textDim)),
                   ],
                 ),
@@ -321,7 +322,7 @@ class VoicemailPlayerState extends ConsumerState<VoicemailPlayer> {
               Text('${_fmt(_pos)} / ${_fmt(len)}', style: monoStyle),
               const Spacer(),
               IconButton(
-                tooltip: 'Back 5s',
+                tooltip: context.tr('Back 5s'),
                 onPressed: () => _seek(
                     Duration(seconds: math.max(0, _pos.inSeconds - 5))),
                 icon: const Icon(Icons.replay_5_rounded),
@@ -333,12 +334,12 @@ class VoicemailPlayerState extends ConsumerState<VoicemailPlayer> {
             for (final line in visibleTranscript)
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
-                child: Text(line,
+                child: Text(context.tr(line),
                     style: monoStyle.copyWith(
                         color: line.contains('(') ? HmColors.amber : HmColors.text)),
               ),
             if (visibleTranscript.isEmpty)
-              Text('press play', style: monoStyle.copyWith(color: HmColors.textDim)),
+              Text(context.tr('press play'), style: monoStyle.copyWith(color: HmColors.textDim)),
           ],
         ],
       ),

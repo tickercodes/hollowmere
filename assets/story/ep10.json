@@ -1,0 +1,120 @@
+{
+  "id": "ep10",
+  "number": 10,
+  "title": "The Architect",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "Inside the safe, you also find an old photo. An architect.",
+        "Elias Thorne. The man who designed the dam.",
+        "The back of the photo has three marks, drawn in order: a house, an arch, a gear."
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "Thorne never trusted Ardis's father. He left a backdoor in the dam's control system.",
+      "next": "m2",
+      "delay": 1.0
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "The spillway terminal will not take a typed word. It wants the marks on the back of Thorne's photo, in the order he drew them.",
+      "next": "notif1",
+      "delay": 1.0
+    },
+    "notif1": {
+      "type": "notification",
+      "app": "cloud",
+      "title": "Terminal Interface",
+      "body": "Connecting...",
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Open the cloud to access Thorne's terminal.",
+      "target": {
+        "app": "cloud"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "key_cipher",
+      "title": "Thorne's Key",
+      "config": {
+        "ciphertext": "WRMLTAU",
+        "answer": "TRAITOR",
+        "key": ["house", "arch", "gear"],
+        "marks": [
+          {"id": "bolt", "glyph": "⚡", "letter": "K", "label": "Bolt"},
+          {"id": "house", "glyph": "⌂", "letter": "D", "label": "House"},
+          {"id": "wave", "glyph": "∿", "letter": "S", "label": "Wave"},
+          {"id": "arch", "glyph": "⌒", "letter": "A", "label": "Arch"},
+          {"id": "gear", "glyph": "⚙", "letter": "M", "label": "Gear"},
+          {"id": "eye", "glyph": "◉", "letter": "R", "label": "Eye"}
+        ],
+        "brief": "Set the three marks from the photo, in the order they were drawn. The terminal reads itself. You do not type the word."
+      },
+      "hints": [
+        "House, then arch, then gear.",
+        "The key is the marks, not a word you spell.",
+        "When the key is right, the panel reads TRAITOR."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "The marks lock in. House. Arch. Gear.",
+        "The panel answers by itself: TRAITOR.",
+        "The control panel unlocks, revealing the detonation sequence."
+      ],
+      "next": "m3"
+    },
+    "m3": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "They set the timer. 2 hours until the valley floods.",
+      "next": "c1",
+      "delay": 1.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "unknown",
+      "options": [
+        {
+          "text": "How do we stop it?",
+          "next": "m4"
+        },
+        {
+          "text": "Can we evacuate?",
+          "next": "m_evac"
+        }
+      ]
+    },
+    "m_evac": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "There's no time. The town's sirens have been disabled. Only you can stop it.",
+      "next": "m4",
+      "delay": 1.0
+    },
+    "m4": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You need to find the physical detonator. It's hidden in the old town hall archives.",
+      "next": "end10",
+      "delay": 1.0
+    },
+    "end10": {
+      "type": "end_episode",
+      "teaser": "Episode 11 - The Archives",
+      "next_episode": "ep11"
+    }
+  }
+}

@@ -5,6 +5,7 @@ import '../../content/browser_pages.dart';
 import '../../content/photos.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import '../shell/phone_shell.dart';
 import '../shell/widgets.dart';
 
@@ -95,7 +96,7 @@ class _BrowserScreenState extends ConsumerState<BrowserScreen> {
                 decoration: TextDecoration.none,
               ),
               decoration: InputDecoration(
-                hintText: page?.url ?? 'Search or type a term',
+                hintText: page?.url ?? context.tr('Search or type a term'),
                 prefixIcon: const Icon(Icons.search_rounded, size: 20),
                 suffixIcon: IconButton(
                     icon: const Icon(Icons.arrow_forward_rounded, size: 20),
@@ -149,7 +150,7 @@ class _Start extends StatelessWidget {
               ListTile(
                 dense: true,
                 leading: const Icon(Icons.history_rounded, size: 18, color: HmColors.textDim),
-                title: Text(h, style: monoStyle),
+                title: Text(context.tr(h), style: monoStyle),
                 onTap: () => onSearch(h),
               ),
           ],
@@ -159,7 +160,7 @@ class _Start extends StatelessWidget {
               ListTile(
                 dense: true,
                 leading: const Icon(Icons.public_rounded, size: 18, color: HmColors.teal),
-                title: Text(p.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: Text(context.tr(p.title), maxLines: 1, overflow: TextOverflow.ellipsis),
                 subtitle: Text(p.url,
                     style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
                 onTap: () => onOpen(p.id),
@@ -183,7 +184,7 @@ class _Results extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (results.isEmpty) {
-      return EmptyHint('No results for "$query".\nTry fewer or different words.');
+      return EmptyHint(context.fmt('No results for "{query}".\nTry fewer or different words.', {'query': query}));
     }
     return ListView.builder(
       padding: const EdgeInsets.all(12),
@@ -197,11 +198,11 @@ class _Results extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(p.site, style: monoStyle.copyWith(fontSize: 11, color: HmColors.teal)),
+              Text(context.tr(p.site), style: monoStyle.copyWith(fontSize: 11, color: HmColors.teal)),
               const SizedBox(height: 4),
-              Text(p.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(context.tr(p.title), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              Text(p.body.first.replaceFirst(RegExp(r'^# '), ''),
+              Text(context.tr(p.body.first).replaceFirst(RegExp(r'^# '), ''),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: HmColors.textDim, fontSize: 13)),
@@ -224,10 +225,10 @@ class _Reader extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
       children: [
-        Text(page.site.toUpperCase(),
+        Text(context.tr(page.site).toUpperCase(),
             style: monoStyle.copyWith(fontSize: 11, color: HmColors.teal, letterSpacing: 2)),
         const SizedBox(height: 8),
-        Text(page.title, style: displayStyle.copyWith(fontSize: 22, letterSpacing: 0.2)),
+        Text(context.tr(page.title), style: displayStyle.copyWith(fontSize: 22, letterSpacing: 0.2)),
         const SizedBox(height: 4),
         Text(page.url, style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
         const Divider(height: 28),
@@ -246,9 +247,9 @@ class _Reader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 14),
             child: para.startsWith('# ')
-                ? Text(para.substring(2),
+                ? Text(context.tr(para).replaceFirst(RegExp(r'^# '), ''),
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
-                : Text(para, style: const TextStyle(fontSize: 15.5, height: 1.55)),
+                : Text(context.tr(para), style: const TextStyle(fontSize: 15.5, height: 1.55)),
           ),
         if (page.links.isNotEmpty) ...[
           const Divider(height: 28),
@@ -259,7 +260,7 @@ class _Reader extends StatelessWidget {
                 dense: true,
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.link_rounded, size: 18, color: HmColors.teal),
-                title: Text(webPages[l]!.title,
+                title: Text(context.tr(webPages[l]!.title),
                     style: const TextStyle(color: HmColors.teal)),
                 onTap: () => onLink(l),
               ),

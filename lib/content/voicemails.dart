@@ -64,7 +64,7 @@ const voicemails = <String, Voicemail>{
     from: 'mara',
     durationSeconds: 12,
     background: 'quiet room',
-    transcript: ["Sam, it's Mara Ellison. Wren and I are together. The police won't tell me anything. If you've heard from her, anything at all, please call me back."],
+    transcript: ["John, it's Mara Ellison. Wren and I are together. The police won't tell me anything. If you've heard from her, anything at all, please call me back."],
   ),
   'vm_deacon': Voicemail(
     id: 'vm_deacon',
@@ -78,7 +78,7 @@ const voicemails = <String, Voicemail>{
     from: 'ardis',
     durationSeconds: 13,
     background: 'office hum',
-    transcript: ["Sam, this is Ardis Locke. I wanted to check in myself. This town looks after its own. If the police have Wren's phone I'd like to know, so I can push them. Call me."],
+    transcript: ["John, this is Ardis Locke. I wanted to check in myself. This town looks after its own. If the police have Wren's phone I'd like to know, so I can push them. Call me."],
   ),
   'vm_unknown': Voicemail(
     id: 'vm_unknown',
@@ -86,6 +86,11 @@ const voicemails = <String, Voicemail>{
     durationSeconds: 5,
     background: 'inside a car, engine off',
     transcript: ["Stop looking. She's alive if you stop."],
+    cues: [
+      VoicemailCue(id: 'siren', at: 0.6, label: 'Siren', detail: 'Spillway warning, faint through the car body.'),
+      VoicemailCue(id: 'ringtone', at: 2.4, label: 'Ringtone', detail: 'A phone ringing on the passenger seat. Nobody answers.'),
+      VoicemailCue(id: 'static', at: 4.2, label: 'Static', detail: 'The line dies in a burst of static.'),
+    ],
   ),
   'vm_wren_memo1': Voicemail(
     id: 'vm_wren_memo1',
@@ -93,7 +98,7 @@ const voicemails = <String, Voicemail>{
     durationSeconds: 11,
     background: 'close, indoor',
     transcript: [
-      "If you're hearing this, Sam - hi. I left this in case I go quiet.",
+      "If you're hearing this - hi. I left this in case I go quiet.",
       "Don't be mad I used your wifi. You were the only person here who wasn't here in 2006.",
     ],
   ),

@@ -11,11 +11,13 @@ const spokenVoices = <VoiceLine>[
   VoiceLine('voice_still_up', 'still up?'),
   VoiceLine('voice_found_it', 'I found it.'),
   VoiceLine('voice_here', "Someone's here."),
-  VoiceLine('voice_sam', "If you're hearing this, Sam."),
+  VoiceLine('voice_hearing', "If you're hearing this"),
   VoiceLine('voice_stop', 'Stop looking.'),
   VoiceLine('voice_alive', "She's alive if you stop."),
   VoiceLine('voice_marina', 'Stay away from the marina.'),
   VoiceLine('voice_quiet', "Don't tell anyone."),
+  VoiceLine('voice_radio', 'Get out of the house. Now.'),
+  VoiceLine('voice_static', 'If the dam breaks, we blame the old infrastructure.'),
 ];
 
 final spokenVoiceIds = {for (final v in spokenVoices) v.id};

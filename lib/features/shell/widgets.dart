@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../content/characters.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 
 /// Substitutes `{player}` in script copy. Safe to call on already-filled text.
 String fillPlayer(String text, String playerName) =>
@@ -11,9 +12,10 @@ String fillPlayer(String text, String playerName) =>
 
 /// Contact display name honouring per-save overrides (unknown numbers etc.).
 String displayName(WidgetRef ref, String characterId) {
+  ref.watch(localeProvider);
   final names = ref.watch(storyEngineProvider.select((s) => s.game.contactNames));
   final c = characterOf(characterId);
-  return names[characterId] ?? c.defaultLabel ?? c.name;
+  return L10nCatalog.lookup(names[characterId] ?? c.defaultLabel ?? c.name);
 }
 
 class Avatar extends ConsumerWidget {
@@ -30,7 +32,8 @@ class Avatar extends ConsumerWidget {
     final c = characterOf(characterId);
     final names = ref.watch(storyEngineProvider.select((s) => s.game.contactNames));
     final known = revealed ?? (c.defaultLabel == null || names.containsKey(characterId));
-    final label = names[characterId] ?? c.defaultLabel ?? c.name;
+    ref.watch(localeProvider);
+    final label = L10nCatalog.lookup(names[characterId] ?? c.defaultLabel ?? c.name);
     final monogram = label.isEmpty ? '?' : label.characters.first.toUpperCase();
     return Container(
       width: size,
@@ -98,7 +101,7 @@ class SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-        child: Text(text.toUpperCase(),
+        child: Text(context.tr(text).toUpperCase(),
             style: const TextStyle(
                 color: HmColors.teal,
                 fontSize: 11,
@@ -119,7 +122,7 @@ class Pill extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
           border: Border.all(color: color.withValues(alpha: 0.6)),
         ),
-        child: Text(text,
+        child: Text(context.tr(text),
             style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
       );
 }
@@ -159,7 +162,7 @@ class AppScaffold extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                title,
+                context.tr(title),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -171,7 +174,7 @@ class AppScaffold extends StatelessWidget {
               ),
               if (subtitle != null)
                 Text(
-                  subtitle!,
+                  context.tr(subtitle!),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -201,7 +204,7 @@ class EmptyHint extends StatelessWidget {
             children: [
               Icon(icon, color: HmColors.textDim, size: 40),
               const SizedBox(height: 12),
-              Text(text,
+              Text(context.tr(text),
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: HmColors.textDim)),
             ],
@@ -234,7 +237,7 @@ class ShellChipButton extends StatelessWidget {
               border: Border.all(color: HmColors.teal.withValues(alpha: 0.6)),
             ),
             child: Text(
-              label,
+              context.tr(label),
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,

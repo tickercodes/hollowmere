@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme.dart';
+import '../l10n/l10n.dart';
 import '../engine/story_engine.dart';
 import '../features/shell/widgets.dart';
+import 'minigame_config.dart';
 import 'minigame_scaffold.dart';
 
 /// Live Static (Episode 4). Messages from Wren arrive in real time and
@@ -28,13 +30,17 @@ class _LiveStaticGameState extends ConsumerState<LiveStaticGame> {
   bool _awaiting = false;
 
   Map<String, dynamic> get cfg => widget.interaction.node.config;
-  List<Map<String, dynamic>> get steps => (cfg['steps'] as List).cast<Map<String, dynamic>>();
+  List<Map<String, dynamic>> get steps => MinigameConfig.liveSteps(cfg);
+  double? get _tuneTarget => MinigameConfig.tuneFrequency(cfg);
   String get from => (cfg['from'] as String?) ?? 'wren';
+  double _freq = 88.0;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 900), _nextStep);
+    if (steps.isNotEmpty) {
+      Future.delayed(const Duration(milliseconds: 900), _nextStep);
+    }
   }
 
   void _nextStep() {
@@ -106,6 +112,14 @@ class _LiveStaticGameState extends ConsumerState<LiveStaticGame> {
 
   @override
   Widget build(BuildContext context) {
+    if (steps.isEmpty && _tuneTarget != null) {
+      return _FrequencyTune(
+        interaction: widget.interaction,
+        target: _tuneTarget!,
+        freq: _freq,
+        onChanged: (v) => setState(() => _freq = v),
+      );
+    }
     final s = _step >= 0 && _step < steps.length ? steps[_step] : null;
     final options = _awaiting && s != null
         ? (s['options'] as List).cast<Map<String, dynamic>>()
@@ -127,7 +141,7 @@ class _LiveStaticGameState extends ConsumerState<LiveStaticGame> {
                 backgroundColor: HmColors.hairline,
               ),
               const SizedBox(height: 4),
-              Text('signal holds for $_left s',
+              Text(context.fmt('signal holds for {n} s', {'n': _left}),
                   style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
               const SizedBox(height: 8),
             ],
@@ -136,11 +150,11 @@ class _LiveStaticGameState extends ConsumerState<LiveStaticGame> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: OutlinedButton(
                   onPressed: () => _reply(o),
-                  child: Text(o['text'] as String),
+                  child: Text(context.tr(o['text'] as String, playerName: ref.watch(storyEngineProvider.select((s) => s.game.playerName)))),
                 ),
               ),
             if (!_awaiting)
-              Text(_step + 1 >= steps.length ? 'signal lost' : 'waiting for signal…',
+              Text(context.tr(_step + 1 >= steps.length ? 'signal lost' : 'waiting for signal…'),
                   textAlign: TextAlign.center,
                   style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
           ],
@@ -156,7 +170,7 @@ class _LiveStaticGameState extends ConsumerState<LiveStaticGame> {
                 children: [
                   Avatar(from, size: 30),
                   const SizedBox(width: 8),
-                  Text('LIVE · unstable', style: monoStyle.copyWith(color: HmColors.glitchCyan, letterSpacing: 2, fontSize: 11)),
+                  Text(context.tr('LIVE · unstable'), style: monoStyle.copyWith(color: HmColors.glitchCyan, letterSpacing: 2, fontSize: 11)),
                 ],
               ),
             ),
@@ -180,7 +194,7 @@ class _LiveStaticGameState extends ConsumerState<LiveStaticGame> {
                           borderRadius: BorderRadius.circular(16),
                           border: gone ? Border.all(color: HmColors.glitchMagenta.withValues(alpha: 0.5)) : null,
                         ),
-                        child: Text(text,
+                        child: Text(context.tr(text, playerName: ref.watch(storyEngineProvider.select((s) => s.game.playerName))),
                             style: TextStyle(
                               fontSize: 15,
                               color: gone ? HmColors.textDim : HmColors.text,
@@ -191,6 +205,63 @@ class _LiveStaticGameState extends ConsumerState<LiveStaticGame> {
                     ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FrequencyTune extends ConsumerWidget {
+  const _FrequencyTune({
+    required this.interaction,
+    required this.target,
+    required this.freq,
+    required this.onChanged,
+  });
+
+  final MinigameInteraction interaction;
+  final double target;
+  final double freq;
+  final ValueChanged<double> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final close = (freq - target).abs() < 0.4;
+    return MinigameScaffold(
+      interaction: interaction,
+      brief: interaction.node.config['brief'] as String? ??
+          'Tune the frequency until the signal locks.',
+      bottom: CheckBar(
+        onCheck: () {
+          if (close) {
+            ref.minigameSuccess(context, message: 'Signal locked.');
+          } else {
+            ref.minigameFail(context, interaction.puzzleId, 'Still just noise.');
+          }
+        },
+        label: 'Lock signal',
+        status: '${freq.toStringAsFixed(1)} MHz',
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 12),
+        child: Column(
+          children: [
+            Text(
+              close ? context.tr('LOCKED') : context.tr('SCANNING'),
+              style: monoStyle.copyWith(
+                color: close ? HmColors.ok : HmColors.glitchCyan,
+                letterSpacing: 3,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Slider(
+              value: freq.clamp(80, 120),
+              min: 80,
+              max: 120,
+              activeColor: close ? HmColors.ok : HmColors.teal,
+              onChanged: onChanged,
             ),
           ],
         ),

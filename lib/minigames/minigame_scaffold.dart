@@ -6,6 +6,7 @@ import '../core/notice.dart';
 import '../core/theme.dart';
 import '../engine/story_engine.dart';
 import '../features/shell/widgets.dart';
+import '../l10n/l10n.dart';
 
 /// Shared chrome and rules for every mini-game (bible §10):
 /// three escalating hints, a skip after three failures, and a "Later" exit
@@ -41,7 +42,7 @@ class MinigameScaffold extends ConsumerWidget {
         if (brief != null)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-            child: Text(brief!,
+            child: Text(context.tr(brief!),
                 style: const TextStyle(color: HmColors.textDim, height: 1.45, fontSize: 14)),
           ),
         child,
@@ -57,14 +58,14 @@ class MinigameScaffold extends ConsumerWidget {
         scrolledUnderElevation: 0,
         shadowColor: Colors.transparent,
         flexibleSpace: const ColoredBox(color: HmColors.bg),
-        title: Text(title,
+        title: Text(context.tr(title),
             style: const TextStyle(
               fontSize: 17,
               color: HmColors.text,
               decoration: TextDecoration.none,
             )),
         leading: IconButton(
-          tooltip: 'Later',
+          tooltip: context.tr('Later'),
           icon: const Icon(Icons.keyboard_arrow_down_rounded),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
@@ -73,7 +74,10 @@ class MinigameScaffold extends ConsumerWidget {
             TextButton.icon(
               onPressed: () => _showHints(context, engine, hints, hintsUsed),
               icon: const Icon(Icons.lightbulb_outline_rounded, size: 18, color: HmColors.amber),
-              label: Text('Hint ${hintsUsed.clamp(0, hints.length)}/${hints.length}',
+              label: Text(context.fmt('Hint {used}/{total}', {
+                'used': hintsUsed.clamp(0, hints.length),
+                'total': hints.length,
+              }),
                   style: const TextStyle(color: HmColors.amber)),
             ),
         ],
@@ -110,7 +114,7 @@ class MinigameScaffold extends ConsumerWidget {
                     Text('${i + 1}  ', style: monoStyle.copyWith(color: HmColors.amber)),
                     Expanded(
                       child: Text(
-                        hints[i],
+                        c.tr(hints[i]),
                         style: const TextStyle(
                           height: 1.45,
                           color: HmColors.text,
@@ -123,7 +127,7 @@ class MinigameScaffold extends ConsumerWidget {
                 ),
               ),
             if (reveal < hints.length)
-              Text('Open hints again for the next one.',
+              Text(c.tr('Open hints again for the next one.'),
                   style: monoStyle.copyWith(fontSize: 11, color: HmColors.textDim)),
           ],
         ),
@@ -166,7 +170,7 @@ class CheckBar extends StatelessWidget {
         child: Row(
           children: [
             if (status != null)
-              Expanded(child: Text(status!, style: monoStyle.copyWith(color: HmColors.textDim, fontSize: 12))),
+              Expanded(child: Text(context.tr(status!), style: monoStyle.copyWith(color: HmColors.textDim, fontSize: 12))),
             ShellChipButton(label: label, onTap: enabled ? onCheck : null),
           ],
         ),

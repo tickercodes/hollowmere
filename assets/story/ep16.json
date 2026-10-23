@@ -1,0 +1,97 @@
+{
+  "id": "ep16",
+  "number": 16,
+  "title": "The Spillway",
+  "start": "start",
+  "nodes": {
+    "start": {
+      "type": "scene",
+      "lines": [
+        "The detonator is in your hands.",
+        "The screen blinks: ABORT CODE?"
+      ],
+      "next": "g1"
+    },
+    "g1": {
+      "type": "goal",
+      "text": "Enter the abort code on the detonator.",
+      "target": {
+        "app": "board"
+      },
+      "next": "mg1"
+    },
+    "mg1": {
+      "type": "minigame",
+      "game": "passcode",
+      "title": "Abort Sequence",
+      "config": {
+        "answer": "2219",
+        "label": "ABORT CODE",
+        "clue": "Wren's passcode."
+      },
+      "hints": [
+        "2219, the same as Wren's phone."
+      ],
+      "next": "s2"
+    },
+    "s2": {
+      "type": "scene",
+      "lines": [
+        "Code Accepted.",
+        "Sequence Aborted.",
+        "The sirens stop. The dam is safe. Jonah falls to his knees."
+      ],
+      "next": "m1"
+    },
+    "m1": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "You did it.",
+      "next": "c1",
+      "delay": 1.0
+    },
+    "c1": {
+      "type": "choice",
+      "thread": "unknown",
+      "options": [
+        {
+          "text": "Who are you?",
+          "next": "m2"
+        },
+        {
+          "text": "It's over.",
+          "next": "m2"
+        }
+      ]
+    },
+    "m2": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "I'm the one who survived the 1986 flood.",
+      "next": "m3",
+      "delay": 1.0
+    },
+    "m3": {
+      "type": "message",
+      "thread": "unknown",
+      "text": "My name is Caleb.",
+      "next": "s3",
+      "delay": 1.0
+    },
+    "s3": {
+      "type": "scene",
+      "lines": [
+        "Caleb is alive.",
+        "The state police arrive, sirens wailing in the distance.",
+        "Ardis, Jonah, Deacon... they will all fall.",
+        "Hollowmere's secrets have finally surfaced."
+      ],
+      "next": "end16"
+    },
+    "end16": {
+      "type": "end_episode",
+      "next_episode": "ep17",
+      "teaser": "Episode 17 - The State Police"
+    }
+  }
+}

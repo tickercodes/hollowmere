@@ -1,3 +1,5 @@
+import '../l10n/l10n.dart';
+
 /// The in-game web. Pages are found by searching keywords or by following
 /// links from other pages. `hidden` pages never appear in search until a
 /// script grants them (e.g. a URL from a chat).
@@ -29,13 +31,64 @@ class WebPage {
   bool matches(String query) {
     final q = query.toLowerCase().trim();
     if (q.isEmpty) return false;
+
+    final pageUrl = url.toLowerCase();
+    for (final candidate in browserQueryUrlCandidates(q)) {
+      if (candidate == pageUrl ||
+          pageUrl.contains(candidate) ||
+          candidate.contains(pageUrl)) {
+        return true;
+      }
+    }
+
     final terms = q.split(RegExp(r'\s+'));
     final hay = [
-      title.toLowerCase(),
-      ...keywords.map((k) => k.toLowerCase()),
-    ].join(' ');
+      url,
+      title,
+      L10nCatalog.lookup(title),
+      site,
+      L10nCatalog.lookup(site),
+      ...keywords,
+      ...keywords.map(L10nCatalog.lookup),
+      ...body,
+      ...body.map(L10nCatalog.lookup),
+    ].join(' ').toLowerCase();
     return terms.every(hay.contains);
   }
+}
+
+/// Normalizes pasted chat links and typed URLs for comparison with [WebPage.url].
+Iterable<String> browserQueryUrlCandidates(String query) sync* {
+  var q = query.toLowerCase().trim();
+  if (q.isEmpty) return;
+
+  String strip(String s) {
+    var out = s.trim();
+    for (final prefix in ['https://', 'http://', 'www.']) {
+      if (out.startsWith(prefix)) out = out.substring(prefix.length);
+    }
+    while (out.isNotEmpty && (out.endsWith('/') || out.endsWith('.'))) {
+      out = out.substring(0, out.length - 1);
+    }
+    return out;
+  }
+
+  yield strip(q);
+
+  final urlLike = RegExp(
+    r'(?:https?://)?(?:www\.)?([a-z0-9][\w.-]*(?:/[\w./-]*)?)',
+    caseSensitive: false,
+  );
+  for (final m in urlLike.allMatches(q)) {
+    final hit = strip(m.group(0)!);
+    if (hit.isNotEmpty) yield hit;
+    final hostPath = m.group(1);
+    if (hostPath != null && hostPath.isNotEmpty) yield strip(hostPath);
+  }
+
+  // First token when someone pastes "url - rest of sentence" from chat.
+  final first = q.split(RegExp(r'\s+')).first;
+  if (first.contains('.') || first.contains('/')) yield strip(first);
 }
 
 const webPages = <String, WebPage>{

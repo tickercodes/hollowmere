@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/glass.dart';
 import '../../core/theme.dart';
 import '../../engine/story_engine.dart';
+import '../../l10n/l10n.dart';
 import 'app_registry.dart';
 import 'phone_shell.dart';
 import 'widgets.dart';
@@ -16,7 +17,8 @@ const kObjectiveOverlayInsetCollapsed = 52.0;
 const kObjectiveOverlayInsetExpanded = 56.0;
 
 bool objectiveBarVisible(Interaction it, {required String route}) {
-  if (route == '/messages' && (it is ChoiceInteraction || it is TypingInteraction)) {
+  if (route == '/messages' &&
+      (it is ChoiceInteraction || it is TypingInteraction)) {
     return false;
   }
   return it is GoalInteraction ||
@@ -27,7 +29,9 @@ bool objectiveBarVisible(Interaction it, {required String route}) {
 
 double objectiveOverlayInset({required bool visible, required bool expanded}) {
   if (!visible) return 0;
-  return expanded ? kObjectiveOverlayInsetExpanded : kObjectiveOverlayInsetCollapsed;
+  return expanded
+      ? kObjectiveOverlayInsetExpanded
+      : kObjectiveOverlayInsetCollapsed;
 }
 
 /// Bottom hint: a small Next chip expands the objective; Skip sits beside it
@@ -43,28 +47,30 @@ class ObjectiveBar extends ConsumerWidget {
     VoidCallback? onTap;
     IconData icon = Icons.flag_rounded;
 
+    final playerName = session.game.playerName;
     if (session.game.objective != null && it is GoalInteraction) {
       final obj = session.game.objective!;
-      text = obj.text;
+      text = context.tr(obj.text, playerName: playerName);
       onTap = () => _navigateTo(obj.target);
     } else if (it is ChoiceInteraction) {
       final who = displayName(ref, it.thread);
-      text = 'Reply to $who';
+      text = context.fmt('Reply to {name}', {'name': who});
       icon = Icons.reply_rounded;
       onTap = () => openApp('messages', arguments: it.thread);
     } else if (it is TypingInteraction) {
       final who = displayName(ref, it.from);
-      text = '$who is typing…';
+      text = context.fmt('{name} is typing…', {'name': who});
       icon = Icons.more_horiz_rounded;
       onTap = () => openApp('messages', arguments: it.thread);
     } else if (it is MinigameInteraction) {
-      text = (it.node['title'] as String?) ?? 'Open the puzzle';
+      text = context.tr((it.node['title'] as String?) ?? 'Open the puzzle');
       icon = Icons.extension_rounded;
       onTap = () => pushShellRouteExclusive('/minigame', arguments: it);
     }
 
     final bottom = MediaQuery.paddingOf(context).bottom + 6;
-    final showSkip = it is MinigameInteraction &&
+    final showSkip =
+        it is MinigameInteraction &&
         (session.game.fails[it.puzzleId] ?? 0) >= 3;
 
     return ValueListenableBuilder<String>(
@@ -88,7 +94,9 @@ class ObjectiveBar extends ConsumerWidget {
                     curve: Curves.easeOutCubic,
                     alignment: Alignment.centerRight,
                     child: Row(
-                      mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
+                      mainAxisSize: expanded
+                          ? MainAxisSize.max
+                          : MainAxisSize.min,
                       children: [
                         if (showSkip && visible) ...[
                           ShellChipButton(
@@ -182,7 +190,11 @@ class _ObjectivePill extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
             border: Border.all(color: HmColors.teal.withValues(alpha: 0.6)),
             boxShadow: const [
-              BoxShadow(color: Colors.black54, blurRadius: 18, offset: Offset(0, 6)),
+              BoxShadow(
+                color: Colors.black54,
+                blurRadius: 18,
+                offset: Offset(0, 6),
+              ),
             ],
           ),
           child: Row(
@@ -190,16 +202,22 @@ class _ObjectivePill extends StatelessWidget {
               Icon(icon, size: 18, color: HmColors.teal),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(text,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: HmColors.text,
-                      decoration: TextDecoration.none,
-                    )),
+                child: Text(
+                  text,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: HmColors.text,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
               ),
-              const Icon(Icons.chevron_right, size: 18, color: HmColors.textDim),
+              const Icon(
+                Icons.chevron_right,
+                size: 18,
+                color: HmColors.textDim,
+              ),
             ],
           ),
         ),
@@ -218,7 +236,9 @@ class NotificationBanner extends StatefulWidget {
 class NotificationBannerState extends State<NotificationBanner>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 380));
+    vsync: this,
+    duration: const Duration(milliseconds: 380),
+  );
   AppNotification? _current;
   Timer? _hide;
 
@@ -234,6 +254,12 @@ class NotificationBannerState extends State<NotificationBanner>
       if (mounted) setState(() => _current = null);
     });
   }
+
+  String _playerName(BuildContext context) =>
+      ProviderScope.containerOf(context)
+          .read(storyEngineProvider)
+          .game
+          .playerName;
 
   @override
   void dispose() {
@@ -253,8 +279,10 @@ class NotificationBannerState extends State<NotificationBanner>
       right: 0,
       child: SafeArea(
         child: SlideTransition(
-          position: Tween(begin: const Offset(0, -1.2), end: Offset.zero).animate(
-              CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic)),
+          position: Tween(
+            begin: const Offset(0, -1.2),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic)),
           child: Dismissible(
             key: ValueKey(n),
             direction: DismissDirection.up,
@@ -277,19 +305,29 @@ class NotificationBannerState extends State<NotificationBanner>
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
-                    child: Icon(app?.icon ?? Icons.notifications, color: HmColors.teal),
+                    child: Icon(
+                      app?.icon ?? Icons.notifications,
+                      color: HmColors.teal,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(n.title,
-                            style: const TextStyle(fontWeight: FontWeight.w600)),
-                        Text(n.body,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: HmColors.textDim, fontSize: 13)),
+                        Text(
+                          context.tr(n.title, playerName: _playerName(context)),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        Text(
+                          context.tr(n.body, playerName: _playerName(context)),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: HmColors.textDim,
+                            fontSize: 13,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -313,11 +351,15 @@ class GlitchOverlay extends StatefulWidget {
 
 class GlitchOverlayState extends State<GlitchOverlay>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 1500))
-    ..addStatusListener((s) {
-      if (s == AnimationStatus.completed && mounted) setState(() => _event = null);
-    });
+  late final AnimationController _ctrl =
+      AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 1500),
+      )..addStatusListener((s) {
+        if (s == AnimationStatus.completed && mounted) {
+          setState(() => _event = null);
+        }
+      });
   GlitchEvent? _event;
   final _rng = math.Random();
 
@@ -343,12 +385,18 @@ class GlitchOverlayState extends State<GlitchOverlay>
           builder: (context, _) {
             final t = _ctrl.value;
             // Tears are strongest in the first third, then settle.
-            final intensity = t < 0.35 ? 1.0 : math.max(0.0, 1 - (t - 0.35) / 0.4);
+            final intensity = t < 0.35
+                ? 1.0
+                : math.max(0.0, 1 - (t - 0.35) / 0.4);
             final ghostVisible = e.ghostText != null && t > 0.15 && t < 0.62;
             return Stack(
               children: [
                 CustomPaint(
-                  painter: _TearPainter(intensity: intensity, seed: (t * 60).floor(), rng: _rng),
+                  painter: _TearPainter(
+                    intensity: intensity,
+                    seed: (t * 60).floor(),
+                    rng: _rng,
+                  ),
                 ),
                 if (ghostVisible)
                   Positioned(
@@ -357,7 +405,10 @@ class GlitchOverlayState extends State<GlitchOverlay>
                     right: 12,
                     child: Transform.translate(
                       offset: Offset(_rng.nextDouble() * 6 - 3, 0),
-                      child: _GhostCard(from: e.ghostFrom ?? 'Wren', text: e.ghostText!),
+                      child: _GhostCard(
+                        from: e.ghostFrom ?? 'Wren',
+                        text: e.ghostText!,
+                      ),
                     ),
                   ),
               ],
@@ -374,55 +425,87 @@ class _GhostCard extends StatelessWidget {
   final String from;
   final String text;
   @override
-  Widget build(BuildContext context) => Stack(
-        children: [
-          Transform.translate(
-            offset: const Offset(-2, 0),
-            child: _card(HmColors.glitchCyan.withValues(alpha: 0.35))),
-          Transform.translate(
-            offset: const Offset(2, 0),
-            child: _card(HmColors.glitchMagenta.withValues(alpha: 0.35))),
-          _card(null),
-        ],
-      );
-
-  Widget _card(Color? tint) => Material(
-        color: Colors.transparent,
-        child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: tint ?? HmColors.surfaceRaised.withValues(alpha: 0.96),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: tint == null ? HmColors.hairline : Colors.transparent),
+  Widget build(BuildContext context) {
+    final playerName = ProviderScope.containerOf(context)
+        .read(storyEngineProvider)
+        .game
+        .playerName;
+    return Stack(
+      children: [
+        Transform.translate(
+          offset: const Offset(-2, 0),
+          child: _card(
+            context,
+            playerName,
+            HmColors.glitchCyan.withValues(alpha: 0.35),
+          ),
         ),
-        child: Row(
-          children: [
-            const Icon(Icons.chat_bubble_rounded, color: HmColors.teal, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(from,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: tint == null ? HmColors.text : Colors.transparent,
-                          decoration: TextDecoration.none)),
-                  Text(text,
-                      style: TextStyle(
-                          color: tint == null ? HmColors.text : Colors.transparent,
-                          decoration: TextDecoration.none)),
-                ],
-              ),
-            ),
-          ],
+        Transform.translate(
+          offset: const Offset(2, 0),
+          child: _card(
+            context,
+            playerName,
+            HmColors.glitchMagenta.withValues(alpha: 0.35),
+          ),
+        ),
+        _card(context, playerName, null),
+      ],
+    );
+  }
+
+  Widget _card(
+    BuildContext context,
+    String playerName,
+    Color? tint,
+  ) => Material(
+    color: Colors.transparent,
+    child: Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: tint ?? HmColors.surfaceRaised.withValues(alpha: 0.96),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: tint == null ? HmColors.hairline : Colors.transparent,
         ),
       ),
-      );
+      child: Row(
+        children: [
+          const Icon(Icons.chat_bubble_rounded, color: HmColors.teal, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.tr(from, playerName: playerName),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: tint == null ? HmColors.text : Colors.transparent,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+                Text(
+                  context.tr(text, playerName: playerName),
+                  style: TextStyle(
+                    color: tint == null ? HmColors.text : Colors.transparent,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _TearPainter extends CustomPainter {
-  _TearPainter({required this.intensity, required this.seed, required this.rng});
+  _TearPainter({
+    required this.intensity,
+    required this.seed,
+    required this.rng,
+  });
   final double intensity;
   final int seed;
   final math.Random rng;
@@ -438,15 +521,18 @@ class _TearPainter extends CustomPainter {
       final dx = (r.nextDouble() - 0.5) * 40 * intensity;
       canvas.drawRect(
         Rect.fromLTWH(dx, y, size.width, h),
-        Paint()..color = HmColors.glitchCyan.withValues(alpha: 0.10 * intensity),
+        Paint()
+          ..color = HmColors.glitchCyan.withValues(alpha: 0.10 * intensity),
       );
       canvas.drawRect(
         Rect.fromLTWH(-dx, y + h * 0.4, size.width, h * 0.6),
-        Paint()..color = HmColors.glitchMagenta.withValues(alpha: 0.10 * intensity),
+        Paint()
+          ..color = HmColors.glitchMagenta.withValues(alpha: 0.10 * intensity),
       );
     }
     // Scanlines.
-    final line = Paint()..color = Colors.black.withValues(alpha: 0.08 * intensity);
+    final line = Paint()
+      ..color = Colors.black.withValues(alpha: 0.08 * intensity);
     for (double y = 0; y < size.height; y += 3) {
       canvas.drawRect(Rect.fromLTWH(0, y, size.width, 1), line);
     }
@@ -457,53 +543,3 @@ class _TearPainter extends CustomPainter {
       old.intensity != intensity || old.seed != seed;
 }
 
-/// Episode 6: time until the next night release, ticking in the corner.
-class SirenCountdown extends ConsumerStatefulWidget {
-  const SirenCountdown({super.key});
-  @override
-  ConsumerState<SirenCountdown> createState() => _SirenCountdownState();
-}
-
-class _SirenCountdownState extends ConsumerState<SirenCountdown> {
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ends = ref.watch(storyEngineProvider.select((s) => s.game.sirenEndsAtMs));
-    if (ends == null) return const SizedBox.shrink();
-    final left = Duration(milliseconds: (ends - DateTime.now().millisecondsSinceEpoch).clamp(0, 1 << 30));
-    final h = left.inHours;
-    final m = left.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final s = left.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return Positioned(
-      top: 52,
-      right: 16,
-      child: IgnorePointer(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: HmColors.surfaceRaised.withValues(alpha: 0.92),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: HmColors.danger.withValues(alpha: 0.7)),
-          ),
-          child: Text('SIREN  $h:$m:$s',
-              style: monoStyle.copyWith(fontSize: 11, color: HmColors.danger, letterSpacing: 1.5)),
-        ),
-      ),
-    );
-  }
-}

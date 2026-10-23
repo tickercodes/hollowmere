@@ -20,7 +20,7 @@ class ChatMessage {
   /// Unique within a thread; used for read tracking and animations.
   final String id;
 
-  /// Character id, or `player` for Sam.
+  /// Character id, or `player` for John.
   final String from;
   final String text;
 
@@ -199,7 +199,7 @@ class Objective {
 
 class GameState {
   GameState({
-    this.playerName = 'Sam',
+    this.playerName = 'John',
     this.episodeId = 'ep1',
     this.nodeId,
     Set<String>? flags,
@@ -276,7 +276,7 @@ class GameState {
   final Set<String> completedEpisodes;
   final Objective? objective;
 
-  /// 0..3, how much of Wren's phone has "stabilised" onto Sam's.
+  /// 0..3, how much of Wren's phone has "stabilised" onto John's.
   final int mirrorLevel;
   final String? ending;
   final double textSpeed;
@@ -407,7 +407,7 @@ class GameState {
     Map<String, int> ints(String k) =>
         Map<String, int>.from((j[k] as Map?) ?? {});
     return GameState(
-      playerName: j['playerName'] as String? ?? 'Sam',
+      playerName: j['playerName'] as String? ?? 'John',
       episodeId: j['episodeId'] as String? ?? 'ep1',
       nodeId: j['nodeId'] as String?,
       flags: set('flags'),
